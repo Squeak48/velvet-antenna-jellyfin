@@ -1,9 +1,10 @@
-/* Velvet Antenna v0.8.0
-   Home experience based on the approved Velvet Antenna design specification.
+/* Velvet Antenna v0.10.0
+   Viewer-wide interface expansion based on the approved design specification.
 */
 
 :root {
   --va-bg: #08060C;
+  --va-bg-2: #0B0810;
   --va-surface: #110D17;
   --va-surface-2: #1B1028;
   --va-accent: #8A46E8;
@@ -13,7 +14,9 @@
   --va-text-2: #AAA2B1;
   --va-muted: #6C6572;
   --va-progress: #2B2432;
-  --va-inset: 3.75%;
+  --va-nav-height: 64px;
+  --va-radius: 12px;
+  --va-focus-shadow: 0 18px 34px rgba(0,0,0,.38), 0 16px 30px -20px rgba(138,70,232,.95);
 }
 
 html,
@@ -29,50 +32,44 @@ textarea {
   font-family: Manrope, Inter, "Segoe UI", sans-serif !important;
 }
 
-/* --------------------------------------------------------------------------
-   Home takeover
----------------------------------------------------------------------------- */
-
-.va-home-active .skinHeader,
-.va-home-active .headerTop,
-.va-home-active .headerTabs {
-  display: none !important;
+body.va-viewer {
+  background:
+    radial-gradient(circle at 55% -25%, rgba(92,39,139,.10), transparent 42%),
+    var(--va-bg) !important;
 }
 
-.va-home-active .libraryPage,
-.va-home-active .homePage,
-.va-home-active .page {
-  padding-top: 0 !important;
+body.va-viewer #reactRoot {
+  padding-top: var(--va-nav-height);
+  box-sizing: border-box;
 }
 
-.va-home-active .homeSectionsContainer,
-.va-home-active .libraryPage {
-  background: var(--va-bg) !important;
+body.va-route-transition #reactRoot {
+  opacity: .96;
 }
 
-.va-row-hidden {
-  display: none !important;
+#reactRoot {
+  transition: opacity 180ms ease;
 }
 
-/* --------------------------------------------------------------------------
-   Velvet Antenna navigation
----------------------------------------------------------------------------- */
+/* ============================================================
+   GLOBAL VELVET ANTENNA NAVIGATION
+============================================================ */
 
-#va-home-nav {
-  position: sticky;
-  top: 0;
-  z-index: 1200;
-  min-height: 74px;
+#va-global-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 99999;
+  height: var(--va-nav-height);
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: minmax(210px, 1fr) auto minmax(210px, 1fr);
+  grid-template-columns: minmax(230px, 1fr) auto minmax(200px, 1fr);
   align-items: center;
   gap: 24px;
-  padding: 0 var(--va-inset);
+  padding: 0 clamp(24px, 3.1vw, 58px);
+  background: rgba(8,6,12,.94);
+  border-bottom: 1px solid rgba(255,255,255,.045);
+  backdrop-filter: blur(16px);
   color: var(--va-text);
-  background: linear-gradient(180deg, rgba(8, 6, 12, .97), rgba(8, 6, 12, .88));
-  border-bottom: 1px solid rgba(246, 242, 248, .055);
-  backdrop-filter: blur(14px);
 }
 
 .va-nav__brand,
@@ -90,89 +87,80 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
-  color: var(--va-text);
+  min-height: 44px;
+  padding: 0;
 }
 
 .va-nav__brand-text {
-  font-size: .82rem;
+  font-size: .79rem;
   line-height: 1;
-  letter-spacing: .24em;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: .23em;
+  color: var(--va-text);
   white-space: nowrap;
 }
 
-.va-nav__mark {
+.va-mark {
   position: relative;
-  display: inline-block;
-  width: 31px;
+  width: 28px;
   height: 22px;
-  filter: drop-shadow(0 5px 10px rgba(138, 70, 232, .28));
+  display: inline-block;
+  filter: drop-shadow(0 7px 10px rgba(138,70,232,.20));
 }
 
-.va-nav__mark::before,
-.va-nav__mark::after {
-  content: "";
+.va-mark span {
   position: absolute;
   left: 2px;
-  width: 26px;
-  height: 11px;
+  width: 24px;
+  height: 10px;
   border-radius: 50%;
-  box-sizing: border-box;
+  border-top: 2px solid var(--va-highlight);
+  transform: rotate(-7deg);
 }
 
-.va-nav__mark::before {
-  top: 0;
-  border-top: 3px solid var(--va-highlight);
-  transform: rotate(-8deg);
-}
-
-.va-nav__mark::after {
-  bottom: 0;
-  border-bottom: 3px solid var(--va-accent);
-  transform: rotate(8deg);
-}
+.va-mark span:nth-child(1) { top: 2px; opacity: .95; }
+.va-mark span:nth-child(2) { top: 7px; width: 19px; left: 5px; opacity: .75; }
+.va-mark span:nth-child(3) { top: 12px; width: 13px; left: 8px; opacity: .52; }
 
 .va-nav__primary,
 .va-nav__utility {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: clamp(14px, 1.5vw, 27px);
 }
 
 .va-nav__primary {
-  justify-self: center;
+  justify-content: center;
 }
 
 .va-nav__utility {
-  justify-self: end;
+  justify-content: flex-end;
 }
 
 .va-nav__item {
   position: relative;
   min-height: 44px;
-  padding: 0 13px;
-  color: var(--va-text-2);
-  font-size: .72rem;
-  font-weight: 600;
-  letter-spacing: .14em;
-  white-space: nowrap;
+  padding: 0 2px;
+  font-size: .69rem;
+  font-weight: 650;
+  letter-spacing: .12em;
+  color: rgba(246,242,248,.62);
   transition: color 170ms ease, transform 170ms ease;
 }
 
 .va-nav__item::after {
   content: "";
   position: absolute;
-  left: 20%;
-  right: 20%;
+  left: 18%;
+  right: 18%;
   bottom: 5px;
   height: 2px;
-  border-radius: 99px;
-  opacity: 0;
+  border-radius: 999px;
   background: var(--va-highlight);
-  box-shadow: 0 5px 14px rgba(138, 70, 232, .7);
-  transform: scaleX(.4);
-  transition: opacity 170ms ease, transform 170ms ease;
+  transform: scaleX(0);
+  opacity: 0;
+  box-shadow: 0 7px 16px rgba(138,70,232,.62);
+  transition: transform 170ms ease, opacity 170ms ease;
 }
 
 .va-nav__item:hover,
@@ -182,33 +170,78 @@ textarea {
   outline: none;
 }
 
-.va-nav__item:hover::after,
-.va-nav__item:focus-visible::after,
-.va-nav__item--active::after {
-  opacity: 1;
+.va-nav__item:hover,
+.va-nav__item:focus-visible {
+  transform: translateY(-1px);
+}
+
+.va-nav__item--active::after,
+.va-nav__item:focus-visible::after {
   transform: scaleX(1);
+  opacity: 1;
 }
 
-.va-nav__item:focus-visible,
-.va-nav__brand:focus-visible {
-  transform: scale(1.035);
-  outline: none;
-  text-shadow: 0 0 14px rgba(198, 139, 255, .25);
+/* Hide stock viewer chrome where our shell replaces it. */
+body.va-page-home .skinHeader,
+body.va-page-search .skinHeader,
+body.va-page-details .skinHeader,
+body.va-page-live .skinHeader,
+body.va-page-other .skinHeader {
+  display: none !important;
 }
 
-/* --------------------------------------------------------------------------
-   Cinematic home hero
----------------------------------------------------------------------------- */
+/* Library pages keep Jellyfin sub-tabs but lose its main chrome. */
+body.va-page-library .skinHeader {
+  top: var(--va-nav-height) !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  background: rgba(8,6,12,.93) !important;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  box-shadow: none !important;
+}
+
+body.va-page-library .skinHeader .headerLeft,
+body.va-page-library .skinHeader .headerRight,
+body.va-page-library .skinHeader .headerButton {
+  display: none !important;
+}
+
+body.va-page-library .skinHeader .headerTabs {
+  position: static !important;
+  margin: 0 auto !important;
+  min-height: 48px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+body.va-page-library #reactRoot {
+  padding-top: calc(var(--va-nav-height) + 48px);
+}
+
+body.va-page-library .emby-tab-button {
+  color: rgba(246,242,248,.58) !important;
+  font-size: .71rem !important;
+  font-weight: 650 !important;
+  letter-spacing: .11em;
+}
+
+body.va-page-library .emby-tab-button-active {
+  color: var(--va-text) !important;
+}
+
+/* ============================================================
+   HOME HERO
+============================================================ */
 
 #va-home-hero {
   position: relative;
   width: 100%;
   min-height: clamp(390px, 44vh, 560px);
-  margin: 0 0 1.4rem 0;
+  margin: 0 0 1.1rem 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 72% 40%, rgba(108, 44, 191, .10), transparent 30%),
-    var(--va-bg);
+  background: var(--va-bg);
   color: var(--va-text);
   isolation: isolate;
 }
@@ -219,26 +252,31 @@ textarea {
   z-index: 0;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center 24%;
-  transform: scale(1.015);
+  background-position: center 25%;
 }
 
 .va-hero__art--base {
   background-image: var(--va-hero-image-base, none);
-  opacity: .35;
-  filter: blur(12px) saturate(.78) contrast(1.05) brightness(.55);
-  transform: scale(1.08);
+  filter: blur(14px) saturate(.75) brightness(.35);
+  transform: scale(1.09);
+  opacity: .76;
 }
 
 .va-hero__art--backdrop {
   background-image: var(--va-hero-image, none);
+  filter: saturate(.93) contrast(1.02) brightness(.78);
+  transform: scale(1.012);
   opacity: 0;
-  filter: saturate(.95) contrast(1.03) brightness(.84);
   transition: opacity 420ms ease;
 }
 
 .va-hero--backdrop-ready .va-hero__art--backdrop {
   opacity: 1;
+}
+
+.va-hero--backdrop-ready .va-hero__art--base {
+  opacity: .05;
+  transition: opacity 360ms ease;
 }
 
 .va-hero__shade {
@@ -247,16 +285,16 @@ textarea {
   z-index: 1;
   background:
     linear-gradient(90deg,
-      rgba(8, 6, 12, .99) 0%,
-      rgba(8, 6, 12, .92) 23%,
-      rgba(8, 6, 12, .56) 46%,
-      rgba(8, 6, 12, .13) 69%,
-      rgba(8, 6, 12, .16) 100%),
+      rgba(8,6,12,.99) 0%,
+      rgba(8,6,12,.90) 21%,
+      rgba(8,6,12,.52) 43%,
+      rgba(8,6,12,.10) 69%,
+      rgba(8,6,12,.07) 100%),
     linear-gradient(0deg,
       var(--va-bg) 0%,
-      rgba(8, 6, 12, .82) 10%,
-      rgba(8, 6, 12, .10) 36%,
-      rgba(8, 6, 12, .04) 100%);
+      rgba(8,6,12,.93) 8%,
+      rgba(8,6,12,.18) 35%,
+      rgba(8,6,12,.04) 100%);
 }
 
 .va-hero__content {
@@ -265,57 +303,64 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: min(760px, 50vw);
+  width: min(760px, 49vw);
   min-height: inherit;
-  padding: 44px var(--va-inset) 54px;
+  padding: clamp(36px, 4vw, 74px);
+  padding-left: 3.55%;
   box-sizing: border-box;
 }
 
-.va-hero__eyebrow {
-  margin-bottom: .75rem;
+.va-hero__eyebrow,
+.va-kicker,
+.va-detail-brand {
   color: var(--va-highlight);
-  font-size: .7rem;
-  font-weight: 600;
-  letter-spacing: .30em;
+  font-size: .68rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: .26em;
   text-transform: uppercase;
+}
+
+.va-hero__eyebrow {
+  margin-bottom: .9rem;
 }
 
 .va-hero__title {
   margin: 0;
   max-width: 13ch;
   color: var(--va-text);
-  font-size: clamp(2.75rem, 4.5vw, 5.1rem);
-  line-height: .98;
-  font-weight: 600;
-  letter-spacing: -.04em;
+  font-size: clamp(2.7rem, 4.2vw, 5.1rem);
+  line-height: .97;
+  font-weight: 650;
+  letter-spacing: -.045em;
   text-wrap: balance;
 }
 
 .va-hero__meta {
-  margin-top: .95rem;
-  color: var(--va-text-2);
-  font-size: .82rem;
-  font-weight: 500;
+  margin-top: .9rem;
+  color: rgba(246,242,248,.68);
+  font-size: .78rem;
+  font-weight: 550;
   letter-spacing: .055em;
   text-transform: uppercase;
 }
 
 .va-hero__copy {
+  max-width: 54ch;
+  margin: .9rem 0 0;
+  color: rgba(246,242,248,.67);
+  font-size: clamp(.9rem, .95vw, 1.05rem);
+  line-height: 1.58;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  max-width: 56ch;
-  margin: .85rem 0 0;
-  color: var(--va-text-2);
-  font-size: clamp(.92rem, .95vw, 1.08rem);
-  line-height: 1.48;
 }
 
 .va-hero__actions {
   display: flex;
-  gap: .75rem;
-  margin-top: 1.35rem;
+  gap: .72rem;
+  margin-top: 1.38rem;
   flex-wrap: wrap;
 }
 
@@ -323,15 +368,15 @@ textarea {
   appearance: none;
   border: 0;
   border-radius: 999px;
-  min-height: 44px;
-  padding: 0 1.2rem;
+  min-height: 42px;
+  padding: 0 1.15rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .58rem;
-  font-size: .76rem;
-  font-weight: 700;
-  letter-spacing: .08em;
+  font-size: .71rem;
+  font-weight: 750;
+  letter-spacing: .075em;
   cursor: pointer;
   transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease, color 170ms ease;
 }
@@ -342,9 +387,9 @@ textarea {
 }
 
 .va-button--secondary {
-  background: rgba(17, 13, 23, .70);
+  background: rgba(12,9,17,.68);
   color: var(--va-text);
-  border: 1px solid rgba(246, 242, 248, .17);
+  border: 1px solid rgba(246,242,248,.19);
   backdrop-filter: blur(8px);
 }
 
@@ -352,200 +397,619 @@ textarea {
 .va-button:focus-visible {
   transform: translateY(-1px) scale(1.035);
   outline: none;
-  box-shadow: 0 12px 30px rgba(138, 70, 232, .24), 0 0 0 2px rgba(198, 139, 255, .22);
-}
-
-.va-button--primary:focus-visible {
-  box-shadow: 0 12px 30px rgba(138, 70, 232, .30), 0 0 0 3px rgba(198, 139, 255, .30);
+  box-shadow: 0 12px 30px rgba(138,70,232,.22), 0 0 0 2px rgba(198,139,255,.20);
 }
 
 .va-hero__signal {
   position: absolute;
-  right: var(--va-inset);
-  bottom: 26px;
-  z-index: 4;
+  right: 3.6%;
+  bottom: 44px;
+  z-index: 3;
   display: flex;
-  align-items: flex-end;
-  gap: 5px;
-  height: 16px;
-  opacity: .55;
+  gap: 3px;
+  align-items: end;
+  opacity: .54;
 }
 
-.va-hero__signal span {
+.va-hero__signal i {
   display: block;
   width: 3px;
   border-radius: 99px;
-  background: linear-gradient(180deg, var(--va-highlight), var(--va-accent));
-  box-shadow: 0 0 10px rgba(138, 70, 232, .55);
-  animation: vaSignal 1.8s ease-in-out infinite;
+  background: linear-gradient(180deg, var(--va-highlight), var(--va-accent-deep));
+  box-shadow: 0 4px 14px rgba(138,70,232,.55);
 }
 
-.va-hero__signal span:nth-child(1) { height: 6px; animation-delay: 0s; }
-.va-hero__signal span:nth-child(2) { height: 11px; animation-delay: .14s; }
-.va-hero__signal span:nth-child(3) { height: 16px; animation-delay: .28s; }
+.va-hero__signal i:nth-child(1) { height: 5px; }
+.va-hero__signal i:nth-child(2) { height: 9px; }
+.va-hero__signal i:nth-child(3) { height: 14px; }
 
-@keyframes vaSignal {
-  0%, 100% { opacity: .38; transform: scaleY(.82); }
-  50% { opacity: 1; transform: scaleY(1); }
+/* ============================================================
+   HOME ROWS & CARD SYSTEM
+============================================================ */
+
+.homeSectionsContainer,
+.libraryPage,
+.page {
+  background-color: transparent !important;
 }
 
-/* --------------------------------------------------------------------------
-   Curated rows
----------------------------------------------------------------------------- */
-
-.va-home-active .verticalSection {
-  margin-top: .3rem;
-  margin-bottom: 2.15rem;
+.va-my-media-source {
+  display: none !important;
 }
 
-.va-home-active .sectionTitle-cards,
-.va-home-active .sectionTitle {
+body.va-page-home .homeSectionsContainer > .verticalSection,
+body.va-page-home .libraryPage > .verticalSection {
+  padding-left: 3.55% !important;
+  padding-right: 2.7% !important;
+  box-sizing: border-box;
+}
+
+.sectionTitle-cards,
+.sectionTitle {
   color: var(--va-text) !important;
-  font-weight: 600 !important;
+  font-weight: 650 !important;
   letter-spacing: -.015em;
 }
 
-.va-home-active .sectionTitle-cards {
-  font-size: 1.28rem !important;
+body.va-page-home .sectionTitle-cards,
+body.va-page-home .sectionTitle {
+  font-size: clamp(1rem, 1.12vw, 1.28rem) !important;
+  margin-bottom: .65rem !important;
 }
 
-.va-home-active .card {
-  transition: transform 175ms ease, filter 175ms ease !important;
-  transform-origin: center bottom;
+.card {
+  transition: transform 175ms ease, filter 175ms ease, opacity 175ms ease !important;
 }
 
-.va-home-active .card:hover,
-.va-home-active .card:focus-within {
-  transform: scale(1.045);
-  filter: brightness(1.07);
+.card:hover,
+.card:focus-within {
+  transform: scale(1.04);
+  filter: brightness(1.065);
   z-index: 8;
 }
 
-.va-home-active .card:hover .cardBox,
-.va-home-active .card:focus-within .cardBox {
-  box-shadow:
-    0 18px 32px rgba(0, 0, 0, .34),
-    0 18px 28px -20px rgba(138, 70, 232, .95) !important;
+.card:hover .cardBox,
+.card:focus-within .cardBox {
+  box-shadow: var(--va-focus-shadow) !important;
 }
 
-.va-row-landscape .card {
-  width: clamp(255px, 22vw, 410px) !important;
+.card:focus-within .cardImageContainer,
+.card:hover .cardImageContainer {
+  outline: 1px solid rgba(198,139,255,.14);
 }
 
-.va-row-wide .card {
-  width: clamp(300px, 27vw, 500px) !important;
-}
-
-.va-home-active .playedIndicator,
-.va-home-active .countIndicator,
-.va-home-active .mediaSourceIndicator,
-.va-home-active .videoIndicator {
+.playedIndicator,
+.countIndicator,
+.mediaSourceIndicator,
+.videoIndicator {
   background: var(--va-accent) !important;
   color: #fff !important;
 }
 
-.va-home-active .itemProgressBarForeground {
+.itemProgressBarForeground {
   background: linear-gradient(90deg, var(--va-accent-deep), var(--va-highlight)) !important;
 }
 
-.va-home-active .itemProgressBar {
+.itemProgressBar {
   background: var(--va-progress) !important;
 }
 
-/* Purple marks interaction, not whole surfaces. */
-.va-home-active .emby-button:focus-visible,
-.va-home-active .card:focus-within {
+/* Continue Watching & Next Up: cinematic 16:9 cards. */
+body.va-page-home .va-row-landscape .cardBox,
+body.va-page-home .va-row-landscape .cardScalable {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+body.va-page-home .va-row-landscape .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+/* Collections: broader and more premium. */
+body.va-page-home .va-row-wide .card {
+  min-width: min(29vw, 430px) !important;
+}
+
+body.va-page-home .va-row-wide .cardImageContainer {
+  border-radius: 12px !important;
+}
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+body.va-page-search #reactRoot {
+  min-height: 100vh;
+}
+
+.va-search-intro {
+  width: min(900px, 78vw);
+  margin: clamp(48px, 8vh, 100px) auto 20px;
+  text-align: left;
+}
+
+.va-search-intro h1 {
+  margin: .72rem 0 .45rem;
+  color: var(--va-text);
+  font-size: clamp(2.25rem, 4vw, 4.3rem);
+  line-height: 1;
+  letter-spacing: -.045em;
+  font-weight: 650;
+}
+
+.va-search-intro p {
+  margin: 0;
+  color: var(--va-text-2);
+  font-size: 1rem;
+}
+
+body.va-page-search .searchFields,
+body.va-page-search .searchField,
+body.va-page-search .inputContainer {
+  width: min(900px, 78vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.va-page-search .searchInput,
+body.va-page-search input[type="search"],
+body.va-page-search input[placeholder*="search" i] {
+  height: 56px !important;
+  min-height: 56px !important;
+  border: 1px solid rgba(198,139,255,.38) !important;
+  border-radius: 12px !important;
+  background: rgba(17,13,23,.82) !important;
+  color: var(--va-text) !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,.20), 0 0 0 1px rgba(138,70,232,.04) inset !important;
+  font-size: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+body.va-page-search .searchInput:focus,
+body.va-page-search input[type="search"]:focus,
+body.va-page-search input[placeholder*="search" i]:focus {
+  border-color: rgba(198,139,255,.72) !important;
+  box-shadow: 0 0 0 3px rgba(138,70,232,.13), 0 20px 46px rgba(0,0,0,.26) !important;
   outline: none !important;
 }
 
-/* --------------------------------------------------------------------------
-   Responsive fallback
----------------------------------------------------------------------------- */
+.va-search-suggestions-title,
+body.va-page-search h2,
+body.va-page-search h3 {
+  color: var(--va-text) !important;
+  font-weight: 650 !important;
+}
 
-@media (max-width: 1100px) {
-  #va-home-nav {
+body.va-page-search .searchSuggestions,
+body.va-page-search .searchSuggestionsList,
+body.va-page-search .searchSuggestionsContainer {
+  width: min(900px, 78vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.va-page-search .searchSuggestions a,
+.va-search-chip {
+  display: inline-flex !important;
+  margin: 5px 4px !important;
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(27,16,40,.62) !important;
+  color: rgba(246,242,248,.76) !important;
+  border: 1px solid rgba(198,139,255,.10) !important;
+  text-decoration: none !important;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease !important;
+}
+
+body.va-page-search .searchSuggestions a:hover,
+body.va-page-search .searchSuggestions a:focus,
+.va-search-chip:hover,
+.va-search-chip:focus {
+  transform: translateY(-1px);
+  background: rgba(108,44,191,.26) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.22), 0 10px 22px -18px rgba(138,70,232,.9) !important;
+  outline: none;
+}
+
+/* Search result cards retain standard movie/series proportions but gain VA spacing. */
+body.va-page-search .verticalSection {
+  padding-left: 3.55% !important;
+  padding-right: 3.55% !important;
+}
+
+/* ============================================================
+   LIBRARY PAGES
+============================================================ */
+
+body.va-page-library .libraryPage,
+body.va-page-library .page {
+  padding-top: 1rem !important;
+}
+
+body.va-page-library .itemsContainer,
+body.va-page-library .verticalSection {
+  padding-left: 3.3% !important;
+  padding-right: 3.3% !important;
+  box-sizing: border-box;
+}
+
+body.va-page-library .pageTitle,
+.va-library-title {
+  color: var(--va-text) !important;
+  font-size: clamp(1.7rem, 2.5vw, 2.8rem) !important;
+  font-weight: 650 !important;
+  letter-spacing: -.035em !important;
+}
+
+body.va-page-library .listPaging,
+body.va-page-library .alphaPicker {
+  color: var(--va-text-2) !important;
+}
+
+body.va-page-library .paper-icon-button-light,
+body.va-page-library .emby-button {
+  border-radius: 999px !important;
+}
+
+.va-library-card .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+/* ============================================================
+   MOVIE / SERIES DETAIL PAGES
+============================================================ */
+
+body.va-page-details {
+  background: var(--va-bg) !important;
+}
+
+body.va-page-details .itemBackdrop,
+body.va-page-details .backdropImage {
+  height: min(62vh, 690px) !important;
+  min-height: 430px !important;
+  opacity: .82 !important;
+  filter: saturate(.91) contrast(1.02) brightness(.78) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+}
+
+body.va-page-details .detailPagePrimaryContainer,
+body.va-page-details .detailPageContent {
+  position: relative;
+  z-index: 2;
+}
+
+body.va-page-details .detailPagePrimaryContainer {
+  padding-left: 4% !important;
+  padding-right: 4% !important;
+  margin-top: -12vh !important;
+  background: linear-gradient(90deg, rgba(8,6,12,.92), rgba(8,6,12,.42) 48%, transparent 72%) !important;
+}
+
+body.va-page-details .detailPagePrimaryContent {
+  max-width: 820px !important;
+}
+
+.va-detail-brand {
+  margin-bottom: .8rem;
+}
+
+body.va-page-details .itemName,
+.va-detail-title {
+  color: var(--va-text) !important;
+  font-size: clamp(2.8rem, 4.4vw, 5.2rem) !important;
+  line-height: .98 !important;
+  font-weight: 650 !important;
+  letter-spacing: -.045em !important;
+  text-shadow: 0 4px 24px rgba(0,0,0,.28);
+}
+
+body.va-page-details .itemMiscInfo,
+body.va-page-details .itemMiscInfo > *,
+body.va-page-details .overview,
+body.va-page-details .tagline {
+  color: rgba(246,242,248,.68) !important;
+}
+
+body.va-page-details .overview {
+  max-width: 62ch !important;
+  line-height: 1.62 !important;
+}
+
+body.va-page-details .mainDetailButtons {
+  gap: .65rem !important;
+  margin-top: 1.25rem !important;
+}
+
+body.va-page-details .mainDetailButtons .emby-button,
+.va-detail-action {
+  border-radius: 999px !important;
+  min-height: 44px !important;
+  background: rgba(17,13,23,.72) !important;
+  color: var(--va-text) !important;
+  border: 1px solid rgba(246,242,248,.16) !important;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease !important;
+}
+
+body.va-page-details .mainDetailButtons .btnPlay,
+body.va-page-details .mainDetailButtons .button-flat:first-child {
+  background: var(--va-text) !important;
+  color: #120B18 !important;
+}
+
+body.va-page-details .mainDetailButtons .emby-button:hover,
+body.va-page-details .mainDetailButtons .emby-button:focus-visible {
+  transform: scale(1.035);
+  box-shadow: 0 13px 26px rgba(0,0,0,.30), 0 12px 28px -20px rgba(138,70,232,.95) !important;
+  outline: none !important;
+}
+
+body.va-page-details .detailPageSecondaryContainer {
+  padding: 1.5rem 4% 4rem !important;
+  background: linear-gradient(180deg, transparent, rgba(17,13,23,.18)) !important;
+}
+
+body.va-page-details .detailPageSecondaryContainer .sectionTitle,
+body.va-page-details .detailPageSecondaryContainer h2 {
+  color: var(--va-text) !important;
+  font-weight: 650 !important;
+  letter-spacing: -.02em !important;
+}
+
+/* Cast should feel editorial rather than server-generated. */
+.va-cast-card .cardImageContainer {
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+/* Episodes: cleaner, landscape-first treatment. */
+.va-episode-card .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+body.va-page-details .childrenItemsContainer .cardText,
+body.va-page-details .episodeCard .cardText {
+  color: rgba(246,242,248,.74) !important;
+}
+
+body.va-page-details select,
+body.va-page-details .selectContainer select {
+  background: var(--va-surface) !important;
+  color: var(--va-text) !important;
+  border: 1px solid rgba(198,139,255,.18) !important;
+  border-radius: 10px !important;
+}
+
+/* ============================================================
+   LIVE TV / GUIDE
+============================================================ */
+
+body.va-page-live .libraryPage,
+body.va-page-live .page {
+  padding: 2rem 3.5% !important;
+}
+
+body.va-page-live .sectionTitle,
+body.va-page-live h1,
+body.va-page-live h2 {
+  color: var(--va-text) !important;
+}
+
+.va-live-program,
+body.va-page-live .programCell,
+body.va-page-live .guideProgram {
+  background: rgba(17,13,23,.78) !important;
+  border-color: rgba(255,255,255,.055) !important;
+  border-radius: 8px !important;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease !important;
+}
+
+.va-live-program:hover,
+.va-live-program:focus,
+body.va-page-live .programCell:hover,
+body.va-page-live .guideProgram:hover {
+  background: rgba(27,16,40,.92) !important;
+  box-shadow: 0 14px 28px rgba(0,0,0,.28), 0 12px 25px -20px rgba(138,70,232,.95) !important;
+  outline: none !important;
+}
+
+.va-live-indicator,
+body.va-page-live .recordingIndicator,
+body.va-page-live .liveTvIndicator {
+  color: var(--va-highlight) !important;
+}
+
+/* ============================================================
+   GENERIC CONTROLS, DIALOGS, DRAWERS
+============================================================ */
+
+body.va-viewer .dialog,
+body.va-viewer .actionSheet,
+body.va-viewer .paperList,
+body.va-viewer .mainDrawer {
+  background: rgba(12,9,17,.97) !important;
+  color: var(--va-text) !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+
+body.va-viewer .mainDrawer {
+  box-shadow: 20px 0 70px rgba(0,0,0,.48) !important;
+}
+
+body.va-viewer .listItem:hover,
+body.va-viewer .listItem:focus,
+body.va-viewer .actionSheetMenuItem:hover,
+body.va-viewer .actionSheetMenuItem:focus {
+  background: rgba(108,44,191,.18) !important;
+}
+
+body.va-viewer .checkboxOutline,
+body.va-viewer .emby-checkbox:checked + span + .checkboxOutline {
+  border-color: var(--va-highlight) !important;
+}
+
+body.va-viewer .emby-checkbox:checked + span + .checkboxOutline {
+  background: var(--va-accent) !important;
+}
+
+/* ============================================================
+   LOADING & MOTION
+============================================================ */
+
+body.va-viewer .docspinner,
+body.va-viewer .mdl-spinner {
+  filter: hue-rotate(30deg) saturate(.75) !important;
+}
+
+body.va-viewer .cardImageContainer {
+  background-color: #120D18 !important;
+}
+
+body.va-viewer .cardImage {
+  animation: vaArtworkIn 220ms ease both;
+}
+
+@keyframes vaArtworkIn {
+  from { opacity: .2; }
+  to { opacity: 1; }
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1180px) {
+  #va-global-nav {
     grid-template-columns: auto 1fr auto;
-    gap: 10px;
+    gap: 14px;
+    padding: 0 20px;
   }
 
   .va-nav__brand-text {
     display: none;
   }
 
-  .va-nav__item {
-    padding: 0 9px;
-    font-size: .67rem;
+  .va-nav__primary,
+  .va-nav__utility {
+    gap: 14px;
   }
-
-  .va-nav__primary {
-    overflow-x: auto;
-    justify-self: stretch;
-    scrollbar-width: none;
-  }
-
-  .va-nav__primary::-webkit-scrollbar { display: none; }
 }
 
-@media (max-width: 760px) {
-  #va-home-nav {
-    min-height: 62px;
-    padding: 0 4%;
+@media (max-width: 900px) {
+  :root {
+    --va-nav-height: 58px;
   }
 
-  .va-nav__utility .va-nav__item {
-    font-size: 0;
-    width: 38px;
-    padding: 0;
+  #va-global-nav {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 12px;
+    gap: 8px;
   }
 
-  .va-nav__utility .va-nav__item:first-child::before { content: "⌕"; font-size: 1.35rem; }
-  .va-nav__utility .va-nav__item:last-child::before { content: "●"; font-size: .85rem; }
+  .va-nav__item {
+    font-size: .61rem;
+    letter-spacing: .08em;
+  }
+
+  .va-nav__utility .va-nav__item[data-va-kind="profile"] {
+    display: none;
+  }
 
   #va-home-hero {
     min-height: 410px;
   }
 
   .va-hero__content {
-    width: min(94vw, 690px);
-    padding: 28px 5% 44px;
+    width: min(92vw, 680px);
+    padding: 28px 5%;
     justify-content: flex-end;
+    padding-bottom: 44px;
   }
 
   .va-hero__title {
-    font-size: clamp(2.2rem, 9vw, 3.7rem);
+    font-size: clamp(2.2rem, 9vw, 3.8rem);
   }
 
   .va-hero__shade {
     background:
       linear-gradient(0deg,
         var(--va-bg) 0%,
-        rgba(8, 6, 12, .94) 29%,
-        rgba(8, 6, 12, .50) 61%,
-        rgba(8, 6, 12, .18) 100%);
+        rgba(8,6,12,.94) 29%,
+        rgba(8,6,12,.47) 61%,
+        rgba(8,6,12,.18) 100%);
   }
 
-  .va-row-landscape .card,
-  .va-row-wide .card {
-    width: min(72vw, 360px) !important;
+  .va-search-intro,
+  body.va-page-search .searchFields,
+  body.va-page-search .searchField,
+  body.va-page-search .inputContainer,
+  body.va-page-search .searchSuggestions,
+  body.va-page-search .searchSuggestionsList,
+  body.va-page-search .searchSuggestionsContainer {
+    width: 88vw !important;
+  }
+
+  body.va-page-details .detailPagePrimaryContainer {
+    margin-top: -6vh !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #va-global-nav {
+    grid-template-columns: auto 1fr;
+  }
+
+  .va-nav__primary {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .va-nav__primary::-webkit-scrollbar {
+    display: none;
+  }
+
+  .va-nav__utility {
+    display: none;
+  }
+
+  .va-mark {
+    width: 24px;
+  }
+
+  body.va-page-details .itemBackdrop,
+  body.va-page-details .backdropImage {
+    min-height: 340px !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .va-home-active .card,
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .card,
   .va-button,
   .va-nav__item,
   .va-hero__art--backdrop,
-  .va-hero__signal span {
+  #reactRoot {
     transition: none !important;
-    animation: none !important;
   }
 
-  .va-home-active .card:hover,
-  .va-home-active .card:focus-within,
+  .card:hover,
+  .card:focus-within,
   .va-button:hover,
   .va-button:focus-visible,
-  .va-nav__item:focus-visible,
-  .va-nav__brand:focus-visible {
+  .va-nav__item:hover,
+  .va-nav__item:focus-visible {
     transform: none !important;
+  }
+
+  body.va-viewer .cardImage {
+    animation: none !important;
   }
 }
