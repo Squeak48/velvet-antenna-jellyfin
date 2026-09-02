@@ -1,14 +1,23 @@
 [
   {
-    "id": "velvet-antenna-test-v3",
-    "name": "Velvet Antenna Test",
+    "id": "velvet-antenna-test-v4",
+    "name": "Velvet Antenna Test v4",
     "author": "James",
-    "description": "Velvet Antenna client JavaScript test.",
-    "version": "0.3.0",
+    "description": "Simple CSS and JavaScript injection test for Velvet Antenna.",
+    "version": "0.4.0",
+    "type": "both",
     "jellyfin": "10.11+",
-    "tags": ["ui", "home", "developer"],
-    "sourceUrl": "https://github.com/YOUR-GITHUB-NAME/velvet-antenna-jellyfin",
-    "jsUrl": "https://raw.githubusercontent.com/YOUR-GITHUB-NAME/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
-    "requires": []
+    "tags": [
+      "ui",
+      "home",
+      "developer",
+      "css"
+    ],
+    "previewUrl": null,
+    "sourceUrl": "https://github.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin",
+    "jsUrl": "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
+    "jsInline": null,
+    "cssUrl": "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin/main/velvet-antenna-test.css",
+    "cssInline": null
   }
 ]
