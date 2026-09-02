@@ -1,0 +1,273 @@
+/* Velvet Antenna v0.6
+   First functional home-screen implementation based on the approved design spec.
+*/
+
+:root {
+  --va-bg: #08060C;
+  --va-surface: #110D17;
+  --va-surface-2: #1B1028;
+  --va-accent: #8A46E8;
+  --va-accent-deep: #6C2CBF;
+  --va-highlight: #C68BFF;
+  --va-text: #F6F2F8;
+  --va-text-2: #AAA2B1;
+  --va-muted: #6C6572;
+  --va-progress: #2B2432;
+}
+
+html,
+body {
+  background: var(--va-bg) !important;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Manrope, Inter, "Segoe UI", sans-serif !important;
+}
+
+/* ------------------------------------------------------------
+   Home hero
+------------------------------------------------------------ */
+
+#va-home-hero {
+  position: relative;
+  width: 100%;
+  min-height: clamp(360px, 42vh, 520px);
+  margin: 0 0 1.6rem 0;
+  overflow: hidden;
+  background: var(--va-bg);
+  color: var(--va-text);
+  isolation: isolate;
+}
+
+.va-hero__art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--va-hero-image, none);
+  background-size: cover;
+  background-position: center 24%;
+  transform: scale(1.01);
+  filter: saturate(.96) contrast(1.03) brightness(.82);
+}
+
+.va-hero__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(8, 6, 12, .98) 0%,
+      rgba(8, 6, 12, .88) 24%,
+      rgba(8, 6, 12, .52) 46%,
+      rgba(8, 6, 12, .10) 70%,
+      rgba(8, 6, 12, .18) 100%),
+    linear-gradient(0deg,
+      var(--va-bg) 0%,
+      rgba(8, 6, 12, .86) 11%,
+      rgba(8, 6, 12, .12) 38%,
+      rgba(8, 6, 12, .06) 100%);
+}
+
+.va-hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(760px, 48vw);
+  min-height: inherit;
+  padding: clamp(34px, 4vw, 72px);
+  padding-left: 3.75%;
+  box-sizing: border-box;
+}
+
+.va-hero__eyebrow {
+  margin-bottom: .8rem;
+  color: var(--va-highlight);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.va-hero__title {
+  margin: 0;
+  max-width: 12ch;
+  color: var(--va-text);
+  font-size: clamp(2.5rem, 4.4vw, 5rem);
+  line-height: .98;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+
+.va-hero__meta {
+  margin-top: 1rem;
+  color: var(--va-text-2);
+  font-size: .9rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.va-hero__copy {
+  max-width: 52ch;
+  margin: 1rem 0 0;
+  color: var(--va-text-2);
+  font-size: clamp(.95rem, 1vw, 1.12rem);
+  line-height: 1.55;
+}
+
+.va-hero__actions {
+  display: flex;
+  gap: .8rem;
+  margin-top: 1.55rem;
+  flex-wrap: wrap;
+}
+
+.va-button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  min-height: 46px;
+  padding: 0 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease, color 170ms ease;
+}
+
+.va-button--primary {
+  background: var(--va-text);
+  color: #120B18;
+}
+
+.va-button--secondary {
+  background: rgba(17, 13, 23, .72);
+  color: var(--va-text);
+  border: 1px solid rgba(246, 242, 248, .18);
+  backdrop-filter: blur(8px);
+}
+
+.va-button:hover,
+.va-button:focus-visible {
+  transform: translateY(-1px) scale(1.025);
+  outline: none;
+  box-shadow: 0 12px 30px rgba(138, 70, 232, .22), 0 0 0 2px rgba(198, 139, 255, .22);
+}
+
+.va-button--primary:focus-visible {
+  box-shadow: 0 12px 30px rgba(138, 70, 232, .28), 0 0 0 3px rgba(198, 139, 255, .32);
+}
+
+/* ------------------------------------------------------------
+   Home spacing and card focus
+------------------------------------------------------------ */
+
+.homeSectionsContainer,
+.libraryPage {
+  background: var(--va-bg) !important;
+}
+
+.homeSectionsContainer .verticalSection,
+.libraryPage .verticalSection {
+  margin-top: .2rem;
+}
+
+.sectionTitle-cards {
+  color: var(--va-text) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.01em;
+}
+
+.card {
+  transition: transform 180ms ease, filter 180ms ease !important;
+}
+
+.card:hover,
+.card:focus-within {
+  transform: scale(1.035);
+  filter: brightness(1.06);
+  z-index: 5;
+}
+
+.card:hover .cardBox,
+.card:focus-within .cardBox {
+  box-shadow: 0 16px 28px rgba(0,0,0,.32), 0 14px 26px -18px rgba(138, 70, 232, .9) !important;
+}
+
+.playedIndicator,
+.countIndicator,
+.mediaSourceIndicator,
+.videoIndicator {
+  background: var(--va-accent) !important;
+  color: #fff !important;
+}
+
+.itemProgressBarForeground {
+  background: linear-gradient(90deg, var(--va-accent-deep), var(--va-highlight)) !important;
+}
+
+.itemProgressBar {
+  background: var(--va-progress) !important;
+}
+
+/* Keep violet restrained: active/focus states only */
+.headerTabs .emby-tab-button-active,
+.sectionTabs .emby-tab-button-active {
+  color: var(--va-text) !important;
+}
+
+.headerTabs .emby-tab-button-active::after,
+.sectionTabs .emby-tab-button-active::after {
+  background: var(--va-accent) !important;
+}
+
+@media (max-width: 900px) {
+  #va-home-hero {
+    min-height: 390px;
+  }
+
+  .va-hero__content {
+    width: min(92vw, 680px);
+    padding: 28px 5%;
+    justify-content: flex-end;
+    padding-bottom: 46px;
+  }
+
+  .va-hero__title {
+    font-size: clamp(2.1rem, 9vw, 3.6rem);
+  }
+
+  .va-hero__shade {
+    background:
+      linear-gradient(0deg,
+        var(--va-bg) 0%,
+        rgba(8, 6, 12, .92) 28%,
+        rgba(8, 6, 12, .46) 60%,
+        rgba(8, 6, 12, .18) 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .va-button {
+    transition: none !important;
+  }
+
+  .card:hover,
+  .card:focus-within,
+  .va-button:hover,
+  .va-button:focus-visible {
+    transform: none !important;
+  }
+}
