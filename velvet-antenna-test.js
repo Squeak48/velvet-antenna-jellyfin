@@ -42,3 +42,37 @@
             subtree: true
         });
 })();
+(function () {
+    console.log('[Velvet Antenna] TEST SCRIPT RUNNING');
+
+    function showTest() {
+        if (!document.body) return;
+        if (document.getElementById('va-test-banner')) return;
+
+        var banner = document.createElement('div');
+        banner.id = 'va-test-banner';
+        banner.textContent = 'VELVET ANTENNA - MOD WORKING';
+
+        banner.style.cssText =
+            'position:fixed;' +
+            'top:80px;' +
+            'left:50%;' +
+            'transform:translateX(-50%);' +
+            'z-index:2147483647;' +
+            'background:#8A46E8;' +
+            'color:#fff;' +
+            'padding:20px 36px;' +
+            'font-size:24px;' +
+            'font-weight:700;' +
+            'border-radius:12px;' +
+            'box-shadow:0 0 40px rgba(138,70,232,.9);';
+
+        document.body.appendChild(banner);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', showTest);
+    } else {
+        showTest();
+    }
+})();
