@@ -1,19 +1,20 @@
 [
   {
-    "id": "velvet-antenna-test-v5",
-    "name": "Velvet Antenna Test v5",
+    "id": "velvet-antenna",
+    "name": "Velvet Antenna",
     "author": "James",
-    "description": "Velvet Antenna browser CSS and JavaScript injection test.",
-    "version": "0.5.0",
+    "description": "Velvet Antenna custom Jellyfin interface. v0.6 adds the first functional cinematic home hero based on the approved design specification.",
+    "version": "0.6.0",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
       "home",
-      "developer"
+      "cinematic",
+      "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js",
     "requires": []
   }
 ]
