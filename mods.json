@@ -1,23 +1,19 @@
 [
   {
-    "id": "velvet-antenna-test-v4",
-    "name": "Velvet Antenna Test v4",
+    "id": "velvet-antenna-test-v5",
+    "name": "Velvet Antenna Test v5",
     "author": "James",
-    "description": "Simple CSS and JavaScript injection test for Velvet Antenna.",
-    "version": "0.4.0",
-    "type": "both",
+    "description": "Velvet Antenna browser CSS and JavaScript injection test.",
+    "version": "0.5.0",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
       "home",
-      "developer",
-      "css"
+      "developer"
     ],
-    "previewUrl": null,
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
-    "jsInline": null,
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.css",
-    "cssInline": null
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
+    "requires": []
   }
 ]
