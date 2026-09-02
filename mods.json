@@ -1,25 +1,28 @@
 [
   {
     "id": "velvet-antenna-v0100",
-    "name": "Velvet Antenna v0.10.0",
+    "name": "Velvet Antenna Core v0.10.0",
     "author": "James",
-    "description": "Large viewer-wide Velvet Antenna expansion: persistent branded navigation across viewer pages, upgraded home hero and row system, redesigned search, immersive detail-page styling, library sub-navigation treatment, Live TV styling, caching, transitions and remote-focused interaction states.",
+    "description": "Velvet Antenna base viewer shell: persistent navigation, home hero, core cards, library tabs and viewer styling.",
     "version": "0.10.0",
     "jellyfin": "10.11+",
-    "tags": [
-      "ui",
-      "home",
-      "search",
-      "details",
-      "libraries",
-      "livetv",
-      "cinematic",
-      "navigation",
-      "velvet-antenna"
-    ],
+    "tags": ["ui", "home", "cinematic", "navigation", "velvet-antenna"],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.10.0",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.10.0",
     "requires": []
+  },
+  {
+    "id": "velvet-antenna-v0120",
+    "name": "Velvet Antenna v0.12.0",
+    "author": "James",
+    "description": "Large Velvet Antenna upgrade: fixes home-row flicker, rebuilds search, gives libraries branded identities and replaces Jellyfin detail headers with a cinematic metadata-driven hero.",
+    "version": "0.12.0",
+    "jellyfin": "10.11+",
+    "tags": ["ui", "search", "details", "libraries", "stability", "velvet-antenna"],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.css?v=0.12.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.js?v=0.12.0",
+    "requires": ["velvet-antenna-v0100"]
   }
 ]
