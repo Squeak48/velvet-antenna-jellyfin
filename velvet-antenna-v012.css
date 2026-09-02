@@ -1,0 +1,496 @@
+/* Velvet Antenna v0.12.0 patch
+   Requires Velvet Antenna v0.10.0 base.
+   Focus: stable home rows, stronger search, library identities, custom detail hero.
+*/
+
+body.va-page-home .va12-stable-row {
+  contain: layout style;
+}
+
+body.va-page-home .va12-stable-row .card {
+  backface-visibility: hidden;
+}
+
+.va12-old-search-intro {
+  display: none !important;
+}
+
+#va12-search-intro {
+  width: min(1120px, 84vw);
+  margin: clamp(44px, 7vh, 88px) auto 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: end;
+}
+
+.va12-search-copy h1 {
+  margin: .75rem 0 .55rem;
+  color: var(--va-text);
+  font-size: clamp(3rem, 5vw, 5.6rem);
+  line-height: .94;
+  letter-spacing: -.055em;
+  font-weight: 650;
+}
+
+.va12-search-copy p {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--va-text-2);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.va12-search-shortcuts {
+  display: grid;
+  gap: 8px;
+}
+
+.va12-search-shortcut {
+  appearance: none;
+  min-height: 46px;
+  width: 100%;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(198,139,255,.10);
+  border-radius: 11px;
+  background: rgba(17,13,23,.68);
+  color: rgba(246,242,248,.72);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.va12-search-shortcut i {
+  color: var(--va-highlight);
+  font-size: 1.4rem;
+  line-height: 1;
+  font-style: normal;
+}
+
+.va12-search-shortcut:hover,
+.va12-search-shortcut:focus-visible {
+  transform: translateX(3px);
+  border-color: rgba(198,139,255,.25);
+  background: rgba(108,44,191,.18);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22), 0 10px 22px -19px rgba(138,70,232,.85);
+  outline: none;
+}
+
+body.va-page-search .searchFields,
+body.va-page-search .searchField,
+body.va-page-search .inputContainer {
+  width: min(1120px, 84vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.va-page-search .searchInput,
+body.va-page-search input[type="search"],
+body.va-page-search input[placeholder*="search" i] {
+  height: 68px !important;
+  min-height: 68px !important;
+  border-radius: 15px !important;
+  font-size: 1.08rem !important;
+  background: rgba(17,13,23,.92) !important;
+  border: 1px solid rgba(198,139,255,.44) !important;
+  box-shadow: 0 22px 56px rgba(0,0,0,.30) !important;
+}
+
+.va12-suggestion-area {
+  width: min(1120px, 84vw) !important;
+  max-width: none !important;
+  margin: 30px auto 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.va12-suggestion-heading {
+  margin: 0 0 13px !important;
+  color: rgba(246,242,248,.48) !important;
+  font-size: .7rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .15em !important;
+  text-transform: uppercase !important;
+}
+
+.va12-suggestion-area > div,
+.va12-suggestion-area .searchSuggestions,
+.va12-suggestion-area .searchSuggestionsList,
+.va12-suggestion-area .searchSuggestionsContainer {
+  width: 100% !important;
+  max-width: none !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+}
+
+.va12-suggestion-chip {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: 280px !important;
+  min-height: 38px;
+  margin: 0 !important;
+  padding: 0 13px !important;
+  align-items: center;
+  border: 1px solid rgba(198,139,255,.10) !important;
+  border-radius: 999px !important;
+  background: rgba(27,16,40,.62) !important;
+  color: rgba(246,242,248,.72) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-decoration: none !important;
+}
+
+.va12-suggestion-chip:hover,
+.va12-suggestion-chip:focus {
+  background: rgba(108,44,191,.24) !important;
+  border-color: rgba(198,139,255,.22) !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.24), 0 11px 25px -20px rgba(138,70,232,.85) !important;
+  outline: none !important;
+}
+
+.va12-suggestion-hidden {
+  display: none !important;
+}
+
+body.va12-search-query #va12-search-intro {
+  margin-bottom: 16px;
+}
+
+body.va12-search-query .va12-search-shortcuts {
+  opacity: .25;
+}
+
+body.va12-search-query .va12-suggestion-area {
+  display: none !important;
+}
+
+.va12-search-results {
+  padding-left: 3.55% !important;
+  padding-right: 3.55% !important;
+  margin-top: 1.4rem !important;
+}
+
+.va12-search-results .sectionTitle,
+.va12-search-results .sectionTitle-cards {
+  font-size: 1.18rem !important;
+}
+
+#va12-library-intro {
+  position: relative;
+  min-height: 210px;
+  box-sizing: border-box;
+  padding: clamp(42px, 5vw, 76px) 3.45% 40px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 42%, rgba(138,70,232,.16), transparent 23%),
+    linear-gradient(90deg, rgba(27,16,40,.28), transparent 50%);
+  border-bottom: 1px solid rgba(255,255,255,.035);
+}
+
+#va12-library-intro::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 150px;
+  right: 5%;
+  bottom: -55px;
+  border: 1px solid rgba(198,139,255,.10);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  box-shadow:
+    0 -24px 0 -23px rgba(198,139,255,.10),
+    0 -50px 0 -49px rgba(198,139,255,.07);
+}
+
+.va12-library-heading {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  margin-top: .8rem;
+}
+
+.va12-library-heading h1 {
+  margin: 0;
+  color: var(--va-text);
+  font-size: clamp(3rem, 4.8vw, 5.5rem);
+  line-height: .94;
+  font-weight: 650;
+  letter-spacing: -.055em;
+}
+
+.va12-library-count {
+  margin-bottom: .38rem;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(198,139,255,.08);
+  color: rgba(246,242,248,.52);
+  font-size: .68rem;
+  letter-spacing: .08em;
+}
+
+#va12-library-intro p {
+  margin: .78rem 0 0;
+  color: var(--va-text-2);
+  font-size: .96rem;
+}
+
+.va12-stock-title {
+  display: none !important;
+}
+
+.va12-library-grid {
+  padding-top: 1.2rem !important;
+}
+
+.va12-library-card .cardImageContainer {
+  border-radius: 11px !important;
+}
+
+body.va-page-library .itemsContainer {
+  row-gap: 1.45rem !important;
+}
+
+.va12-old-detail-brand {
+  display: none !important;
+}
+
+#va12-detail-hero {
+  position: relative;
+  min-height: clamp(520px, 64vh, 760px);
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--va-bg);
+}
+
+.va12-detail-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--va12-detail-image, none);
+  background-size: cover;
+  background-position: center 22%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  filter: saturate(.93) contrast(1.02) brightness(.72);
+  transform: scale(1.01);
+  transition: opacity 340ms ease;
+}
+
+.va12-detail-art-ready .va12-detail-art {
+  opacity: 1;
+}
+
+.va12-detail-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(8,6,12,.995) 0%,
+      rgba(8,6,12,.94) 22%,
+      rgba(8,6,12,.66) 44%,
+      rgba(8,6,12,.20) 72%,
+      rgba(8,6,12,.12) 100%),
+    linear-gradient(0deg,
+      var(--va-bg) 0%,
+      rgba(8,6,12,.80) 10%,
+      rgba(8,6,12,.05) 48%);
+}
+
+.va12-detail-content {
+  position: relative;
+  z-index: 2;
+  width: min(780px, 51vw);
+  min-height: inherit;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(54px, 5vw, 94px) 4%;
+}
+
+.va12-detail-logo {
+  max-width: min(500px, 36vw);
+  max-height: 130px;
+  object-fit: contain;
+  object-position: left center;
+  margin: 1rem 0 .55rem;
+}
+
+.va12-detail-has-logo .va12-detail-title {
+  font-size: clamp(2.35rem, 3.3vw, 4rem);
+}
+
+.va12-detail-title {
+  margin: .9rem 0 0;
+  max-width: 13ch;
+  color: var(--va-text);
+  font-size: clamp(3.1rem, 5vw, 5.8rem);
+  line-height: .94;
+  font-weight: 650;
+  letter-spacing: -.057em;
+  text-wrap: balance;
+}
+
+.va12-detail-meta {
+  margin-top: 1rem;
+  color: rgba(246,242,248,.67);
+  font-size: .79rem;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.va12-detail-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: .9rem;
+}
+
+.va12-detail-genres span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(198,139,255,.12);
+  background: rgba(17,13,23,.55);
+  color: rgba(246,242,248,.60);
+  font-size: .68rem;
+}
+
+.va12-detail-overview {
+  max-width: 58ch;
+  margin: 1rem 0 0;
+  color: rgba(246,242,248,.72);
+  font-size: clamp(.92rem, 1vw, 1.06rem);
+  line-height: 1.62;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.va12-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .72rem;
+  margin-top: 1.5rem;
+}
+
+body.va12-detail-ready .detailPagePrimaryContainer,
+body.va12-detail-ready .itemBackdrop,
+body.va12-detail-ready .backdropImage {
+  display: none !important;
+}
+
+body.va12-detail-ready .detailPageContent {
+  padding-top: 0 !important;
+}
+
+body.va12-detail-ready .detailPageSecondaryContainer {
+  padding: 2.2rem 4% 5rem !important;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(138,70,232,.055), transparent 28%),
+    linear-gradient(180deg, rgba(17,13,23,.10), transparent 32%) !important;
+}
+
+body.va12-detail-ready .detailPageSecondaryContainer .sectionTitle,
+body.va12-detail-ready .detailPageSecondaryContainer h2 {
+  color: var(--va-text) !important;
+  font-size: clamp(1.15rem, 1.4vw, 1.5rem) !important;
+  font-weight: 650 !important;
+  letter-spacing: -.02em !important;
+}
+
+body.va12-detail-ready .detailPageSecondaryContainer .verticalSection {
+  margin-top: 1.8rem !important;
+}
+
+.va12-cast-card .cardImageContainer {
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+.va12-episode-card .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+body.va12-detail-ready select {
+  background: var(--va-surface) !important;
+  color: var(--va-text) !important;
+  border: 1px solid rgba(198,139,255,.18) !important;
+  border-radius: 10px !important;
+}
+
+@media (max-width: 1000px) {
+  #va12-search-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .va12-search-shortcuts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .va12-detail-content {
+    width: min(72vw, 760px);
+  }
+}
+
+@media (max-width: 760px) {
+  #va12-search-intro,
+  body.va-page-search .searchFields,
+  body.va-page-search .searchField,
+  body.va-page-search .inputContainer,
+  .va12-suggestion-area {
+    width: 88vw !important;
+  }
+
+  .va12-search-shortcuts {
+    grid-template-columns: 1fr;
+  }
+
+  #va12-library-intro {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .va12-detail-content {
+    width: 94vw;
+    padding: 34px 5% 48px;
+    justify-content: flex-end;
+  }
+
+  .va12-detail-title {
+    font-size: clamp(2.4rem, 10vw, 4rem);
+  }
+
+  .va12-detail-shade {
+    background:
+      linear-gradient(0deg,
+        var(--va-bg) 0%,
+        rgba(8,6,12,.94) 30%,
+        rgba(8,6,12,.48) 62%,
+        rgba(8,6,12,.16) 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .va12-detail-art,
+  .va12-search-shortcut {
+    transition: none !important;
+  }
+
+  .va12-search-shortcut:hover,
+  .va12-search-shortcut:focus-visible {
+    transform: none !important;
+  }
+}
