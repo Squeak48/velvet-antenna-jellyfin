@@ -1,10 +1,10 @@
 [
   {
-    "id": "velvet-antenna-v062",
-    "name": "Velvet Antenna v0.6.2",
+    "id": "velvet-antenna-v063",
+    "name": "Velvet Antenna v0.6.3",
     "author": "James",
-    "description": "Velvet Antenna custom Jellyfin interface. v0.6.2 forces a fresh uncached load of the improved hero selection code.",
-    "version": "0.6.2",
+    "description": "Velvet Antenna custom Jellyfin interface. v0.6.3 fixes home hero mounting by accepting visible media cards even when Jellyfin does not expose an item id in the DOM.",
+    "version": "0.6.3",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -13,8 +13,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.6.2",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.6.2",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.6.3",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.6.3",
     "requires": []
   }
 ]
