@@ -1,0 +1,42 @@
+/* Velvet Antenna v0.15.0
+   Reliability pass for hero selection and viewer actions.
+*/
+
+body.va15-hero-settling #va-home-hero {
+  opacity: 0;
+}
+
+#va-home-hero {
+  transition: opacity .32s ease, transform .32s ease;
+}
+
+#va-home-hero.va15-ready {
+  opacity: 1;
+}
+
+#va-home-hero [data-va-action="play"][data-va15-mode="details"] {
+  background: rgba(246, 242, 248, .96) !important;
+  color: #08060C !important;
+}
+
+#va-home-hero [data-va-action="play"][hidden] {
+  display: none !important;
+}
+
+#va-home-hero .va-hero__actions button,
+#va12-detail-hero .va12-detail-actions button {
+  cursor: pointer;
+}
+
+#va-home-hero .va-hero__actions button:focus-visible,
+#va12-detail-hero .va12-detail-actions button:focus-visible {
+  outline: 2px solid #C68BFF !important;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 1px rgba(198,139,255,.16), 0 0 28px rgba(138,70,232,.38) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #va-home-hero {
+    transition: none !important;
+  }
+}
