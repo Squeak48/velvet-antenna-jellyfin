@@ -1,0 +1,41 @@
+[
+  {
+    "id": "velvet-antenna-v0100",
+    "name": "Velvet Antenna Core v0.10.0",
+    "author": "James",
+    "description": "Velvet Antenna base viewer shell: persistent navigation, home hero, core cards, library tabs and viewer styling.",
+    "version": "0.10.0",
+    "jellyfin": "10.11+",
+    "tags": ["ui", "home", "cinematic", "navigation", "velvet-antenna"],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.10.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.10.0",
+    "requires": []
+  },
+  {
+    "id": "velvet-antenna-v0120",
+    "name": "Velvet Antenna v0.12.0",
+    "author": "James",
+    "description": "Large Velvet Antenna upgrade: fixes home-row flicker, rebuilds search, gives libraries branded identities and replaces Jellyfin detail headers with a cinematic metadata-driven hero.",
+    "version": "0.12.0",
+    "jellyfin": "10.11+",
+    "tags": ["ui", "search", "details", "libraries", "stability", "velvet-antenna"],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.css?v=0.12.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.js?v=0.12.0",
+    "requires": ["velvet-antenna-v0100"]
+  },
+  {
+    "id": "velvet-antenna-v0140",
+    "name": "Velvet Antenna v0.14.0",
+    "author": "James",
+    "description": "Design-faithful expansion from the Velvet Antenna Trial: larger glass TV navigation, rotating metadata-driven home hero, format badges and progress, remote on-screen search keyboard, rebuilt library sub-navigation, editorial detail credits, stronger card focus states and player/profile styling.",
+    "version": "0.14.0",
+    "jellyfin": "10.11+",
+    "tags": ["ui", "home", "search", "details", "libraries", "player", "remote", "cinematic", "velvet-antenna"],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.css?v=0.14.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.js?v=0.14.0",
+    "requires": ["velvet-antenna-v0120"]
+  }
+]
