@@ -14,10 +14,10 @@
       "css"
     ],
     "previewUrl": null,
-    "sourceUrl": "https://github.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin",
-    "jsUrl": "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
     "jsInline": null,
-    "cssUrl": "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/velvet-antenna-jellyfin/main/velvet-antenna-test.css",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-test.css",
     "cssInline": null
   }
 ]
