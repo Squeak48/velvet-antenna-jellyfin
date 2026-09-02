@@ -1,0 +1,30 @@
+/*
+    Velvet Antenna
+    JellyFrame CSS injection test
+*/
+
+html::before {
+    content: "VA CSS";
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 2147483647;
+
+    padding: 10px 16px;
+
+    background: #8A46E8;
+    color: #FFFFFF;
+
+    border: 2px solid #C68BFF;
+    border-radius: 8px;
+
+    box-shadow:
+        0 0 20px rgba(138, 70, 232, 0.9);
+
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+
+    pointer-events: none;
+}
