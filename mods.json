@@ -1,21 +1,25 @@
 [
   {
-    "id": "velvet-antenna-v080",
-    "name": "Velvet Antenna v0.8.0",
+    "id": "velvet-antenna-v0100",
+    "name": "Velvet Antenna v0.10.0",
     "author": "James",
-    "description": "Major Velvet Antenna home-screen build: branded navigation, cinematic hero caching and crossfade, curated row treatment, My Media cleanup, responsive TV-focused styling and dynamic Anime/Live visibility.",
-    "version": "0.8.0",
+    "description": "Large viewer-wide Velvet Antenna expansion: persistent branded navigation across viewer pages, upgraded home hero and row system, redesigned search, immersive detail-page styling, library sub-navigation treatment, Live TV styling, caching, transitions and remote-focused interaction states.",
+    "version": "0.10.0",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
       "home",
+      "search",
+      "details",
+      "libraries",
+      "livetv",
       "cinematic",
       "navigation",
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.8.0",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.8.0",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.10.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.10.0",
     "requires": []
   }
 ]
