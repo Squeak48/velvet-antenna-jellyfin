@@ -3,8 +3,8 @@
     "id": "velvet-antenna",
     "name": "Velvet Antenna",
     "author": "James",
-    "description": "Velvet Antenna custom Jellyfin interface. v0.6 adds the first functional cinematic home hero based on the approved design specification.",
-    "version": "0.6.0",
+    "description": "Velvet Antenna custom Jellyfin interface. v0.6.1 fixes hero media selection and loads real Jellyfin artwork and metadata where available.",
+    "version": "0.6.1",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
