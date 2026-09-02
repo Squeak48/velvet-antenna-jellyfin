@@ -1,0 +1,18 @@
+[
+  {
+    "id": "velvet-antenna-test",
+    "name": "Velvet Antenna Test",
+    "author": "James",
+    "description": "Initial Velvet Antenna JavaScript injection test.",
+    "version": "0.1.0",
+    "type": "js",
+    "jellyfin": "10.11+",
+    "tags": ["ui", "home", "developer"],
+    "previewUrl": null,
+    "sourceUrl": "https://github.com/YOUR-GITHUB-NAME/velvet-antenna-jellyfin",
+    "jsUrl": "https://raw.githubusercontent.com/YOUR-GITHUB-NAME/velvet-antenna-jellyfin/main/velvet-antenna-test.js",
+    "jsInline": null,
+    "cssUrl": null,
+    "cssInline": null
+  }
+]
