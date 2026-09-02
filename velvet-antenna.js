@@ -3,7 +3,6 @@
 
     const VA = {
         heroId: 'va-home-hero',
-        styleMarker: 'velvet-antenna',
         refreshTimer: null,
         observer: null,
         currentHash: ''
@@ -12,6 +11,10 @@
     function isHomePage() {
         const hash = window.location.hash || '';
         return hash === '#/home' || hash.startsWith('#/home?');
+    }
+
+    function textOf(el) {
+        return el && (el.textContent || '').trim();
     }
 
     function getCardTitle(card) {
@@ -26,8 +29,8 @@
 
         for (const selector of selectors) {
             const el = card.querySelector(selector);
-            const text = el && (el.textContent || el.getAttribute('title'));
-            if (text && text.trim()) return text.trim();
+            const text = el && ((el.textContent || el.getAttribute('title') || '').trim());
+            if (text) return text;
         }
 
         return (card.getAttribute('aria-label') || card.getAttribute('title') || 'Featured').trim();
@@ -37,7 +40,7 @@
         if (!card) return '';
 
         const texts = Array.from(card.querySelectorAll('.cardText'))
-            .map(el => (el.textContent || '').trim())
+            .map(textOf)
             .filter(Boolean);
 
         return texts.length > 1 ? texts.slice(1, 3).join('  •  ') : '';
@@ -62,11 +65,21 @@
     function getItemId(card) {
         if (!card) return '';
 
-        const direct = card.dataset && (card.dataset.id || card.dataset.itemid || card.dataset.itemId);
-        if (direct) return direct;
+        const candidates = [
+            card,
+            card.querySelector('[data-id]'),
+            card.querySelector('[data-itemid]'),
+            card.closest('[data-id]'),
+            card.closest('[data-itemid]')
+        ].filter(Boolean);
 
-        const dataId = card.getAttribute('data-id') || card.getAttribute('data-itemid');
-        if (dataId) return dataId;
+        for (const el of candidates) {
+            const value =
+                (el.dataset && (el.dataset.id || el.dataset.itemid || el.dataset.itemId)) ||
+                el.getAttribute('data-id') ||
+                el.getAttribute('data-itemid');
+            if (value) return value;
+        }
 
         const link = card.closest('a[href]') || card.querySelector('a[href]');
         const href = link && link.getAttribute('href');
@@ -78,44 +91,99 @@
         return '';
     }
 
+    function getApiClient() {
+        return window.ApiClient || null;
+    }
+
     function getServerBase() {
+        const api = getApiClient();
         try {
-            if (window.ApiClient && typeof window.ApiClient.serverAddress === 'function') {
-                return window.ApiClient.serverAddress().replace(/\/$/, '');
+            if (api && typeof api.serverAddress === 'function') {
+                return api.serverAddress().replace(/\/$/, '');
             }
-        } catch (e) {
-            console.debug('[Velvet Antenna] Could not read ApiClient server address', e);
+        } catch (error) {
+            console.debug('[Velvet Antenna] Could not read server address', error);
         }
 
         return window.location.origin;
     }
 
-    function buildBackdropUrl(card) {
-        const itemId = getItemId(card);
-        if (itemId) {
-            return `${getServerBase()}/Items/${encodeURIComponent(itemId)}/Images/Backdrop/0?fillWidth=1920&quality=90`;
+    function apiImageUrl(itemId, type, options) {
+        const api = getApiClient();
+        const settings = Object.assign({
+            type: type,
+            maxWidth: 1920,
+            quality: 90
+        }, options || {});
+
+        try {
+            if (api && typeof api.getImageUrl === 'function') {
+                return api.getImageUrl(itemId, settings);
+            }
+        } catch (error) {
+            console.debug('[Velvet Antenna] ApiClient image URL failed', error);
         }
 
-        return getCardImage(card);
+        const index = typeof settings.index === 'number' ? settings.index : 0;
+        return `${getServerBase()}/Items/${encodeURIComponent(itemId)}/Images/${encodeURIComponent(type)}/${index}?maxWidth=${settings.maxWidth || 1920}&quality=${settings.quality || 90}`;
     }
 
-    function findFeaturedCard() {
-        const preferredSelectors = [
-            '.resumeSection .card',
-            '.continueWatchingSection .card',
-            '.nextUpSection .card',
-            '.homeSectionsContainer .verticalSection .card',
-            '.homeSectionsContainer .card',
-            '.libraryPage .card'
-        ];
+    function findSectionByHeading(patterns) {
+        const sections = Array.from(document.querySelectorAll('.verticalSection'));
 
-        for (const selector of preferredSelectors) {
-            const cards = Array.from(document.querySelectorAll(selector));
-            const card = cards.find(el => !el.closest(`#${VA.heroId}`) && el.offsetParent !== null);
-            if (card) return card;
+        for (const pattern of patterns) {
+            const section = sections.find(el => {
+                const heading = el.querySelector('.sectionTitle-cards, .sectionTitle, h2, h3');
+                const label = textOf(heading).toLowerCase();
+                return label && pattern.test(label);
+            });
+
+            if (section) return section;
         }
 
         return null;
+    }
+
+    function firstRealCard(section) {
+        if (!section) return null;
+
+        const cards = Array.from(section.querySelectorAll('.card')).filter(card => {
+            if (card.closest(`#${VA.heroId}`)) return false;
+            if (card.offsetParent === null) return false;
+
+            const title = getCardTitle(card).toLowerCase();
+            if (!title) return false;
+            if (['collections', 'movies', 'shows', 'series', 'anime'].includes(title)) return false;
+
+            return Boolean(getItemId(card) || getCardImage(card));
+        });
+
+        return cards[0] || null;
+    }
+
+    function findFeaturedCard() {
+        const priorities = [
+            [/continue watching/i, /resume/i],
+            [/next up/i],
+            [/recently added.*movies/i, /latest.*movies/i],
+            [/recently added.*shows/i, /recently added.*series/i],
+            [/recently added/i]
+        ];
+
+        for (const patterns of priorities) {
+            const card = firstRealCard(findSectionByHeading(patterns));
+            if (card) return card;
+        }
+
+        const fallback = Array.from(document.querySelectorAll('.homeSectionsContainer .card, .libraryPage .card'))
+            .find(card => {
+                if (card.offsetParent === null || card.closest(`#${VA.heroId}`)) return false;
+                const title = getCardTitle(card).toLowerCase();
+                if (['collections', 'movies', 'shows', 'series', 'anime'].includes(title)) return false;
+                return Boolean(getItemId(card));
+            });
+
+        return fallback || null;
     }
 
     function findHomeContainer() {
@@ -136,7 +204,6 @@
 
     function openDetails(card) {
         if (!card) return;
-
         const clickable = card.querySelector('a[href], .cardContent') || card;
         if (clickable && typeof clickable.click === 'function') clickable.click();
     }
@@ -158,18 +225,94 @@
         if (existing) existing.remove();
     }
 
+    function formatRuntime(ticks) {
+        if (!ticks || !Number.isFinite(Number(ticks))) return '';
+        const minutes = Math.round(Number(ticks) / 600000000);
+        if (minutes < 60) return `${minutes} min`;
+        const hours = Math.floor(minutes / 60);
+        const rest = minutes % 60;
+        return rest ? `${hours}h ${rest}m` : `${hours}h`;
+    }
+
+    function createMeta(item, fallback) {
+        if (!item) return fallback || 'FEATURED';
+
+        const parts = [];
+        if (item.ProductionYear) parts.push(String(item.ProductionYear));
+        const runtime = formatRuntime(item.RunTimeTicks);
+        if (runtime) parts.push(runtime);
+        if (item.OfficialRating) parts.push(item.OfficialRating);
+        if (item.CommunityRating) parts.push(`★ ${Number(item.CommunityRating).toFixed(1)}`);
+
+        return parts.join('  •  ') || fallback || 'FEATURED';
+    }
+
+    async function enrichHero(hero, card) {
+        const itemId = getItemId(card);
+        const api = getApiClient();
+        if (!itemId || !api) return;
+
+        try {
+            let item = null;
+            if (typeof api.getItem === 'function' && typeof api.getCurrentUserId === 'function') {
+                item = await api.getItem(api.getCurrentUserId(), itemId);
+            }
+
+            if (!item || !hero.isConnected) return;
+
+            if (item.Name) hero.querySelector('.va-hero__title').textContent = item.Name;
+            hero.querySelector('.va-hero__meta').textContent = createMeta(item, getCardSecondary(card));
+
+            const overview = (item.Overview || '').trim();
+            if (overview) hero.querySelector('.va-hero__copy').textContent = overview;
+
+            let backdropUrl = '';
+            if (Array.isArray(item.BackdropImageTags) && item.BackdropImageTags.length) {
+                backdropUrl = apiImageUrl(item.Id || itemId, 'Backdrop', {
+                    index: 0,
+                    tag: item.BackdropImageTags[0],
+                    maxWidth: 1920,
+                    quality: 90
+                });
+            } else if (item.ParentBackdropItemId && Array.isArray(item.ParentBackdropImageTags) && item.ParentBackdropImageTags.length) {
+                backdropUrl = apiImageUrl(item.ParentBackdropItemId, 'Backdrop', {
+                    index: 0,
+                    tag: item.ParentBackdropImageTags[0],
+                    maxWidth: 1920,
+                    quality: 90
+                });
+            }
+
+            if (!backdropUrl) {
+                backdropUrl = apiImageUrl(item.Id || itemId, 'Backdrop', {
+                    index: 0,
+                    maxWidth: 1920,
+                    quality: 90
+                });
+            }
+
+            if (backdropUrl) {
+                hero.style.setProperty('--va-hero-image', `url("${backdropUrl.replace(/"/g, '%22')}")`);
+                hero.classList.add('va-hero--has-art');
+            }
+        } catch (error) {
+            console.debug('[Velvet Antenna] Could not enrich hero metadata', error);
+        }
+    }
+
     function createHero(card) {
         const hero = document.createElement('section');
         hero.id = VA.heroId;
         hero.className = 'va-hero';
         hero.setAttribute('aria-label', 'Velvet Antenna featured title');
 
-        const backdrop = buildBackdropUrl(card);
         const title = getCardTitle(card);
         const secondary = getCardSecondary(card);
+        const fallbackImage = getCardImage(card);
 
-        if (backdrop) {
-            hero.style.setProperty('--va-hero-image', `url("${backdrop.replace(/"/g, '%22')}")`);
+        if (fallbackImage) {
+            hero.style.setProperty('--va-hero-image', `url("${fallbackImage.replace(/"/g, '%22')}")`);
+            hero.classList.add('va-hero--has-art');
         }
 
         hero.innerHTML = `
@@ -193,8 +336,7 @@
         `;
 
         hero.querySelector('.va-hero__title').textContent = title;
-        const meta = hero.querySelector('.va-hero__meta');
-        meta.textContent = secondary || 'FEATURED';
+        hero.querySelector('.va-hero__meta').textContent = secondary || 'FEATURED';
 
         hero.querySelector('[data-va-action="play"]').addEventListener('click', function (event) {
             event.preventDefault();
@@ -208,6 +350,7 @@
             openDetails(card);
         });
 
+        enrichHero(hero, card);
         return hero;
     }
 
@@ -221,12 +364,11 @@
 
         const container = findHomeContainer();
         const card = findFeaturedCard();
-
         if (!container || !card) return;
 
         const hero = createHero(card);
         container.insertBefore(hero, container.firstChild);
-        console.log('[Velvet Antenna] v0.6 home hero mounted');
+        console.log('[Velvet Antenna] v0.6.1 home hero mounted from:', getCardTitle(card));
     }
 
     function scheduleRender(delay) {
@@ -244,7 +386,6 @@
 
     function start() {
         VA.currentHash = window.location.hash;
-
         window.addEventListener('hashchange', handleRouteChange);
         window.addEventListener('popstate', handleRouteChange);
 
@@ -261,7 +402,7 @@
         window.setTimeout(function () { scheduleRender(0); }, 750);
         window.setTimeout(function () { scheduleRender(0); }, 1800);
 
-        console.log('[Velvet Antenna] v0.6 loaded');
+        console.log('[Velvet Antenna] v0.6.1 loaded');
     }
 
     if (document.readyState === 'loading') {
