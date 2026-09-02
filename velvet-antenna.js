@@ -1,45 +1,120 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.8.0';
-    const HERO_ID = 'va-home-hero';
-    const NAV_ID = 'va-home-nav';
-    const HOME_CLASS = 'va-home-active';
-    const CACHE_PREFIX = 'velvet-antenna:v080:hero:';
+    const VERSION = '0.10.0';
+    const IDS = {
+        nav: 'va-global-nav',
+        hero: 'va-home-hero',
+        searchIntro: 'va-search-intro',
+        detailBrand: 'va-detail-brand'
+    };
+    const CACHE_PREFIX = 'velvet-antenna:';
+    const PAGE_CLASSES = [
+        'va-page-home',
+        'va-page-search',
+        'va-page-library',
+        'va-page-details',
+        'va-page-live',
+        'va-page-other'
+    ];
 
-    let timer = null;
+    let observer = null;
+    let renderTimer = null;
     let lastHash = '';
-
-    function isHome() {
-        const hash = window.location.hash || '';
-        return hash === '#/home' || hash.startsWith('#/home?');
-    }
 
     function text(el) {
         return el ? (el.textContent || '').trim() : '';
     }
 
-    function titleOf(card) {
+    function normalise(value) {
+        return (value || '').trim().toLowerCase();
+    }
+
+    function hash() {
+        return window.location.hash || '';
+    }
+
+    function isAdminRoute() {
+        return /dashboard|configurationpage|scheduledtasks|logs|networking|plugins|metadataeditor/i.test(hash());
+    }
+
+    function isPlaybackRoute() {
+        return /videoosd|nowplaying|playback/i.test(hash()) || Boolean(document.querySelector('.videoOsdPage:not(.hide), .videoPlayerContainer:not(.hide)'));
+    }
+
+    function pageType() {
+        const value = hash().toLowerCase();
+        if (value === '#/home' || value.startsWith('#/home?')) return 'home';
+        if (value.startsWith('#/search')) return 'search';
+        if (/details\?id=|\/details\//i.test(value)) return 'details';
+        if (/livetv|tvguide|recordings|scheduled/i.test(value)) return 'live';
+        if (/\/movies|\/tv|\/collections|topparentid|collectiontype=/i.test(value)) return 'library';
+        return 'other';
+    }
+
+    function setPageClass() {
+        const body = document.body;
+        if (!body) return;
+
+        PAGE_CLASSES.forEach(cls => body.classList.remove(cls));
+        body.classList.remove('va-viewer');
+        body.removeAttribute('data-va-version');
+
+        if (isAdminRoute() || isPlaybackRoute()) return;
+
+        const type = pageType();
+        body.classList.add('va-viewer', 'va-page-' + type);
+        body.setAttribute('data-va-version', VERSION);
+    }
+
+    function getApiClient() {
+        return window.ApiClient || null;
+    }
+
+    function sessionGet(key) {
+        try {
+            return sessionStorage.getItem(CACHE_PREFIX + key);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function sessionSet(key, value) {
+        try {
+            if (value !== undefined && value !== null) {
+                sessionStorage.setItem(CACHE_PREFIX + key, String(value));
+            }
+        } catch (error) {
+            // Storage is optional.
+        }
+    }
+
+    function getTitle(card) {
         if (!card) return '';
-        for (const selector of ['.cardText-first', '.cardText', '.itemName', '[title]']) {
+        const selectors = ['.cardText-first', '.cardText', '.itemName', '[title]'];
+        for (const selector of selectors) {
             const el = card.querySelector(selector);
-            const value = el && ((el.textContent || el.getAttribute('title') || '') + '').trim();
+            if (!el) continue;
+            const value = ((el.textContent || el.getAttribute('title') || '') + '').trim();
             if (value) return value;
         }
         return (card.getAttribute('aria-label') || card.getAttribute('title') || '').trim();
     }
 
-    function secondaryOf(card) {
-        const values = card ? Array.from(card.querySelectorAll('.cardText')).map(text).filter(Boolean) : [];
+    function getSecondary(card) {
+        if (!card) return '';
+        const values = Array.from(card.querySelectorAll('.cardText')).map(text).filter(Boolean);
         return values.length > 1 ? values.slice(1, 3).join('  •  ') : '';
     }
 
-    function imageOf(card) {
+    function getImage(card) {
         if (!card) return '';
+
         const img = card.querySelector('img');
         if (img && img.src) return img.src;
 
-        for (const el of card.querySelectorAll('.cardImage, .cardImageContainer, .cardContent')) {
+        const candidates = card.querySelectorAll('.cardImage, .cardImageContainer, .cardContent');
+        for (const el of candidates) {
             const bg = window.getComputedStyle(el).backgroundImage;
             const match = bg && bg.match(/url\(["']?(.*?)["']?\)/i);
             if (match && match[1]) return match[1];
@@ -47,13 +122,25 @@
         return '';
     }
 
-    function itemIdOf(card) {
+    function getItemId(card) {
         if (!card) return '';
-        const candidates = [card, card.querySelector('[data-id]'), card.querySelector('[data-itemid]'), card.closest('[data-id]'), card.closest('[data-itemid]')].filter(Boolean);
+
+        const candidates = [
+            card,
+            card.querySelector('[data-id]'),
+            card.querySelector('[data-itemid]'),
+            card.closest('[data-id]'),
+            card.closest('[data-itemid]')
+        ].filter(Boolean);
+
         for (const el of candidates) {
-            const value = (el.dataset && (el.dataset.id || el.dataset.itemid || el.dataset.itemId)) || el.getAttribute('data-id') || el.getAttribute('data-itemid');
+            const value =
+                (el.dataset && (el.dataset.id || el.dataset.itemid || el.dataset.itemId)) ||
+                el.getAttribute('data-id') ||
+                el.getAttribute('data-itemid');
             if (value) return value;
         }
+
         const link = card.closest('a[href]') || card.querySelector('a[href]');
         const href = link && link.getAttribute('href');
         if (href) {
@@ -63,59 +150,80 @@
         return '';
     }
 
-    function api() {
-        return window.ApiClient || null;
+    function cardHref(card) {
+        if (!card) return '';
+        const link = card.closest('a[href]') || card.querySelector('a[href]');
+        return link ? (link.getAttribute('href') || '') : '';
     }
 
-    function homeContainer() {
-        return document.querySelector('.homeSectionsContainer') || document.querySelector('.libraryPage') || document.querySelector('.page.homePage') || document.querySelector('#indexPage');
+    function sectionHeading(section) {
+        if (!section) return '';
+        return text(section.querySelector('.sectionTitle-cards, .sectionTitle, h2, h3'));
     }
 
-    function headingOf(section) {
-        return text(section && section.querySelector('.sectionTitle-cards, .sectionTitle, h2, h3'));
-    }
-
-    function sectionMatching(regexes) {
-        for (const heading of document.querySelectorAll('.sectionTitle-cards, .sectionTitle, h2, h3')) {
-            if (!regexes.some(regex => regex.test(text(heading)))) continue;
+    function findSectionByHeading(regexes) {
+        const headings = Array.from(document.querySelectorAll('.sectionTitle-cards, .sectionTitle, h2, h3'));
+        for (const regex of regexes) {
+            const heading = headings.find(el => regex.test(text(el)));
+            if (!heading) continue;
             const section = heading.closest('.verticalSection') || (heading.parentElement && heading.parentElement.parentElement);
             if (section) return section;
         }
         return null;
     }
 
-    function myMediaSection() {
-        return sectionMatching([/^my media$/i]);
+    function findHomeContainer() {
+        return document.querySelector('.homeSectionsContainer') ||
+               document.querySelector('.libraryPage') ||
+               document.querySelector('.page.homePage') ||
+               document.querySelector('#indexPage');
     }
 
-    function libraryCard(regexes) {
-        const section = myMediaSection();
-        if (!section) return null;
-        return Array.from(section.querySelectorAll('.card')).find(card => regexes.some(regex => regex.test(titleOf(card)))) || null;
+    function findMyMediaSection() {
+        return findSectionByHeading([/^my media$/i]);
     }
 
-    function isLibraryTile(card) {
-        const value = titleOf(card).trim().toLowerCase();
-        if (!value) return true;
-        if (['collections', 'movies', 'shows', 'series', 'anime', 'music', 'books', 'photos', 'live tv', 'livetv'].includes(value)) return true;
-        const section = card.closest('.verticalSection');
-        return Boolean(section && /^my media$/i.test(headingOf(section)));
+    function findLibraryCard(patterns) {
+        const myMedia = findMyMediaSection();
+        const scope = myMedia || document;
+        const cards = Array.from(scope.querySelectorAll('.card'));
+        return cards.find(card => patterns.some(pattern => pattern.test(getTitle(card)))) || null;
     }
 
-    function usableCard(card) {
-        return Boolean(card && card.offsetParent !== null && !isLibraryTile(card) && (imageOf(card) || itemIdOf(card)));
+    function captureLibraryRoutes() {
+        const routes = {
+            movies: [/^movies$/i],
+            series: [/^shows$/i, /^series$/i],
+            anime: [/^anime$/i],
+            collections: [/^collections$/i],
+            live: [/^live tv$/i, /^livetv$/i, /^live$/i]
+        };
+
+        Object.keys(routes).forEach(kind => {
+            const card = findLibraryCard(routes[kind]);
+            const href = cardHref(card);
+            if (href) sessionSet('route:' + kind, href);
+        });
+
+        const liveLink = document.querySelector('a[href*="livetv" i], a[href*="live" i]');
+        if (liveLink && liveLink.getAttribute('href')) {
+            sessionSet('route:live', liveLink.getAttribute('href'));
+        }
     }
 
-    function cardFromSection(regexes) {
-        const section = sectionMatching(regexes);
-        return section ? Array.from(section.querySelectorAll('.card')).find(usableCard) || null : null;
-    }
+    function hasLibrary(kind) {
+        if (sessionGet('route:' + kind)) return true;
 
-    function featuredCard() {
-        return cardFromSection([/continue watching/i, /resume/i]) ||
-            cardFromSection([/next up/i]) ||
-            cardFromSection([/recently added.*movies/i, /latest.*movies/i]) ||
-            Array.from(document.querySelectorAll('.card')).find(card => !card.closest('#' + HERO_ID) && usableCard(card)) || null;
+        const patterns = {
+            movies: [/^movies$/i],
+            series: [/^shows$/i, /^series$/i],
+            anime: [/^anime$/i],
+            collections: [/^collections$/i],
+            live: [/^live tv$/i, /^livetv$/i, /^live$/i]
+        };
+
+        if (kind === 'live' && document.querySelector('a[href*="livetv" i], a[href*="live" i]')) return true;
+        return Boolean(findLibraryCard(patterns[kind] || []));
     }
 
     function clickCard(card) {
@@ -128,123 +236,246 @@
         return false;
     }
 
-    function playCard(card) {
-        const play = card && card.querySelector('.cardOverlayButton-play, [data-action="play"], .btnPlay');
-        if (play && typeof play.click === 'function') return play.click();
-        clickCard(card);
-    }
-
     function navigateLibrary(kind) {
-        const map = {
+        const cached = sessionGet('route:' + kind);
+        if (cached) {
+            if (cached.charAt(0) === '#') {
+                window.location.hash = cached;
+            } else {
+                window.location.href = cached;
+            }
+            return;
+        }
+
+        const patterns = {
             movies: [/^movies$/i],
             series: [/^shows$/i, /^series$/i],
             anime: [/^anime$/i],
             collections: [/^collections$/i],
             live: [/^live tv$/i, /^livetv$/i, /^live$/i]
         };
-        const card = libraryCard(map[kind] || []);
+
+        const card = findLibraryCard(patterns[kind] || []);
         if (card && clickCard(card)) return;
+
         if (kind === 'live') {
-            const live = document.querySelector('a[href*="live" i], [data-role="livetv"]');
+            const live = document.querySelector('a[href*="livetv" i], a[href*="live" i]');
             if (live && typeof live.click === 'function') live.click();
         }
     }
 
-    function stockButton(kind) {
+    function findStockButton(kind) {
         const selectors = kind === 'search'
             ? ['.headerSearchButton', '[aria-label="Search"]', '[title="Search"]']
             : ['.headerUserButton', '.headerUserButtonRound', '[aria-label*="profile" i]', '[title*="profile" i]'];
-        return selectors.map(selector => document.querySelector(selector)).find(Boolean) || null;
+
+        for (const selector of selectors) {
+            const el = document.querySelector(selector);
+            if (el) return el;
+        }
+        return null;
     }
 
-    function navButton(label, handler, active) {
+    function openUtility(kind) {
+        const target = findStockButton(kind);
+        if (target && typeof target.click === 'function') {
+            target.click();
+            return;
+        }
+
+        if (kind === 'search') window.location.hash = '#/search';
+    }
+
+    function activeNavKind() {
+        const type = pageType();
+        const value = hash().toLowerCase();
+        if (type === 'home') return 'home';
+        if (type === 'search') return 'search';
+        if (type === 'live') return 'live';
+        if (value.includes('collectiontype=movies') || value.startsWith('#/movies')) return 'movies';
+        if (value.includes('collectiontype=tvshows') || value.startsWith('#/tv')) return 'series';
+        if (value.includes('collection')) return 'collections';
+        return '';
+    }
+
+    function makeMark() {
+        const mark = document.createElement('span');
+        mark.className = 'va-mark';
+        mark.setAttribute('aria-hidden', 'true');
+        mark.innerHTML = '<span></span><span></span><span></span>';
+        return mark;
+    }
+
+    function createNavButton(label, kind, action) {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'va-nav__item' + (active ? ' va-nav__item--active' : '');
+        button.className = 'va-nav__item';
         button.textContent = label;
-        button.addEventListener('click', handler);
+        button.setAttribute('data-va-kind', kind);
+        if (activeNavKind() === kind) button.classList.add('va-nav__item--active');
+        button.addEventListener('click', action);
         return button;
     }
 
-    function createNav() {
+    function createGlobalNav() {
         const nav = document.createElement('nav');
-        nav.id = NAV_ID;
+        nav.id = IDS.nav;
         nav.className = 'va-nav';
-        nav.setAttribute('data-va-version', VERSION);
         nav.setAttribute('aria-label', 'Velvet Antenna navigation');
+        nav.setAttribute('data-va-version', VERSION);
 
         const brand = document.createElement('button');
         brand.type = 'button';
         brand.className = 'va-nav__brand';
         brand.title = 'Velvet Antenna v' + VERSION;
-        brand.innerHTML = '<span class="va-nav__mark" aria-hidden="true"></span><span class="va-nav__brand-text">VELVET ANTENNA</span>';
-        brand.addEventListener('click', () => { window.location.hash = '#/home'; });
+        brand.appendChild(makeMark());
+        const wordmark = document.createElement('span');
+        wordmark.className = 'va-nav__brand-text';
+        wordmark.textContent = 'VELVET ANTENNA';
+        brand.appendChild(wordmark);
+        brand.addEventListener('click', function () { window.location.hash = '#/home'; });
 
         const primary = document.createElement('div');
         primary.className = 'va-nav__primary';
-        primary.appendChild(navButton('HOME', () => { window.location.hash = '#/home'; }, true));
-        primary.appendChild(navButton('MOVIES', () => navigateLibrary('movies')));
-        primary.appendChild(navButton('SERIES', () => navigateLibrary('series')));
-        if (libraryCard([/^anime$/i])) primary.appendChild(navButton('ANIME', () => navigateLibrary('anime')));
-        if (libraryCard([/^live tv$/i, /^livetv$/i, /^live$/i]) || document.querySelector('a[href*="live" i]')) primary.appendChild(navButton('LIVE', () => navigateLibrary('live')));
-        primary.appendChild(navButton('COLLECTIONS', () => navigateLibrary('collections')));
+        primary.appendChild(createNavButton('HOME', 'home', function () { window.location.hash = '#/home'; }));
+        if (hasLibrary('movies')) primary.appendChild(createNavButton('MOVIES', 'movies', function () { navigateLibrary('movies'); }));
+        if (hasLibrary('series')) primary.appendChild(createNavButton('SERIES', 'series', function () { navigateLibrary('series'); }));
+        if (hasLibrary('anime')) primary.appendChild(createNavButton('ANIME', 'anime', function () { navigateLibrary('anime'); }));
+        if (hasLibrary('live')) primary.appendChild(createNavButton('LIVE', 'live', function () { navigateLibrary('live'); }));
+        if (hasLibrary('collections')) primary.appendChild(createNavButton('COLLECTIONS', 'collections', function () { navigateLibrary('collections'); }));
 
         const utility = document.createElement('div');
         utility.className = 'va-nav__utility';
-        utility.appendChild(navButton('SEARCH', () => { const el = stockButton('search'); if (el) el.click(); }));
-        utility.appendChild(navButton('PROFILE', () => { const el = stockButton('profile'); if (el) el.click(); }));
+        utility.appendChild(createNavButton('SEARCH', 'search', function () { openUtility('search'); }));
+        utility.appendChild(createNavButton('PROFILE', 'profile', function () { openUtility('profile'); }));
 
-        nav.append(brand, primary, utility);
+        nav.appendChild(brand);
+        nav.appendChild(primary);
+        nav.appendChild(utility);
         return nav;
     }
 
-    function mountNav(container) {
-        if (!document.getElementById(NAV_ID)) container.insertBefore(createNav(), container.firstChild);
+    function mountGlobalNav() {
+        const existing = document.getElementById(IDS.nav);
+
+        if (isAdminRoute() || isPlaybackRoute()) {
+            if (existing) existing.remove();
+            return;
+        }
+
+        if (!document.body) return;
+
+        if (!existing) {
+            document.body.insertBefore(createGlobalNav(), document.body.firstChild);
+        } else {
+            existing.querySelectorAll('.va-nav__item').forEach(button => {
+                button.classList.toggle('va-nav__item--active', button.getAttribute('data-va-kind') === activeNavKind());
+            });
+        }
     }
 
-    function runtime(ticks) {
+    function isLibraryTile(card) {
+        const title = normalise(getTitle(card));
+        if (!title) return true;
+
+        const blocked = new Set(['collections', 'movies', 'shows', 'series', 'anime', 'music', 'books', 'photos', 'livetv', 'live tv']);
+        if (blocked.has(title)) return true;
+
+        const section = card.closest('.verticalSection');
+        if (section && /^my media$/i.test(sectionHeading(section))) return true;
+        return false;
+    }
+
+    function visibleCards() {
+        return Array.from(document.querySelectorAll('.card')).filter(card => {
+            if (card.closest('#' + IDS.hero)) return false;
+            if (card.offsetParent === null) return false;
+            if (isLibraryTile(card)) return false;
+            return Boolean(getImage(card) || getItemId(card));
+        });
+    }
+
+    function findCardInSection(regexes) {
+        const section = findSectionByHeading(regexes);
+        if (!section) return null;
+        return Array.from(section.querySelectorAll('.card')).find(card => {
+            return card.offsetParent !== null && !isLibraryTile(card) && Boolean(getImage(card) || getItemId(card));
+        }) || null;
+    }
+
+    function findFeaturedCard() {
+        return (
+            findCardInSection([/continue watching/i, /resume/i]) ||
+            findCardInSection([/next up/i]) ||
+            findCardInSection([/recently added.*movies/i, /latest.*movies/i]) ||
+            visibleCards()[0] ||
+            null
+        );
+    }
+
+    function formatRuntime(ticks) {
         if (!ticks || !Number.isFinite(Number(ticks))) return '';
         const minutes = Math.round(Number(ticks) / 600000000);
         if (minutes < 60) return minutes + ' min';
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
-        return m ? h + 'h ' + m + 'm' : h + 'h';
+        const hours = Math.floor(minutes / 60);
+        const rest = minutes % 60;
+        return rest ? hours + 'h ' + rest + 'm' : hours + 'h';
     }
 
-    function metaOf(item, fallback) {
+    function buildMeta(item, fallback) {
         if (!item) return fallback || 'FEATURED';
         const parts = [];
         if (item.ProductionYear) parts.push(String(item.ProductionYear));
-        const run = runtime(item.RunTimeTicks);
-        if (run) parts.push(run);
+        const runtime = formatRuntime(item.RunTimeTicks);
+        if (runtime) parts.push(runtime);
         if (item.OfficialRating) parts.push(item.OfficialRating);
         if (item.CommunityRating) parts.push('★ ' + Number(item.CommunityRating).toFixed(1));
         return parts.join('  •  ') || fallback || 'FEATURED';
     }
 
-    function imageUrl(client, id, type, tag) {
+    function imageUrl(api, itemId, type, tag, width, quality) {
         try {
-            if (client && typeof client.getImageUrl === 'function') {
-                return client.getImageUrl(id, { type: type, index: 0, tag: tag, maxWidth: 1600, quality: 82 });
+            if (api && typeof api.getImageUrl === 'function') {
+                return api.getImageUrl(itemId, {
+                    type: type,
+                    index: 0,
+                    tag: tag,
+                    maxWidth: width || 1600,
+                    quality: quality || 82
+                });
             }
         } catch (error) {
-            console.debug('[Velvet Antenna] image URL failed', error);
+            console.debug('[Velvet Antenna] image URL fallback', error);
         }
         return '';
     }
 
-    function readCache(id) {
-        if (!id) return null;
-        try { return JSON.parse(sessionStorage.getItem(CACHE_PREFIX + id) || 'null'); } catch (error) { return null; }
+    function heroCacheKey(itemId) {
+        return 'hero:' + itemId;
     }
 
-    function writeCache(id, value) {
-        if (!id) return;
-        try { sessionStorage.setItem(CACHE_PREFIX + id, JSON.stringify(value)); } catch (error) { /* non-critical */ }
+    function readHeroCache(itemId) {
+        if (!itemId) return null;
+        const raw = sessionGet(heroCacheKey(itemId));
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch (error) {
+            return null;
+        }
     }
 
-    function preload(hero, url) {
-        if (!url) return;
+    function writeHeroCache(itemId, value) {
+        if (!itemId || !value) return;
+        try {
+            sessionSet(heroCacheKey(itemId), JSON.stringify(value));
+        } catch (error) {
+            // Ignore cache failures.
+        }
+    }
+
+    function preloadBackdrop(hero, url) {
+        if (!hero || !url) return;
         const image = new Image();
         image.decoding = 'async';
         image.onload = function () {
@@ -255,63 +486,83 @@
         image.src = url;
     }
 
-    async function enrichHero(hero, card) {
-        const client = api();
-        const id = itemIdOf(card);
-        if (!client || !id) return;
+    function applyCachedHero(hero, cached) {
+        if (!hero || !cached) return;
+        if (cached.title) hero.querySelector('.va-hero__title').textContent = cached.title;
+        if (cached.meta) hero.querySelector('.va-hero__meta').textContent = cached.meta;
+        if (cached.overview) hero.querySelector('.va-hero__copy').textContent = cached.overview;
+        if (cached.backdrop) preloadBackdrop(hero, cached.backdrop);
+    }
 
-        const cached = readCache(id);
-        if (cached) {
-            if (cached.title) hero.querySelector('.va-hero__title').textContent = cached.title;
-            if (cached.meta) hero.querySelector('.va-hero__meta').textContent = cached.meta;
-            if (cached.overview) hero.querySelector('.va-hero__copy').textContent = cached.overview;
-            if (cached.backdrop) preload(hero, cached.backdrop);
+    function playCard(card) {
+        if (!card) return;
+        const play = card.querySelector('.cardOverlayButton-play, [data-action="play"], .btnPlay');
+        if (play && typeof play.click === 'function') {
+            play.click();
+            return;
         }
+        clickCard(card);
+    }
+
+    async function enrichHero(hero, card) {
+        const api = getApiClient();
+        const itemId = getItemId(card);
+        if (!api || !itemId) return;
+
+        const cached = readHeroCache(itemId);
+        if (cached) applyCachedHero(hero, cached);
 
         try {
-            if (typeof client.getItem !== 'function' || typeof client.getCurrentUserId !== 'function') return;
-            const item = await client.getItem(client.getCurrentUserId(), id);
+            if (typeof api.getItem !== 'function' || typeof api.getCurrentUserId !== 'function') return;
+            const item = await api.getItem(api.getCurrentUserId(), itemId);
             if (!item || !hero.isConnected) return;
 
-            const heroTitle = item.Name || titleOf(card) || 'Featured';
-            const heroMeta = metaOf(item, secondaryOf(card));
+            const title = item.Name || getTitle(card) || 'Featured';
+            const meta = buildMeta(item, getSecondary(card));
             const overview = (item.Overview || '').trim();
-            hero.querySelector('.va-hero__title').textContent = heroTitle;
-            hero.querySelector('.va-hero__meta').textContent = heroMeta;
+
+            hero.querySelector('.va-hero__title').textContent = title;
+            hero.querySelector('.va-hero__meta').textContent = meta;
             if (overview) hero.querySelector('.va-hero__copy').textContent = overview;
 
-            if (item.UserData && item.UserData.PlaybackPositionTicks > 0 && !item.UserData.Played) {
-                const label = hero.querySelector('.va-button__label');
+            const userData = item.UserData || {};
+            if (userData.PlaybackPositionTicks > 0 && !userData.Played) {
+                const label = hero.querySelector('[data-va-action="play"] .va-button__label');
                 if (label) label.textContent = 'CONTINUE';
             }
 
             let backdrop = '';
-            if (item.BackdropImageTags && item.BackdropImageTags.length) {
-                backdrop = imageUrl(client, item.Id || id, 'Backdrop', item.BackdropImageTags[0]);
-            } else if (item.ParentBackdropItemId && item.ParentBackdropImageTags && item.ParentBackdropImageTags.length) {
-                backdrop = imageUrl(client, item.ParentBackdropItemId, 'Backdrop', item.ParentBackdropImageTags[0]);
+            if (Array.isArray(item.BackdropImageTags) && item.BackdropImageTags.length) {
+                backdrop = imageUrl(api, item.Id || itemId, 'Backdrop', item.BackdropImageTags[0], 1600, 82);
+            } else if (item.ParentBackdropItemId && Array.isArray(item.ParentBackdropImageTags) && item.ParentBackdropImageTags.length) {
+                backdrop = imageUrl(api, item.ParentBackdropItemId, 'Backdrop', item.ParentBackdropImageTags[0], 1600, 82);
             }
-            if (backdrop) preload(hero, backdrop);
-            writeCache(id, { title: heroTitle, meta: heroMeta, overview: overview, backdrop: backdrop });
+
+            if (backdrop) preloadBackdrop(hero, backdrop);
+            writeHeroCache(itemId, { title: title, meta: meta, overview: overview, backdrop: backdrop });
         } catch (error) {
-            console.debug('[Velvet Antenna] metadata enrichment failed', error);
+            console.debug('[Velvet Antenna] hero metadata enrichment failed', error);
         }
     }
 
     function createHero(card) {
         const hero = document.createElement('section');
-        hero.id = HERO_ID;
+        hero.id = IDS.hero;
         hero.className = 'va-hero';
         hero.setAttribute('data-va-version', VERSION);
         hero.setAttribute('aria-label', 'Velvet Antenna featured title');
 
-        const base = imageOf(card);
-        if (base) hero.style.setProperty('--va-hero-image-base', 'url("' + base.replace(/"/g, '%22') + '")');
+        const fallbackImage = getImage(card);
+        if (fallbackImage) {
+            hero.style.setProperty('--va-hero-image-base', 'url("' + fallbackImage.replace(/"/g, '%22') + '")');
+            hero.classList.add('va-hero--has-base-art');
+        }
 
         hero.innerHTML = `
             <div class="va-hero__art va-hero__art--base" aria-hidden="true"></div>
             <div class="va-hero__art va-hero__art--backdrop" aria-hidden="true"></div>
             <div class="va-hero__shade" aria-hidden="true"></div>
+            <div class="va-hero__signal" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="va-hero__content">
                 <div class="va-hero__eyebrow">VELVET ANTENNA</div>
                 <h1 class="va-hero__title"></h1>
@@ -319,110 +570,258 @@
                 <p class="va-hero__copy">Featured from your library.</p>
                 <div class="va-hero__actions">
                     <button class="va-button va-button--primary" type="button" data-va-action="play"><span class="va-button__icon">▶</span><span class="va-button__label">PLAY</span></button>
-                    <button class="va-button va-button--secondary" type="button" data-va-action="details">MORE INFO</button>
+                    <button class="va-button va-button--secondary" type="button" data-va-action="details"><span>MORE INFO</span></button>
                 </div>
             </div>
-            <div class="va-hero__signal" aria-hidden="true"><span></span><span></span><span></span></div>`;
+        `;
 
-        hero.querySelector('.va-hero__title').textContent = titleOf(card) || 'Featured';
-        hero.querySelector('.va-hero__meta').textContent = secondaryOf(card) || 'FEATURED';
-        hero.querySelector('[data-va-action="play"]').addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); playCard(card); });
-        hero.querySelector('[data-va-action="details"]').addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); clickCard(card); });
+        hero.querySelector('.va-hero__title').textContent = getTitle(card) || 'Featured';
+        hero.querySelector('.va-hero__meta').textContent = getSecondary(card) || 'FEATURED';
+
+        hero.querySelector('[data-va-action="play"]').addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            playCard(card);
+        });
+
+        hero.querySelector('[data-va-action="details"]').addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            clickCard(card);
+        });
+
         enrichHero(hero, card);
         return hero;
     }
 
-    function mountHero(container) {
-        if (document.getElementById(HERO_ID)) return;
-        const card = featuredCard();
-        if (!card) return;
-        const hero = createHero(card);
-        const nav = document.getElementById(NAV_ID);
-        if (nav && nav.parentElement === container) nav.insertAdjacentElement('afterend', hero);
-        else container.insertBefore(hero, container.firstChild);
-        console.log('[Velvet Antenna] v' + VERSION + ' hero mounted from:', titleOf(card));
-    }
-
-    function polishSections(container) {
-        const sections = Array.from(document.querySelectorAll('.verticalSection'));
-        sections.forEach(section => {
-            const heading = headingOf(section);
-            section.classList.remove('va-row-landscape', 'va-row-posters', 'va-row-wide', 'va-row-hidden');
-
-            if (/^my media$/i.test(heading)) section.classList.add('va-row-hidden');
-            else if (/continue watching|resume|next up/i.test(heading)) section.classList.add('va-row-landscape');
-            else if (/collection/i.test(heading)) section.classList.add('va-row-wide');
-            else if (/recently added|latest|movies|shows|series|anime/i.test(heading)) section.classList.add('va-row-posters');
-
-            if (/recently added.*shows/i.test(heading)) {
-                const title = section.querySelector('.sectionTitle-cards, .sectionTitle, h2, h3');
-                if (title && text(title) !== 'Recently Added Series') title.textContent = 'Recently Added Series';
-            }
-        });
-
-        if (!container) return;
-        const current = Array.from(container.children).filter(el => el.classList && el.classList.contains('verticalSection'));
-        const rank = section => {
-            const heading = headingOf(section).toLowerCase();
-            if (/^my media$/.test(heading)) return 0;
-            if (/continue watching|resume/.test(heading)) return 10;
-            if (/next up/.test(heading)) return 20;
-            if (/recently added.*movies|latest.*movies/.test(heading)) return 30;
-            if (/recently added.*shows|recently added.*series|latest.*series/.test(heading)) return 40;
-            if (/collection/.test(heading)) return 50;
-            if (/anime/.test(heading)) return 60;
-            if (/live now|live tv/.test(heading)) return 70;
-            if (/recording/.test(heading)) return 80;
-            return 90;
-        };
-        const sorted = current.slice().sort((a, b) => rank(a) - rank(b));
-        if (sorted.some((section, index) => section !== current[index])) sorted.forEach(section => container.appendChild(section));
-    }
-
-    function clearHome() {
-        document.body.classList.remove(HOME_CLASS);
-        const nav = document.getElementById(NAV_ID);
-        const hero = document.getElementById(HERO_ID);
-        if (nav) nav.remove();
+    function removeHomeHero() {
+        const hero = document.getElementById(IDS.hero);
         if (hero) hero.remove();
     }
 
-    function render() {
-        document.documentElement.setAttribute('data-velvet-antenna-version', VERSION);
-        if (!isHome()) return clearHome();
-        const container = homeContainer();
-        if (!container) return;
-        document.body.classList.add(HOME_CLASS);
-        mountNav(container);
-        mountHero(container);
-        polishSections(container);
+    function decorateHomeSections() {
+        const sections = Array.from(document.querySelectorAll('.verticalSection'));
+        sections.forEach(section => {
+            const heading = sectionHeading(section);
+            section.classList.remove('va-row-landscape', 'va-row-posters', 'va-row-wide');
+
+            if (/continue watching|next up/i.test(heading)) section.classList.add('va-row-landscape');
+            if (/recently added.*movie/i.test(heading)) section.classList.add('va-row-posters');
+            if (/recently added.*show|recently added.*series/i.test(heading)) {
+                section.classList.add('va-row-posters');
+                const titleEl = section.querySelector('.sectionTitle-cards, .sectionTitle, h2, h3');
+                if (titleEl && /shows/i.test(text(titleEl))) titleEl.textContent = 'Recently Added Series';
+            }
+            if (/collection/i.test(heading)) section.classList.add('va-row-wide');
+        });
+
+        const myMedia = findMyMediaSection();
+        if (myMedia) myMedia.classList.add('va-my-media-source');
     }
 
-    function schedule(delay) {
-        clearTimeout(timer);
-        timer = setTimeout(render, typeof delay === 'number' ? delay : 140);
+    function reorderHomeSections() {
+        const container = findHomeContainer();
+        if (!container) return;
+
+        const sections = Array.from(container.querySelectorAll(':scope > .verticalSection, :scope > div > .verticalSection'));
+        if (!sections.length) return;
+
+        const priorities = [
+            [/continue watching/i, /resume/i],
+            [/next up/i],
+            [/recently added.*movies/i],
+            [/recently added.*series/i, /recently added.*shows/i],
+            [/collections?/i],
+            [/anime/i],
+            [/live now/i],
+            [/recordings/i]
+        ];
+
+        let anchor = document.getElementById(IDS.hero);
+        priorities.forEach(group => {
+            const section = sections.find(candidate => {
+                const heading = sectionHeading(candidate);
+                return group.some(regex => regex.test(heading));
+            });
+            if (!section || section.classList.contains('va-my-media-source')) return;
+            if (anchor && anchor.parentElement === container) {
+                anchor.insertAdjacentElement('afterend', section);
+                anchor = section;
+            }
+        });
+    }
+
+    function renderHome() {
+        if (pageType() !== 'home') {
+            removeHomeHero();
+            return;
+        }
+
+        captureLibraryRoutes();
+        decorateHomeSections();
+
+        const container = findHomeContainer();
+        if (!container) return;
+
+        if (!document.getElementById(IDS.hero)) {
+            const card = findFeaturedCard();
+            if (card) {
+                container.insertBefore(createHero(card), container.firstChild);
+            }
+        }
+
+        reorderHomeSections();
+    }
+
+    function mountSearchIntro() {
+        const existing = document.getElementById(IDS.searchIntro);
+        if (pageType() !== 'search') {
+            if (existing) existing.remove();
+            return;
+        }
+        if (existing) return;
+
+        const input = document.querySelector('.searchInput, input[type="search"], input[placeholder*="search" i]');
+        if (!input) return;
+
+        const intro = document.createElement('section');
+        intro.id = IDS.searchIntro;
+        intro.className = 'va-search-intro';
+        intro.innerHTML = '<div class="va-kicker">VELVET ANTENNA</div><h1>Search everything.</h1><p>Movies, series, episodes, collections and more.</p>';
+
+        const host = input.closest('.searchFields') || input.parentElement || document.querySelector('.libraryPage');
+        if (host && host.parentElement) host.parentElement.insertBefore(intro, host);
+    }
+
+    function decorateSearchResults() {
+        if (pageType() !== 'search') return;
+
+        const suggestionsHeading = Array.from(document.querySelectorAll('h2, h3, .sectionTitle')).find(el => /suggestions/i.test(text(el)));
+        if (suggestionsHeading) suggestionsHeading.classList.add('va-search-suggestions-title');
+
+        const links = Array.from(document.querySelectorAll('a')).filter(el => {
+            const value = text(el);
+            if (!value || value.length > 90) return false;
+            const parent = suggestionsHeading && suggestionsHeading.parentElement;
+            return parent ? parent.contains(el) : false;
+        });
+        links.forEach(link => link.classList.add('va-search-chip'));
+    }
+
+    function mountDetailBrand() {
+        const existing = document.getElementById(IDS.detailBrand);
+        if (pageType() !== 'details') {
+            if (existing) existing.remove();
+            return;
+        }
+        if (existing) return;
+
+        const title = document.querySelector('.itemName, .detailPagePrimaryContent h1, .detailPagePrimaryContainer h1');
+        if (!title) return;
+
+        const brand = document.createElement('div');
+        brand.id = IDS.detailBrand;
+        brand.className = 'va-detail-brand';
+        brand.textContent = 'VELVET ANTENNA';
+        title.parentElement.insertBefore(brand, title);
+    }
+
+    function decorateDetails() {
+        if (pageType() !== 'details') return;
+
+        const title = document.querySelector('.itemName, .detailPagePrimaryContent h1, .detailPagePrimaryContainer h1');
+        if (title) title.classList.add('va-detail-title');
+
+        document.querySelectorAll('.mainDetailButtons button, .detailButton').forEach(button => {
+            button.classList.add('va-detail-action');
+        });
+
+        document.querySelectorAll('.peopleItems .card, .castContent .card').forEach(card => card.classList.add('va-cast-card'));
+        document.querySelectorAll('.childrenItemsContainer .card, .episodeCard').forEach(card => card.classList.add('va-episode-card'));
+    }
+
+    function decorateLibrary() {
+        if (pageType() !== 'library') return;
+        document.querySelectorAll('.card').forEach(card => card.classList.add('va-library-card'));
+
+        const title = document.querySelector('.pageTitle, .sectionTitle:first-of-type, h1');
+        if (title) title.classList.add('va-library-title');
+    }
+
+    function decorateLive() {
+        if (pageType() !== 'live') return;
+        document.querySelectorAll('.programCell, .guideProgram, .channelProgram').forEach(el => el.classList.add('va-live-program'));
+        document.querySelectorAll('.recordingIndicator, .liveTvIndicator').forEach(el => el.classList.add('va-live-indicator'));
+    }
+
+    function cleanupViewerArtifacts() {
+        if (isAdminRoute() || isPlaybackRoute()) {
+            const nav = document.getElementById(IDS.nav);
+            if (nav) nav.remove();
+            PAGE_CLASSES.forEach(cls => document.body && document.body.classList.remove(cls));
+            if (document.body) document.body.classList.remove('va-viewer');
+        }
+    }
+
+    function renderAll() {
+        setPageClass();
+        cleanupViewerArtifacts();
+        if (isAdminRoute() || isPlaybackRoute()) return;
+
+        captureLibraryRoutes();
+        mountGlobalNav();
+        renderHome();
+        mountSearchIntro();
+        decorateSearchResults();
+        mountDetailBrand();
+        decorateDetails();
+        decorateLibrary();
+        decorateLive();
+    }
+
+    function scheduleRender(delay) {
+        clearTimeout(renderTimer);
+        renderTimer = setTimeout(renderAll, typeof delay === 'number' ? delay : 100);
     }
 
     function routeChanged() {
-        if (lastHash !== window.location.hash) {
-            lastHash = window.location.hash;
-            clearHome();
+        const current = hash();
+        if (current !== lastHash) {
+            lastHash = current;
+            removeHomeHero();
+            const searchIntro = document.getElementById(IDS.searchIntro);
+            if (searchIntro) searchIntro.remove();
+            const detailBrand = document.getElementById(IDS.detailBrand);
+            if (detailBrand) detailBrand.remove();
+            document.body && document.body.classList.add('va-route-transition');
+            setTimeout(function () {
+                document.body && document.body.classList.remove('va-route-transition');
+            }, 220);
         }
-        schedule(120);
+        scheduleRender(80);
     }
 
     function start() {
-        lastHash = window.location.hash;
+        lastHash = hash();
         window.addEventListener('hashchange', routeChanged);
         window.addEventListener('popstate', routeChanged);
-        new MutationObserver(() => schedule(160)).observe(document.documentElement, { childList: true, subtree: true });
-        schedule(20);
-        setTimeout(() => schedule(0), 450);
-        setTimeout(() => schedule(0), 1100);
-        setTimeout(() => schedule(0), 2200);
+
+        observer = new MutationObserver(function () {
+            scheduleRender(90);
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+
+        renderAll();
+        setTimeout(function () { scheduleRender(0); }, 350);
+        setTimeout(function () { scheduleRender(0); }, 900);
+        setTimeout(function () { scheduleRender(0); }, 1800);
+
         console.log('[Velvet Antenna] v' + VERSION + ' loaded');
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
-    else start();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start, { once: true });
+    } else {
+        start();
+    }
 })();
