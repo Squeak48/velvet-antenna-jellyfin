@@ -89,21 +89,23 @@
   },
   {
     "id": "velvet-antenna-v0170",
-    "name": "Velvet Antenna v0.17.2 Minimal Hotfix",
+    "name": "Velvet Antenna v0.17.3 Compatibility Hotfix",
     "author": "James",
-    "description": "Minimal non-invasive action hotfix. It does not rewrite or hide Home/detail UI. Velvet Antenna Play and More Info are captured before older layers; More Info navigates to the exact Jellyfin item and Play hands off only to Jellyfin's genuine local .btnPlay while explicitly rejecting SyncPlay and group-session controls.",
-    "version": "0.17.2",
+    "description": "Compatibility hotfix preserving v0.17.2 local playback routing while restoring Jellyfin 10.11's genuine TV Series/Episodes library tabs and ensuring Jellyfin's genuine subtitle button remains visible whenever subtitle tracks are available.",
+    "version": "0.17.3",
     "jellyfin": "10.11+",
     "tags": [
       "playback",
       "details",
+      "libraries",
+      "subtitles",
       "hotfix",
       "stability",
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.2",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.2",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.3",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.3",
     "requires": [
       "velvet-antenna-v0150"
     ]
