@@ -4,7 +4,7 @@
 
 v0.20 is the first standalone Velvet Antenna build. It replaces the layered 0.10 + 0.12 + 0.14 + 0.15 + 0.17 stack with one JellyFrame mod.
 
-The public runtime entrypoint is `velvet-antenna-v020.js`. From v0.20.2 the implementation is internally split into the proven viewer core (`velvet-antenna-v020-core.js`) and an administrator maintenance module (`velvet-antenna-v020-maintenance.js`). They are internal parts of the same standalone mod and do not require earlier Velvet Antenna versions to be enabled.
+The public runtime entrypoint is `velvet-antenna-v020.js`. v0.20.3 deliberately keeps the complete viewer core and administrator maintenance runtime in this single physical JavaScript asset. v0.20.2 briefly used a secondary-script loader, but this proved incompatible with the deployed Jellyfin/JellyFrame browser environment and was removed.
 
 The main engineering rule is simple:
 
@@ -86,9 +86,9 @@ For administrators:
 
 The viewer core has one debounced `MutationObserver` watching structural child changes only.
 
-The maintenance module also watches structural child changes so it can detect Jellyfin entering/leaving native selection mode and can mount admin controls after library content is rendered.
+The maintenance runtime also watches structural child changes so it can detect Jellyfin entering/leaving native selection mode and can mount admin controls after library content is rendered.
 
-Neither module observes class/style attributes and neither runs a continuous enforcement interval.
+Neither observer watches class/style attributes and neither runs a continuous enforcement interval.
 
 The Home hero settle process is bounded and stops permanently once the item is locked.
 
