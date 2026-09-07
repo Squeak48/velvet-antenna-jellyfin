@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.17.4';
+    const VERSION = '0.17.5';
     const PENDING_PLAY_KEY = 'va17:pending-local-play';
     const PLAY_TTL_MS = 15000;
     const MAX_PLAY_ATTEMPTS = 40;
@@ -208,7 +208,7 @@
         if (button) {
             sessionRemove(PENDING_PLAY_KEY);
             clearPlayTimer();
-            console.log('[Velvet Antenna v0.17.4] using Jellyfin local .btnPlay for', pending.id);
+            console.log('[Velvet Antenna v0.17.5] using Jellyfin local .btnPlay for', pending.id);
             button.click();
             return true;
         }
@@ -217,7 +217,7 @@
         if (playAttempts < MAX_PLAY_ATTEMPTS) {
             playTimer = window.setTimeout(tryPendingPlay, PLAY_RETRY_MS);
         } else {
-            console.warn('[Velvet Antenna v0.17.4] no genuine local .btnPlay found for', pending.id);
+            console.warn('[Velvet Antenna v0.17.5] no genuine local .btnPlay found for', pending.id);
             sessionRemove(PENDING_PLAY_KEY);
         }
         return false;
@@ -281,7 +281,7 @@
 
     function start() {
         // Intentionally no MutationObserver and no hero/detail DOM rewriting.
-        // v0.17.4 owns only Velvet Antenna action routing.
+        // v0.17.5 owns only Velvet Antenna action routing.
         window.addEventListener('click', captureVelvetActions, true);
         window.addEventListener('hashchange', onRouteChange);
         window.addEventListener('popstate', onRouteChange);
