@@ -1,0 +1,14 @@
+/* Velvet Antenna v0.17.0
+   Functional hotfix for stable home hero and local playback routing.
+*/
+
+body.va17-hero-settling #va-home-hero {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.va17-hero-locked #va-home-hero,
+#va-home-hero.va17-locked {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
