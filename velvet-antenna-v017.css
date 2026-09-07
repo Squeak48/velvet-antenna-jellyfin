@@ -1,4 +1,50 @@
-/* Velvet Antenna v0.17.2
-   Minimal action hotfix only.
-   Intentionally contains no hero, detail, visibility or pointer-event overrides.
+/* Velvet Antenna v0.17.3
+   Compatibility hotfix for Jellyfin 10.11 functional controls.
 */
+
+/*
+ * v0.14 hides Jellyfin's real library header and replaces it with a cloned
+ * sub-navigation. On TV libraries this can remove the native SERIES and
+ * EPISODES views if the clone is created before Jellyfin finishes populating
+ * its tabs. Restore the genuine Jellyfin tabs for TV libraries only.
+ */
+body.va17-tv-library-native-tabs.va-page-library .skinHeader {
+  display: block !important;
+  top: var(--va-nav-height) !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  background: rgba(8, 6, 12, .93) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .04) !important;
+  box-shadow: none !important;
+}
+
+body.va17-tv-library-native-tabs.va-page-library #reactRoot {
+  padding-top: calc(var(--va-nav-height) + 48px) !important;
+}
+
+body.va17-tv-library-native-tabs #va14-library-subnav {
+  display: none !important;
+}
+
+body.va17-tv-library-native-tabs.va-page-library .skinHeader .headerTabs {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+}
+
+/*
+ * Jellyfin 10.11 uses .btnSubtitles and removes its own .hide class only when
+ * subtitle tracks are available. Never override .hide; only ensure an already
+ * available genuine subtitle button cannot be suppressed by the VA layers.
+ */
+.videoOsdPage .btnSubtitles:not(.hide),
+.videoPlayerContainer .btnSubtitles:not(.hide),
+.videoOsdBottom .btnSubtitles:not(.hide),
+.videoOsdControls .btnSubtitles:not(.hide),
+.osdControls .btnSubtitles:not(.hide) {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
