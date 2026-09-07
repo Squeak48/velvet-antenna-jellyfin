@@ -1,4 +1,4 @@
-/* Velvet Antenna v0.20.0
+/* Velvet Antenna v0.20.1
    Standalone viewer shell. One mod, native Jellyfin functionality preserved.
 */
 
@@ -193,10 +193,16 @@ body.va20-page-other .skinHeader {
 
 body.va20-page-library .skinHeader {
   display: block !important;
+  position: fixed !important;
   top: var(--va20-nav-height) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99998 !important;
   height: 48px !important;
   min-height: 48px !important;
-  background: rgba(8,6,12,.94) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: rgba(8,6,12,.96) !important;
   border-bottom: 1px solid rgba(255,255,255,.04) !important;
   box-shadow: none !important;
 }
@@ -210,15 +216,19 @@ body.va20-page-library .skinHeader .headerButton {
 body.va20-page-library .skinHeader .headerTabs {
   position: static !important;
   display: flex !important;
+  width: 100% !important;
+  height: 48px !important;
   min-height: 48px !important;
+  padding: 0 !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 28px !important;
   margin: 0 auto !important;
+  overflow: visible !important;
 }
 
 body.va20-page-library #reactRoot {
-  padding-top: calc(var(--va20-nav-height) + 48px) !important;
+  padding-top: var(--va20-nav-height) !important;
 }
 
 body.va20-page-library .emby-tab-button {
@@ -497,7 +507,8 @@ body.va20-viewer .card:focus-within .cardImageContainer {
 }
 
 body.va20-viewer .cardImageContainer {
-  background: #120D18 !important;
+  /* Jellyfin applies artwork as background-image on this element. Never use the background shorthand here. */
+  background-color: #120D18 !important;
 }
 
 body.va20-viewer .playedIndicator,
@@ -537,6 +548,7 @@ body.va20-page-home .va20-row-wide .cardImageContainer {
 
 .va20-library-intro {
   position: relative;
+  margin-top: 48px;
   box-sizing: border-box;
   width: 100%;
   min-height: 150px;
