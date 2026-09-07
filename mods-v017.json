@@ -89,14 +89,12 @@
   },
   {
     "id": "velvet-antenna-v0170",
-    "name": "Velvet Antenna v0.17.1 Hotfix",
+    "name": "Velvet Antenna v0.17.2 Minimal Hotfix",
     "author": "James",
-    "description": "Safe functional hotfix: waits for the Home hero to settle, presents a locked overlay for one exact Jellyfin item, captures Velvet Antenna actions before older layers, routes Play only through Jellyfin's genuine local .btnPlay action, rejects SyncPlay/group-session controls, and makes More Info navigate to the exact item without a global attribute-mutation loop.",
-    "version": "0.17.1",
+    "description": "Minimal non-invasive action hotfix. It does not rewrite or hide Home/detail UI. Velvet Antenna Play and More Info are captured before older layers; More Info navigates to the exact Jellyfin item and Play hands off only to Jellyfin's genuine local .btnPlay while explicitly rejecting SyncPlay and group-session controls.",
+    "version": "0.17.2",
     "jellyfin": "10.11+",
     "tags": [
-      "ui",
-      "home",
       "playback",
       "details",
       "hotfix",
@@ -104,8 +102,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.1",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.1",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.2",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.2",
     "requires": [
       "velvet-antenna-v0150"
     ]
