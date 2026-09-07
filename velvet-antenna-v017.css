@@ -1,5 +1,5 @@
-/* Velvet Antenna v0.17.0
-   Functional hotfix for stable home hero and local playback routing.
+/* Velvet Antenna v0.17.1
+   Safe functional hotfix: stable locked overlay and local playback routing.
 */
 
 body.va17-hero-settling #va-home-hero {
@@ -7,8 +7,100 @@ body.va17-hero-settling #va-home-hero {
   pointer-events: none !important;
 }
 
-body.va17-hero-locked #va-home-hero,
 #va-home-hero.va17-locked {
+  position: relative !important;
   opacity: 1 !important;
   pointer-events: auto !important;
+  overflow: hidden !important;
+}
+
+#va-home-hero.va17-locked > :not(#va17-overlay) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#va17-overlay {
+  --va17-image: none;
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  color: #fff;
+}
+
+#va17-overlay .va17-overlay__art,
+#va17-overlay .va17-overlay__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#va17-overlay .va17-overlay__art {
+  background-image: var(--va17-image);
+  background-size: cover;
+  background-position: center;
+}
+
+#va17-overlay .va17-overlay__shade {
+  background:
+    linear-gradient(90deg, rgba(7,5,11,.96) 0%, rgba(7,5,11,.76) 34%, rgba(7,5,11,.25) 68%, rgba(7,5,11,.08) 100%),
+    linear-gradient(0deg, rgba(7,5,11,.86) 0%, rgba(7,5,11,.10) 55%);
+}
+
+#va17-overlay .va17-overlay__content {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 70%);
+  padding: clamp(2rem, 5vw, 5rem);
+}
+
+#va17-overlay .va17-overlay__eyebrow {
+  margin-bottom: .55rem;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+
+#va17-overlay .va17-overlay__title {
+  margin: 0 0 .75rem;
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  line-height: .98;
+}
+
+#va17-overlay .va17-overlay__meta {
+  margin-bottom: .8rem;
+  opacity: .82;
+}
+
+#va17-overlay .va17-overlay__copy {
+  max-width: 62ch;
+  margin: 0 0 1.35rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#va17-overlay .va17-overlay__actions {
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+#va17-overlay .va17-overlay__actions button {
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  #va17-overlay .va17-overlay__content {
+    width: auto;
+    padding: 1.5rem;
+  }
+
+  #va17-overlay .va17-overlay__copy {
+    -webkit-line-clamp: 3;
+  }
 }
