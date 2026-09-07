@@ -20,10 +20,10 @@
   },
   {
     "id": "velvet-antenna-v0120",
-    "name": "Velvet Antenna v0.12.0",
+    "name": "Velvet Antenna v0.12.1",
     "author": "James",
-    "description": "Large Velvet Antenna upgrade: fixes home-row flicker, rebuilds search, gives libraries branded identities and replaces Jellyfin detail headers with a cinematic metadata-driven hero.",
-    "version": "0.12.0",
+    "description": "Detail and library layer. v0.12.1 preserves Jellyfin's native Series and Season detail pages so season and episode rendering remains functional, while retaining Velvet Antenna cinematic detail treatment for playable items.",
+    "version": "0.12.1",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -34,18 +34,18 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.css?v=0.12.0",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.js?v=0.12.0",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.css?v=0.12.1",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.js?v=0.12.1",
     "requires": [
       "velvet-antenna-v0100"
     ]
   },
   {
     "id": "velvet-antenna-v0140",
-    "name": "Velvet Antenna v0.14.0",
+    "name": "Velvet Antenna v0.14.1",
     "author": "James",
-    "description": "Design-faithful expansion from the Velvet Antenna Trial: larger glass TV navigation, rotating metadata-driven home hero, format badges and progress, remote on-screen search keyboard, rebuilt library sub-navigation, editorial detail credits, stronger card focus states and player/profile styling.",
-    "version": "0.14.0",
+    "description": "Design expansion with stable deterministic Home hero selection. v0.14.1 removes the lastHero anti-repeat rule that caused two Continue Watching items to ping-pong on every DOM mutation.",
+    "version": "0.14.1",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -56,11 +56,12 @@
       "player",
       "remote",
       "cinematic",
+      "stability",
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.css?v=0.14.0",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.js?v=0.14.0",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.css?v=0.14.1",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.js?v=0.14.1",
     "requires": [
       "velvet-antenna-v0120"
     ]
@@ -89,10 +90,10 @@
   },
   {
     "id": "velvet-antenna-v0170",
-    "name": "Velvet Antenna v0.17.4 Stability Hotfix",
+    "name": "Velvet Antenna v0.17.5 Functional Hotfix",
     "author": "James",
-    "description": "Stability rollback to the proven v0.17.2 action-only JavaScript. Restores Jellyfin's genuine library tabs, including TV Series and Episodes, and preserves genuine subtitle controls using CSS only, with no new route timers or home-hero behaviour.",
-    "version": "0.17.4",
+    "description": "Functional hotfix preserving strict local playback routing and genuine Jellyfin subtitle/library controls. This release also publishes source-level v0.12.1 Series/Season compatibility and v0.14.1 Home hero stability fixes.",
+    "version": "0.17.5",
     "jellyfin": "10.11+",
     "tags": [
       "playback",
@@ -104,8 +105,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.4",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.4",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.5",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.5",
     "requires": [
       "velvet-antenna-v0150"
     ]
