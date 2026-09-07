@@ -1,14 +1,15 @@
-/* Velvet Antenna v0.17.3
+/* Velvet Antenna v0.17.4
    Compatibility hotfix for Jellyfin 10.11 functional controls.
+   No home-hero or route-state behaviour lives here.
 */
 
 /*
- * v0.14 hides Jellyfin's real library header and replaces it with a cloned
- * sub-navigation. On TV libraries this can remove the native SERIES and
- * EPISODES views if the clone is created before Jellyfin finishes populating
- * its tabs. Restore the genuine Jellyfin tabs for TV libraries only.
+ * v0.14 hides Jellyfin's genuine library header and substitutes a cloned
+ * navigation bar. That clone can miss functional library views such as
+ * TV Series and Episodes. Restore Jellyfin's own library tabs everywhere
+ * and suppress the cloned v0.14 sub-navigation instead.
  */
-body.va17-tv-library-native-tabs.va-page-library .skinHeader {
+body.va-page-library .skinHeader {
   display: block !important;
   top: var(--va-nav-height) !important;
   height: 48px !important;
@@ -18,25 +19,33 @@ body.va17-tv-library-native-tabs.va-page-library .skinHeader {
   box-shadow: none !important;
 }
 
-body.va17-tv-library-native-tabs.va-page-library #reactRoot {
+body.va-page-library #reactRoot {
   padding-top: calc(var(--va-nav-height) + 48px) !important;
 }
 
-body.va17-tv-library-native-tabs #va14-library-subnav {
+body.va-page-library #va14-library-subnav {
   display: none !important;
 }
 
-body.va17-tv-library-native-tabs.va-page-library .skinHeader .headerTabs {
+body.va-page-library .skinHeader .headerTabs {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   min-height: 48px !important;
 }
 
+/* Keep Jellyfin's utility chrome hidden while allowing its real tabs. */
+body.va-page-library .skinHeader .headerLeft,
+body.va-page-library .skinHeader .headerRight,
+body.va-page-library .skinHeader .headerButton {
+  display: none !important;
+}
+
 /*
  * Jellyfin 10.11 uses .btnSubtitles and removes its own .hide class only when
- * subtitle tracks are available. Never override .hide; only ensure an already
- * available genuine subtitle button cannot be suppressed by the VA layers.
+ * subtitle tracks are actually available. Never override .hide. Only ensure
+ * an already-available genuine subtitle control cannot be suppressed by the
+ * older Velvet Antenna visual layers.
  */
 .videoOsdPage .btnSubtitles:not(.hide),
 .videoPlayerContainer .btnSubtitles:not(.hide),
