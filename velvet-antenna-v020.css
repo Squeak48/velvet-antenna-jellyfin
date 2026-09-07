@@ -1,0 +1,1086 @@
+/* Velvet Antenna v0.20.0
+   Standalone viewer shell. One mod, native Jellyfin functionality preserved.
+*/
+
+:root {
+  --va20-bg: #08060C;
+  --va20-bg-raised: #110D17;
+  --va20-bg-soft: #1B1028;
+  --va20-accent: #8A46E8;
+  --va20-accent-deep: #6C2CBF;
+  --va20-highlight: #C68BFF;
+  --va20-text: #F6F2F8;
+  --va20-text-2: #AAA2B1;
+  --va20-muted: #6C6572;
+  --va20-progress: #2B2432;
+  --va20-nav-height: 68px;
+  --va20-edge: clamp(28px, 3.55vw, 68px);
+  --va20-radius: 12px;
+  --va20-focus-shadow: 0 22px 44px rgba(0,0,0,.40), 0 18px 36px -22px rgba(138,70,232,.96);
+}
+
+html,
+body {
+  background: var(--va20-bg) !important;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Manrope, Inter, "Segoe UI", sans-serif !important;
+}
+
+body.va20-viewer {
+  background:
+    radial-gradient(circle at 55% -25%, rgba(92,39,139,.10), transparent 43%),
+    var(--va20-bg) !important;
+  color: var(--va20-text);
+}
+
+body.va20-viewer #reactRoot {
+  box-sizing: border-box;
+  padding-top: var(--va20-nav-height);
+}
+
+body.va20-player-active #va20-nav,
+body:not(.va20-viewer) #va20-nav {
+  display: none !important;
+}
+
+.va20-kicker {
+  color: var(--va20-highlight);
+  font-size: .66rem;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+#va20-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 99999;
+  height: var(--va20-nav-height);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) auto minmax(210px, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 0 var(--va20-edge);
+  background: rgba(8,6,12,.95);
+  border-bottom: 1px solid rgba(255,255,255,.045);
+  backdrop-filter: blur(16px);
+  color: var(--va20-text);
+}
+
+.va20-nav__brand,
+.va20-nav__item {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.va20-nav__brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.va20-nav__wordmark {
+  font-size: .77rem;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: .22em;
+  white-space: nowrap;
+}
+
+.va20-mark {
+  position: relative;
+  width: 29px;
+  height: 22px;
+  display: inline-block;
+  filter: drop-shadow(0 7px 10px rgba(138,70,232,.22));
+}
+
+.va20-mark i {
+  position: absolute;
+  left: 2px;
+  width: 25px;
+  height: 10px;
+  border-radius: 50%;
+  border-top: 2px solid var(--va20-highlight);
+  transform: rotate(-7deg);
+}
+
+.va20-mark i:nth-child(1) { top: 2px; opacity: .96; }
+.va20-mark i:nth-child(2) { top: 7px; width: 20px; left: 5px; opacity: .73; }
+.va20-mark i:nth-child(3) { top: 12px; width: 13px; left: 8px; opacity: .50; }
+
+.va20-nav__primary,
+.va20-nav__utility {
+  display: flex;
+  align-items: center;
+  gap: clamp(15px, 1.55vw, 29px);
+}
+
+.va20-nav__primary { justify-content: center; }
+.va20-nav__utility { justify-content: flex-end; }
+
+.va20-nav__item {
+  position: relative;
+  min-height: 44px;
+  padding: 0 2px;
+  font-size: .68rem;
+  font-weight: 680;
+  letter-spacing: .12em;
+  color: rgba(246,242,248,.60);
+  transition: color 170ms ease, transform 170ms ease;
+}
+
+.va20-nav__item::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--va20-highlight);
+  transform: scaleX(0);
+  opacity: 0;
+  box-shadow: 0 7px 17px rgba(138,70,232,.62);
+  transition: transform 170ms ease, opacity 170ms ease;
+}
+
+.va20-nav__item:hover,
+.va20-nav__item:focus-visible,
+.va20-nav__item.is-active {
+  color: var(--va20-text);
+  outline: none;
+}
+
+.va20-nav__item:hover,
+.va20-nav__item:focus-visible {
+  transform: translateY(-1px);
+}
+
+.va20-nav__item.is-active::after,
+.va20-nav__item:focus-visible::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Replace only Jellyfin's top-level viewer chrome. Library tabs remain native. */
+body.va20-page-home .skinHeader,
+body.va20-page-search .skinHeader,
+body.va20-page-details .skinHeader,
+body.va20-page-live .skinHeader,
+body.va20-page-other .skinHeader {
+  display: none !important;
+}
+
+body.va20-page-library .skinHeader {
+  display: block !important;
+  top: var(--va20-nav-height) !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  background: rgba(8,6,12,.94) !important;
+  border-bottom: 1px solid rgba(255,255,255,.04) !important;
+  box-shadow: none !important;
+}
+
+body.va20-page-library .skinHeader .headerLeft,
+body.va20-page-library .skinHeader .headerRight,
+body.va20-page-library .skinHeader .headerButton {
+  display: none !important;
+}
+
+body.va20-page-library .skinHeader .headerTabs {
+  position: static !important;
+  display: flex !important;
+  min-height: 48px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 28px !important;
+  margin: 0 auto !important;
+}
+
+body.va20-page-library #reactRoot {
+  padding-top: calc(var(--va20-nav-height) + 48px) !important;
+}
+
+body.va20-page-library .emby-tab-button {
+  color: rgba(246,242,248,.55) !important;
+  font-size: .70rem !important;
+  font-weight: 680 !important;
+  letter-spacing: .11em !important;
+}
+
+body.va20-page-library .emby-tab-button-active {
+  color: var(--va20-text) !important;
+}
+
+/* ============================================================
+   HOME HERO
+============================================================ */
+
+#va20-home-hero {
+  position: relative;
+  width: 100%;
+  min-height: clamp(430px, 48vh, 610px);
+  margin: 0 0 1.1rem;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--va20-bg);
+  color: var(--va20-text);
+}
+
+.va20-hero__art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 25%;
+}
+
+.va20-hero__art--fallback {
+  background-image: var(--va20-hero-fallback, none);
+  filter: blur(15px) saturate(.74) brightness(.33);
+  transform: scale(1.09);
+  opacity: .78;
+}
+
+.va20-hero__art--backdrop {
+  background-image: var(--va20-hero-backdrop, none);
+  filter: saturate(.93) contrast(1.02) brightness(.79);
+  transform: scale(1.01);
+  opacity: 0;
+  transition: opacity 380ms ease;
+}
+
+.va20-hero.backdrop-ready .va20-hero__art--backdrop { opacity: 1; }
+.va20-hero.backdrop-ready .va20-hero__art--fallback { opacity: .05; }
+
+.va20-hero__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(8,6,12,.995) 0%,
+      rgba(8,6,12,.92) 20%,
+      rgba(8,6,12,.58) 42%,
+      rgba(8,6,12,.13) 68%,
+      rgba(8,6,12,.06) 100%),
+    linear-gradient(0deg,
+      var(--va20-bg) 0%,
+      rgba(8,6,12,.94) 8%,
+      rgba(8,6,12,.18) 35%,
+      transparent 100%);
+}
+
+.va20-hero__content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(790px, 51vw);
+  min-height: inherit;
+  box-sizing: border-box;
+  padding: clamp(38px, 4.2vw, 80px) var(--va20-edge);
+}
+
+.va20-hero__eyebrow { margin-bottom: .9rem; }
+
+.va20-hero__title {
+  margin: 0;
+  max-width: 13ch;
+  color: var(--va20-text);
+  font-size: clamp(2.9rem, 4.5vw, 5.5rem);
+  line-height: .96;
+  font-weight: 680;
+  letter-spacing: -.047em;
+  text-wrap: balance;
+}
+
+.va20-hero__meta {
+  margin-top: .9rem;
+  color: rgba(246,242,248,.66);
+  font-size: .77rem;
+  font-weight: 570;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.va20-hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: .72rem;
+}
+
+.va20-hero__badges[hidden] { display: none !important; }
+
+.va20-hero__badges span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  color: rgba(246,242,248,.78);
+  background: rgba(17,13,23,.54);
+  border: 1px solid rgba(198,139,255,.13);
+  font-size: .58rem;
+  font-weight: 720;
+  letter-spacing: .08em;
+}
+
+.va20-hero__overview {
+  max-width: 57ch;
+  margin: .9rem 0 0;
+  color: rgba(246,242,248,.68);
+  font-size: clamp(.90rem, .95vw, 1.05rem);
+  line-height: 1.58;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.va20-hero__progress {
+  width: min(360px, 85%);
+  margin-top: .92rem;
+}
+
+.va20-hero__progress[hidden] { display: none !important; }
+
+.va20-hero__progress > span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--va20-text-2);
+  font-size: .68rem;
+}
+
+.va20-hero__progress > div {
+  height: 4px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--va20-progress);
+}
+
+.va20-hero__progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--va20-accent-deep), var(--va20-highlight));
+}
+
+.va20-hero__actions {
+  display: flex;
+  gap: .72rem;
+  flex-wrap: wrap;
+  margin-top: 1.35rem;
+}
+
+.va20-button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 0 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .56rem;
+  font: inherit;
+  font-size: .70rem;
+  font-weight: 760;
+  letter-spacing: .075em;
+  cursor: pointer;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease, color 170ms ease;
+}
+
+.va20-button b { font: inherit; font-weight: inherit; }
+
+.va20-button--primary {
+  background: var(--va20-text);
+  color: #120B18;
+}
+
+.va20-button--secondary {
+  background: rgba(12,9,17,.68);
+  color: var(--va20-text);
+  border: 1px solid rgba(246,242,248,.18);
+  backdrop-filter: blur(8px);
+}
+
+.va20-button--quiet {
+  min-height: 38px;
+  background: rgba(17,13,23,.72);
+  color: var(--va20-highlight);
+  border: 1px solid rgba(198,139,255,.15);
+}
+
+.va20-button:hover,
+.va20-button:focus-visible {
+  transform: translateY(-1px) scale(1.035);
+  outline: none;
+  box-shadow: 0 12px 30px rgba(138,70,232,.22), 0 0 0 2px rgba(198,139,255,.18);
+}
+
+/* ============================================================
+   HOME ROWS & CARD SYSTEM
+============================================================ */
+
+.homeSectionsContainer,
+.libraryPage,
+.page {
+  background-color: transparent !important;
+}
+
+.va20-my-media-source { display: none !important; }
+
+body.va20-page-home .homeSectionsContainer > .verticalSection,
+body.va20-page-home .libraryPage > .verticalSection {
+  padding-left: var(--va20-edge) !important;
+  padding-right: clamp(20px, 2.7vw, 52px) !important;
+  box-sizing: border-box;
+}
+
+.sectionTitle-cards,
+.sectionTitle {
+  color: var(--va20-text) !important;
+  font-weight: 670 !important;
+  letter-spacing: -.015em;
+}
+
+body.va20-page-home .sectionTitle-cards,
+body.va20-page-home .sectionTitle {
+  font-size: clamp(1rem, 1.12vw, 1.30rem) !important;
+  margin-bottom: .66rem !important;
+}
+
+body.va20-viewer .card {
+  transition: transform 175ms ease, filter 175ms ease, opacity 175ms ease !important;
+}
+
+body.va20-viewer .card:hover,
+body.va20-viewer .card:focus-within {
+  transform: scale(1.042);
+  filter: brightness(1.065);
+  z-index: 10;
+}
+
+body.va20-viewer .card:hover .cardBox,
+body.va20-viewer .card:focus-within .cardBox {
+  box-shadow: var(--va20-focus-shadow) !important;
+}
+
+body.va20-viewer .card:hover .cardImageContainer,
+body.va20-viewer .card:focus-within .cardImageContainer {
+  outline: 1px solid rgba(198,139,255,.14);
+}
+
+body.va20-viewer .cardImageContainer {
+  background: #120D18 !important;
+}
+
+body.va20-viewer .playedIndicator,
+body.va20-viewer .countIndicator,
+body.va20-viewer .mediaSourceIndicator,
+body.va20-viewer .videoIndicator {
+  background: var(--va20-accent) !important;
+  color: white !important;
+}
+
+body.va20-viewer .itemProgressBar {
+  background: var(--va20-progress) !important;
+}
+
+body.va20-viewer .itemProgressBarForeground {
+  background: linear-gradient(90deg, var(--va20-accent-deep), var(--va20-highlight)) !important;
+}
+
+body.va20-page-home .va20-row-landscape .cardImageContainer,
+body.va20-page-home .va20-row-landscape .cardScalable,
+body.va20-page-home .va20-row-landscape .cardBox {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+body.va20-page-home .va20-row-wide .card {
+  min-width: min(29vw, 430px) !important;
+}
+
+body.va20-page-home .va20-row-wide .cardImageContainer {
+  border-radius: 12px !important;
+}
+
+/* ============================================================
+   LIBRARY
+============================================================ */
+
+.va20-library-intro {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 150px;
+  padding: 35px var(--va20-edge) 26px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  background:
+    linear-gradient(90deg, rgba(108,44,191,.16), transparent 42%),
+    linear-gradient(180deg, rgba(17,13,23,.76), rgba(8,6,12,.16));
+  border-bottom: 1px solid rgba(255,255,255,.035);
+}
+
+.va20-library-intro h1 {
+  margin: .66rem 0 .28rem;
+  color: var(--va20-text);
+  font-size: clamp(2rem, 3.2vw, 4.2rem);
+  line-height: .94;
+  font-weight: 680;
+  letter-spacing: -.045em;
+}
+
+.va20-library-intro p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--va20-text-2);
+  font-size: .92rem;
+}
+
+.va20-library-intro__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 2px;
+}
+
+body.va20-page-library .libraryPage,
+body.va20-page-library .page {
+  padding-top: 0 !important;
+}
+
+body.va20-page-library .itemsContainer,
+body.va20-page-library .verticalSection {
+  padding-left: var(--va20-edge) !important;
+  padding-right: var(--va20-edge) !important;
+  box-sizing: border-box;
+}
+
+body.va20-page-library .listPaging {
+  margin-top: 24px !important;
+  color: var(--va20-text-2) !important;
+}
+
+body.va20-page-library .alphaPicker {
+  color: var(--va20-text-2) !important;
+}
+
+body.va20-page-library .paper-icon-button-light,
+body.va20-page-library .emby-button {
+  border-radius: 999px !important;
+}
+
+.va20-library-card {
+  position: relative !important;
+}
+
+.va20-library-card .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+.va20-edit-metadata {
+  position: absolute;
+  z-index: 40;
+  right: 8px;
+  bottom: 46px;
+  min-height: 32px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  appearance: none;
+  border-radius: 999px;
+  border: 1px solid rgba(198,139,255,.20);
+  background: rgba(8,6,12,.90);
+  color: var(--va20-text);
+  box-shadow: 0 10px 28px rgba(0,0,0,.36);
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.va20-edit-metadata span {
+  color: var(--va20-highlight);
+  font-size: .90rem;
+}
+
+.va20-edit-metadata b {
+  font-size: .57rem;
+  font-weight: 760;
+  letter-spacing: .08em;
+}
+
+.va20-library-card:hover .va20-edit-metadata,
+.va20-library-card:focus-within .va20-edit-metadata,
+body.va20-metadata-mode .va20-edit-metadata {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.va20-edit-metadata:hover,
+.va20-edit-metadata:focus-visible {
+  background: rgba(108,44,191,.72);
+  outline: 2px solid rgba(198,139,255,.28);
+  outline-offset: 2px;
+}
+
+body.va20-metadata-mode .va20-library-card {
+  outline: 1px solid rgba(198,139,255,.05);
+}
+
+body.va20-metadata-mode .va20-library-card:hover,
+body.va20-metadata-mode .va20-library-card:focus-within {
+  transform: none !important;
+}
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+.va20-search-intro {
+  width: min(980px, 82vw);
+  margin: clamp(45px, 7vh, 90px) auto 22px;
+}
+
+.va20-search-intro h1 {
+  margin: .72rem 0 .45rem;
+  color: var(--va20-text);
+  font-size: clamp(2.6rem, 4.7vw, 5.2rem);
+  line-height: .96;
+  letter-spacing: -.047em;
+  font-weight: 680;
+}
+
+.va20-search-intro p {
+  margin: 0;
+  color: var(--va20-text-2);
+  font-size: 1rem;
+}
+
+body.va20-page-search .searchFields,
+body.va20-page-search .searchField,
+body.va20-page-search .inputContainer {
+  width: min(980px, 82vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.va20-page-search .searchInput,
+body.va20-page-search input[type="search"],
+body.va20-page-search input[placeholder*="search" i] {
+  height: 60px !important;
+  min-height: 60px !important;
+  border-radius: 13px !important;
+  border: 1px solid rgba(198,139,255,.34) !important;
+  background: rgba(17,13,23,.86) !important;
+  color: var(--va20-text) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.22) !important;
+  padding-left: 1rem !important;
+  font-size: 1.02rem !important;
+}
+
+body.va20-page-search .searchInput:focus,
+body.va20-page-search input[type="search"]:focus,
+body.va20-page-search input[placeholder*="search" i]:focus {
+  border-color: rgba(198,139,255,.72) !important;
+  box-shadow: 0 0 0 3px rgba(138,70,232,.13), 0 20px 48px rgba(0,0,0,.28) !important;
+  outline: none !important;
+}
+
+body.va20-page-search .va20-search-section {
+  padding-left: var(--va20-edge) !important;
+  padding-right: var(--va20-edge) !important;
+}
+
+/* ============================================================
+   DETAILS: DECORATE JELLYFIN, DO NOT REBUILD IT
+============================================================ */
+
+body.va20-page-details {
+  background: var(--va20-bg) !important;
+}
+
+body.va20-page-details .itemBackdrop,
+body.va20-page-details .backdropImage {
+  height: min(67vh, 760px) !important;
+  min-height: 440px !important;
+  opacity: .86 !important;
+  filter: saturate(.92) contrast(1.02) brightness(.76) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+}
+
+body.va20-page-details .detailPagePrimaryContainer,
+body.va20-page-details .detailPageContent {
+  position: relative;
+  z-index: 2;
+}
+
+body.va20-page-details .detailPagePrimaryContainer {
+  margin-top: -13vh !important;
+  padding-left: var(--va20-edge) !important;
+  padding-right: var(--va20-edge) !important;
+  background: linear-gradient(90deg, rgba(8,6,12,.94), rgba(8,6,12,.46) 50%, transparent 75%) !important;
+}
+
+body.va20-page-details .detailPagePrimaryContent {
+  max-width: 840px !important;
+}
+
+.va20-detail-brand {
+  margin-bottom: .76rem;
+}
+
+body.va20-page-details .itemName,
+body.va20-page-details .detailPagePrimaryContent h1 {
+  color: var(--va20-text) !important;
+  font-size: clamp(2.9rem, 4.5vw, 5.4rem) !important;
+  line-height: .96 !important;
+  font-weight: 680 !important;
+  letter-spacing: -.047em !important;
+  text-shadow: 0 4px 26px rgba(0,0,0,.30);
+}
+
+body.va20-page-details .itemMiscInfo,
+body.va20-page-details .itemMiscInfo > *,
+body.va20-page-details .overview,
+body.va20-page-details .tagline {
+  color: rgba(246,242,248,.69) !important;
+}
+
+body.va20-page-details .overview {
+  max-width: 64ch !important;
+  line-height: 1.62 !important;
+}
+
+body.va20-page-details .mainDetailButtons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: .64rem !important;
+  margin-top: 1.25rem !important;
+}
+
+body.va20-page-details .mainDetailButtons .emby-button,
+.va20-detail-edit {
+  min-height: 43px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  border-radius: 999px !important;
+  background: rgba(17,13,23,.72) !important;
+  color: var(--va20-text) !important;
+  border: 1px solid rgba(246,242,248,.15) !important;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease !important;
+}
+
+body.va20-page-details .mainDetailButtons .btnPlay {
+  background: var(--va20-text) !important;
+  color: #120B18 !important;
+}
+
+body.va20-page-details .mainDetailButtons .emby-button:hover,
+body.va20-page-details .mainDetailButtons .emby-button:focus-visible {
+  transform: scale(1.035);
+  outline: none !important;
+  box-shadow: 0 13px 28px rgba(0,0,0,.31), 0 12px 28px -20px rgba(138,70,232,.95) !important;
+}
+
+.va20-detail-edit span:first-child {
+  color: var(--va20-highlight);
+  margin-right: 6px;
+}
+
+body.va20-page-details .detailPageSecondaryContainer {
+  padding: 1.6rem var(--va20-edge) 4.5rem !important;
+  background: linear-gradient(180deg, transparent, rgba(17,13,23,.18)) !important;
+}
+
+body.va20-page-details .detailPageSecondaryContainer .sectionTitle,
+body.va20-page-details .detailPageSecondaryContainer h2 {
+  color: var(--va20-text) !important;
+  font-weight: 670 !important;
+  letter-spacing: -.02em !important;
+}
+
+/* Series/Season child rendering stays completely native, only restyled. */
+body.va20-page-details #listChildrenCollapsible,
+body.va20-page-details #childrenCollapsible {
+  width: 100% !important;
+}
+
+body.va20-page-details #listChildrenCollapsible .listItem,
+body.va20-page-details .va20-episode-card {
+  border-radius: 12px !important;
+  border: 1px solid rgba(198,139,255,.055) !important;
+  background: rgba(17,13,23,.35) !important;
+}
+
+body.va20-page-details #listChildrenCollapsible .listItem:hover,
+body.va20-page-details .va20-episode-card:hover {
+  background: rgba(27,16,40,.52) !important;
+}
+
+body.va20-page-details .childrenItemsContainer .cardImageContainer,
+body.va20-page-details .episodeCard .cardImageContainer {
+  border-radius: 10px !important;
+}
+
+body.va20-page-details .peopleItems .cardImageContainer,
+body.va20-page-details .castContent .cardImageContainer {
+  border-radius: 999px !important;
+  border: 1px solid rgba(198,139,255,.08) !important;
+}
+
+body.va20-page-details select,
+body.va20-page-details .selectContainer select {
+  background: var(--va20-bg-raised) !important;
+  color: var(--va20-text) !important;
+  border: 1px solid rgba(198,139,255,.17) !important;
+  border-radius: 10px !important;
+}
+
+/* ============================================================
+   PLAYER
+============================================================ */
+
+.videoOsdBottom,
+.videoOsdControls,
+.osdControls {
+  background: linear-gradient(0deg, rgba(8,6,12,.98), rgba(8,6,12,.86) 54%, transparent) !important;
+}
+
+.videoOsdBottom .emby-button,
+.videoOsdControls .emby-button,
+.osdControls .emby-button {
+  border-radius: 999px !important;
+}
+
+.videoOsdBottom .emby-button:focus,
+.videoOsdBottom .emby-button:hover,
+.videoOsdControls .emby-button:focus,
+.videoOsdControls .emby-button:hover,
+.osdControls .emby-button:focus,
+.osdControls .emby-button:hover {
+  background: rgba(108,44,191,.28) !important;
+  box-shadow: 0 0 0 1px rgba(198,139,255,.15) inset, 0 12px 26px -18px rgba(138,70,232,.9) !important;
+}
+
+/* Jellyfin owns subtitle availability. Never unhide a .hide button. */
+.videoOsdPage .btnSubtitles:not(.hide),
+.videoPlayerContainer .btnSubtitles:not(.hide),
+.videoOsdBottom .btnSubtitles:not(.hide),
+.videoOsdControls .btnSubtitles:not(.hide),
+.osdControls .btnSubtitles:not(.hide) {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ============================================================
+   LIVE TV / IPTV / DVR READY
+============================================================ */
+
+body.va20-page-live .libraryPage,
+body.va20-page-live .page {
+  padding: 2rem var(--va20-edge) !important;
+}
+
+body.va20-page-live .sectionTitle,
+body.va20-page-live h1,
+body.va20-page-live h2 {
+  color: var(--va20-text) !important;
+}
+
+.va20-live-program,
+body.va20-page-live .programCell,
+body.va20-page-live .guideProgram {
+  background: rgba(17,13,23,.78) !important;
+  border-color: rgba(255,255,255,.055) !important;
+  border-radius: 8px !important;
+  transition: transform 170ms ease, box-shadow 170ms ease, background 170ms ease !important;
+}
+
+.va20-live-program:hover,
+.va20-live-program:focus,
+body.va20-page-live .programCell:hover,
+body.va20-page-live .guideProgram:hover {
+  background: rgba(27,16,40,.92) !important;
+  box-shadow: 0 14px 28px rgba(0,0,0,.28), 0 12px 25px -20px rgba(138,70,232,.95) !important;
+  outline: none !important;
+}
+
+body.va20-page-live .recordingIndicator,
+body.va20-page-live .liveTvIndicator {
+  color: var(--va20-highlight) !important;
+}
+
+/* ============================================================
+   DIALOGS / NATIVE JELLYFIN TOOLS
+============================================================ */
+
+body.va20-viewer .dialog,
+body.va20-viewer .actionSheet,
+body.va20-viewer .paperList,
+body.va20-viewer .mainDrawer {
+  background: rgba(12,9,17,.98) !important;
+  color: var(--va20-text) !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+
+body.va20-viewer .dialog,
+body.va20-viewer .actionSheet {
+  box-shadow: 0 28px 80px rgba(0,0,0,.56) !important;
+}
+
+body.va20-viewer .listItem:hover,
+body.va20-viewer .listItem:focus,
+body.va20-viewer .actionSheetMenuItem:hover,
+body.va20-viewer .actionSheetMenuItem:focus {
+  background: rgba(108,44,191,.18) !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1180px) {
+  :root { --va20-nav-height: 64px; }
+
+  #va20-nav {
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    padding: 0 20px;
+  }
+
+  .va20-nav__wordmark { display: none; }
+  .va20-nav__primary,
+  .va20-nav__utility { gap: 14px; }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --va20-nav-height: 58px;
+    --va20-edge: 5%;
+  }
+
+  #va20-nav {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .va20-nav__item {
+    font-size: .60rem;
+    letter-spacing: .08em;
+  }
+
+  .va20-nav__utility .va20-nav__item[data-va20-kind="profile"] {
+    display: none;
+  }
+
+  #va20-home-hero { min-height: 430px; }
+
+  .va20-hero__content {
+    width: min(92vw, 690px);
+    padding: 30px 5% 44px;
+    justify-content: flex-end;
+  }
+
+  .va20-hero__shade {
+    background: linear-gradient(0deg,
+      var(--va20-bg) 0%,
+      rgba(8,6,12,.95) 29%,
+      rgba(8,6,12,.50) 62%,
+      rgba(8,6,12,.15) 100%);
+  }
+
+  .va20-library-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body.va20-page-details .detailPagePrimaryContainer {
+    margin-top: -7vh !important;
+  }
+}
+
+@media (max-width: 680px) {
+  #va20-nav {
+    grid-template-columns: auto 1fr;
+  }
+
+  .va20-nav__primary {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .va20-nav__primary::-webkit-scrollbar { display: none; }
+  .va20-nav__utility { display: none; }
+
+  .va20-edit-metadata b { display: none; }
+  .va20-edit-metadata { bottom: 40px; }
+
+  body.va20-page-details .itemBackdrop,
+  body.va20-page-details .backdropImage {
+    min-height: 350px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .card,
+  .va20-button,
+  .va20-nav__item,
+  .va20-hero__art--backdrop,
+  .va20-edit-metadata {
+    transition: none !important;
+  }
+
+  body.va20-viewer .card:hover,
+  body.va20-viewer .card:focus-within,
+  .va20-button:hover,
+  .va20-button:focus-visible,
+  .va20-nav__item:hover,
+  .va20-nav__item:focus-visible {
+    transform: none !important;
+  }
+}
