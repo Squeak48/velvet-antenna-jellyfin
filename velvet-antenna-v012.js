@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.12.0';
+    const VERSION = '0.12.1';
     const IDS = {
         search: 'va12-search-intro',
         library: 'va12-library-intro',
@@ -10,6 +10,10 @@
 
     let timer = null;
     let detailItemId = '';
+    let detailTypeId = '';
+    let detailType = '';
+    let detailLookupId = '';
+    let detailLookupToken = 0;
 
     function txt(el) {
         return el ? (el.textContent || '').trim() : '';
@@ -457,17 +461,81 @@
         }
     }
 
+    async function resolveDetailType(itemId) {
+        const client = api();
+        const token = ++detailLookupToken;
+
+        if (!client || typeof client.getItem !== 'function' || typeof client.getCurrentUserId !== 'function') {
+            detailTypeId = itemId;
+            detailType = '';
+            detailLookupId = '';
+            schedule(0);
+            return;
+        }
+
+        try {
+            const item = await client.getItem(client.getCurrentUserId(), itemId);
+            if (token !== detailLookupToken || currentItemId() !== itemId) return;
+            detailTypeId = itemId;
+            detailType = item && item.Type ? item.Type : '';
+        } catch (error) {
+            if (token !== detailLookupToken || currentItemId() !== itemId) return;
+            detailTypeId = itemId;
+            detailType = '';
+            console.debug('[Velvet Antenna v0.12] detail type lookup failed', error);
+        }
+
+        detailLookupId = '';
+        schedule(0);
+    }
+
+    function useNativeContainerDetails() {
+        return /^(Series|Season)$/i.test(detailType || '');
+    }
+
     function mountDetails() {
         removeIfOffRoute(IDS.detail, isDetails());
 
         if (!isDetails()) {
             detailItemId = '';
+            detailTypeId = '';
+            detailType = '';
+            detailLookupId = '';
+            detailLookupToken += 1;
             document.body && document.body.classList.remove('va12-detail-ready');
             return;
         }
 
         const itemId = currentItemId();
         if (!itemId) return;
+
+        if (detailTypeId !== itemId) {
+            const current = document.getElementById(IDS.detail);
+            if (current) current.remove();
+            document.body && document.body.classList.remove('va12-detail-ready');
+
+            if (detailLookupId !== itemId) {
+                detailLookupId = itemId;
+                resolveDetailType(itemId);
+            }
+            return;
+        }
+
+        if (useNativeContainerDetails()) {
+            const current = document.getElementById(IDS.detail);
+            if (current) current.remove();
+            document.body && document.body.classList.remove('va12-detail-ready');
+
+            const oldBrand = document.getElementById('va-detail-brand');
+            if (oldBrand) oldBrand.classList.remove('va12-old-detail-brand');
+
+            // Series and Season pages keep Jellyfin's native structure so its
+            // own season/episode/list child rendering remains fully functional.
+            document.querySelectorAll('#listChildrenCollapsible, #childrenCollapsible').forEach(section => {
+                section.style.removeProperty('display');
+            });
+            return;
+        }
 
         const current = document.getElementById(IDS.detail);
         if (current && current.getAttribute('data-item-id') === itemId) {
@@ -523,6 +591,10 @@
 
         window.addEventListener('hashchange', function () {
             document.body && document.body.classList.remove('va12-detail-ready', 'va12-search-query');
+            detailTypeId = '';
+            detailType = '';
+            detailLookupId = '';
+            detailLookupToken += 1;
             [IDS.search, IDS.library, IDS.detail].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.remove();
