@@ -1,16 +1,14 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.17.3';
+    const VERSION = '0.17.4';
     const PENDING_PLAY_KEY = 'va17:pending-local-play';
-    const TV_LIBRARY_CLASS = 'va17-tv-library-native-tabs';
     const PLAY_TTL_MS = 15000;
     const MAX_PLAY_ATTEMPTS = 40;
     const PLAY_RETRY_MS = 150;
 
     let playTimer = null;
     let playAttempts = 0;
-    let routeTimers = [];
 
     function route() {
         return window.location.hash || '';
@@ -18,15 +16,6 @@
 
     function isDetails() {
         return /details\?id=|\/details\//i.test(route());
-    }
-
-    function isTvLibrary() {
-        const value = route().toLowerCase();
-        if (value.startsWith('#/tv') || value.includes('collectiontype=tvshows')) return true;
-
-        const body = document.body;
-        const seriesNav = document.querySelector('#va-global-nav [data-va-kind="series"].va-nav__item--active');
-        return Boolean(body && body.classList.contains('va-page-library') && seriesNav);
     }
 
     function currentDetailsId() {
@@ -219,7 +208,7 @@
         if (button) {
             sessionRemove(PENDING_PLAY_KEY);
             clearPlayTimer();
-            console.log('[Velvet Antenna v0.17.3] using Jellyfin local .btnPlay for', pending.id);
+            console.log('[Velvet Antenna v0.17.4] using Jellyfin local .btnPlay for', pending.id);
             button.click();
             return true;
         }
@@ -228,7 +217,7 @@
         if (playAttempts < MAX_PLAY_ATTEMPTS) {
             playTimer = window.setTimeout(tryPendingPlay, PLAY_RETRY_MS);
         } else {
-            console.warn('[Velvet Antenna v0.17.3] no genuine local .btnPlay found for', pending.id);
+            console.warn('[Velvet Antenna v0.17.4] no genuine local .btnPlay found for', pending.id);
             sessionRemove(PENDING_PLAY_KEY);
         }
         return false;
@@ -284,41 +273,21 @@
         }
     }
 
-    function syncRouteClasses() {
-        if (!document.body) return;
-        document.body.classList.toggle(TV_LIBRARY_CLASS, isTvLibrary());
-    }
-
-    function clearRouteTimers() {
-        routeTimers.forEach(timer => window.clearTimeout(timer));
-        routeTimers = [];
-    }
-
-    function scheduleRouteClassSync() {
-        clearRouteTimers();
-        [0, 250, 900].forEach(delay => {
-            routeTimers.push(window.setTimeout(syncRouteClasses, delay));
-        });
-    }
-
     function onRouteChange() {
         clearPlayTimer();
         playAttempts = 0;
-        scheduleRouteClassSync();
         if (isDetails()) window.setTimeout(tryPendingPlay, 100);
     }
 
     function start() {
         // Intentionally no MutationObserver and no hero/detail DOM rewriting.
-        // v0.17.3 owns action routing plus narrow compatibility restores for
-        // Jellyfin's genuine TV library tabs and subtitle control.
+        // v0.17.4 owns only Velvet Antenna action routing.
         window.addEventListener('click', captureVelvetActions, true);
         window.addEventListener('hashchange', onRouteChange);
         window.addEventListener('popstate', onRouteChange);
 
-        scheduleRouteClassSync();
         if (isDetails()) window.setTimeout(tryPendingPlay, 100);
-        console.log('[Velvet Antenna] v' + VERSION + ' compatibility hotfix loaded');
+        console.log('[Velvet Antenna] v' + VERSION + ' minimal action hotfix loaded');
     }
 
     if (document.readyState === 'loading') {
