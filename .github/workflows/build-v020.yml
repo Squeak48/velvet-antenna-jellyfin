@@ -1,0 +1,71 @@
+name: Build Velvet Antenna v0.20 bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'velvet-antenna-v020-maintenance.js'
+      - '.github/workflows/build-v020.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build monolithic JellyFrame bundle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          bundle_path = Path('velvet-antenna-v020.js')
+          maintenance_path = Path('velvet-antenna-v020-maintenance.js')
+
+          bundle = bundle_path.read_text(encoding='utf-8')
+          marker = re.search(r"\n\(function \(\) \{\n    'use strict';\n\n    if \(window\.__VELVET_ANTENNA_V020\d+_MAINTENANCE__\)", bundle)
+          if not marker:
+              raise SystemExit('Could not find maintenance module boundary in velvet-antenna-v020.js')
+
+          core = bundle[:marker.start()].rstrip()
+          core = re.sub(r"const VERSION = '0\.20\.\d+';", "const VERSION = '0.20.4';", core, count=1)
+          maintenance = maintenance_path.read_text(encoding='utf-8').strip()
+          bundle_path.write_text(core + '\n\n' + maintenance + '\n', encoding='utf-8')
+
+          description = ('Standalone Velvet Antenna release. v0.20.4 fixes duplicate filtering so unresolved cards cannot leak into '
+                         'duplicate results, requires corroborating title evidence for provider-ID matches, and retains Needs ID, native '
+                         'multi-select, playback, Series/Season and metadata-management functionality.')
+
+          for manifest_name in ('mods-v020.json', 'mods-v017.json', 'mods.json'):
+              path = Path(manifest_name)
+              data = json.loads(path.read_text(encoding='utf-8'))
+              changed = False
+              for mod in data:
+                  if mod.get('id') != 'velvet-antenna-v0200':
+                      continue
+                  mod['name'] = 'Velvet Antenna v0.20.4 Standalone'
+                  mod['version'] = '0.20.4'
+                  mod['description'] = description
+                  mod['cssUrl'] = 'https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.4'
+                  mod['jsUrl'] = 'https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.4'
+                  changed = True
+              if changed:
+                  path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit generated bundle
+        run: |
+          if git diff --quiet; then
+            echo 'No generated changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add velvet-antenna-v020.js mods-v020.json mods-v017.json mods.json
+          git commit -m 'Build Velvet Antenna v0.20.4 bundle'
+          git push
