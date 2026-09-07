@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.14.0';
+    const VERSION = '0.14.1';
     const IDS = {
         keyboard: 'va14-search-keyboard',
         libraryNav: 'va14-library-subnav',
@@ -143,18 +143,10 @@
         const pool = heroPool();
         if (!pool.cards.length) return null;
 
+        // Stable deterministic choice. The old lastHero anti-repeat rule caused
+        // a two-item Continue Watching pool to alternate on every DOM mutation.
         const bucket = Math.floor(Date.now() / (60 * 60 * 1000));
-        let index = bucket % pool.cards.length;
-
-        try {
-            const last = localStorage.getItem('va14:lastHero');
-            if (pool.cards.length > 1 && getItemId(pool.cards[index]) === last) {
-                index = (index + 1) % pool.cards.length;
-            }
-        } catch (error) {
-            // Optional.
-        }
-
+        const index = bucket % pool.cards.length;
         return { card: pool.cards[index], mode: pool.mode };
     }
 
@@ -319,12 +311,6 @@
         }
 
         if (!itemId) return;
-
-        try {
-            localStorage.setItem('va14:lastHero', itemId);
-        } catch (error) {
-            // Optional.
-        }
 
         const client = api();
         if (!client || typeof client.getItem !== 'function' || typeof client.getCurrentUserId !== 'function') return;
