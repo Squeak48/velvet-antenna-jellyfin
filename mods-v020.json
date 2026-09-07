@@ -1,10 +1,10 @@
 [
   {
     "id": "velvet-antenna-v0200",
-    "name": "Velvet Antenna v0.20.0 Standalone",
+    "name": "Velvet Antenna v0.20.1 Standalone",
     "author": "James",
-    "description": "Major standalone Velvet Antenna release consolidating the working 0.10/0.12/0.14/0.15/0.17 behaviour into one mod. Adds a stable settled Home hero, exact local playback handoff, native Series/Season support, genuine Jellyfin library tabs and subtitles, premium search/library/detail/player styling, future Live TV presentation and administrator metadata-management controls for fixing unmatched media directly from library cards.",
-    "version": "0.20.0",
+    "description": "Standalone Velvet Antenna release. v0.20.1 restores Jellyfin card artwork that v0.20.0 accidentally masked and separates native library tabs cleanly from the branded library header, while retaining the consolidated Home, playback, Series/Season, subtitle, metadata-management, search and Live TV-ready behaviour.",
+    "version": "0.20.1",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -25,8 +25,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.0",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.0",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.1",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.1",
     "requires": []
   }
 ]
