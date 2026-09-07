@@ -66,15 +66,15 @@
   },
   {
     "id": "velvet-antenna-v0200",
-    "name": "Velvet Antenna v0.20.2 Standalone",
+    "name": "Velvet Antenna v0.20.3 Standalone",
     "author": "James",
-    "description": "Standalone Velvet Antenna release. v0.20.2 adds administrator cleanup tools for Needs ID and likely duplicate detection, preserves Jellyfin native multi-select for bulk Delete/Group Versions, and retains the consolidated Home, playback, Series/Season, subtitle, metadata-management, search and Live TV-ready behaviour.",
-    "version": "0.20.2",
+    "description": "Standalone Velvet Antenna release. v0.20.3 restores a single-file runtime after the v0.20.2 secondary-script loader was blocked, while retaining administrator Needs ID and duplicate cleanup tools plus native Jellyfin multi-select for bulk Delete/Group Versions.",
+    "version": "0.20.3",
     "jellyfin": "10.11+",
     "tags": ["ui", "home", "cinematic", "navigation", "playback", "details", "libraries", "series", "subtitles", "metadata", "admin", "cleanup", "duplicates", "multi-select", "search", "live-tv", "stability", "standalone", "velvet-antenna"],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.2",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.2",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.3",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.3",
     "requires": []
   }
 ]
