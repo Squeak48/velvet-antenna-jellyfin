@@ -89,10 +89,10 @@
   },
   {
     "id": "velvet-antenna-v0170",
-    "name": "Velvet Antenna v0.17.3 Compatibility Hotfix",
+    "name": "Velvet Antenna v0.17.4 Stability Hotfix",
     "author": "James",
-    "description": "Compatibility hotfix preserving v0.17.2 local playback routing while restoring Jellyfin 10.11's genuine TV Series/Episodes library tabs and ensuring Jellyfin's genuine subtitle button remains visible whenever subtitle tracks are available.",
-    "version": "0.17.3",
+    "description": "Stability rollback to the proven v0.17.2 action-only JavaScript. Restores Jellyfin's genuine library tabs, including TV Series and Episodes, and preserves genuine subtitle controls using CSS only, with no new route timers or home-hero behaviour.",
+    "version": "0.17.4",
     "jellyfin": "10.11+",
     "tags": [
       "playback",
@@ -104,8 +104,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.3",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.3",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.4",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.4",
     "requires": [
       "velvet-antenna-v0150"
     ]
