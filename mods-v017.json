@@ -6,7 +6,13 @@
     "description": "Velvet Antenna base viewer shell: persistent navigation, home hero, core cards, library tabs and viewer styling.",
     "version": "0.10.0",
     "jellyfin": "10.11+",
-    "tags": ["ui", "home", "cinematic", "navigation", "velvet-antenna"],
+    "tags": [
+      "ui",
+      "home",
+      "cinematic",
+      "navigation",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.css?v=0.10.0",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna.js?v=0.10.0",
@@ -19,11 +25,20 @@
     "description": "Detail and library layer. v0.12.1 preserves Jellyfin's native Series and Season detail pages so season and episode rendering remains functional, while retaining Velvet Antenna cinematic detail treatment for playable items.",
     "version": "0.12.1",
     "jellyfin": "10.11+",
-    "tags": ["ui", "search", "details", "libraries", "stability", "velvet-antenna"],
+    "tags": [
+      "ui",
+      "search",
+      "details",
+      "libraries",
+      "stability",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.css?v=0.12.1",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v012.js?v=0.12.1",
-    "requires": ["velvet-antenna-v0100"]
+    "requires": [
+      "velvet-antenna-v0100"
+    ]
   },
   {
     "id": "velvet-antenna-v0140",
@@ -32,11 +47,24 @@
     "description": "Design expansion with stable deterministic Home hero selection. v0.14.1 removes the lastHero anti-repeat rule that caused two Continue Watching items to ping-pong on every DOM mutation.",
     "version": "0.14.1",
     "jellyfin": "10.11+",
-    "tags": ["ui", "home", "search", "details", "libraries", "player", "remote", "cinematic", "stability", "velvet-antenna"],
+    "tags": [
+      "ui",
+      "home",
+      "search",
+      "details",
+      "libraries",
+      "player",
+      "remote",
+      "cinematic",
+      "stability",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.css?v=0.14.1",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v014.js?v=0.14.1",
-    "requires": ["velvet-antenna-v0120"]
+    "requires": [
+      "velvet-antenna-v0120"
+    ]
   },
   {
     "id": "velvet-antenna-v0150",
@@ -45,11 +73,20 @@
     "description": "Reliability pass: hides hero selection churn while the home page settles, makes More Info navigate directly, makes Play use Jellyfin's own player via a safe detail-page handoff, and gives non-playable series/folders explicit View/Open actions.",
     "version": "0.15.0",
     "jellyfin": "10.11+",
-    "tags": ["ui", "home", "playback", "details", "stability", "velvet-antenna"],
+    "tags": [
+      "ui",
+      "home",
+      "playback",
+      "details",
+      "stability",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v015.css?v=0.15.0",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v015.js?v=0.15.0",
-    "requires": ["velvet-antenna-v0140"]
+    "requires": [
+      "velvet-antenna-v0140"
+    ]
   },
   {
     "id": "velvet-antenna-v0170",
@@ -58,23 +95,53 @@
     "description": "Functional hotfix preserving strict local playback routing and genuine Jellyfin subtitle/library controls. This release also publishes source-level v0.12.1 Series/Season compatibility and v0.14.1 Home hero stability fixes.",
     "version": "0.17.5",
     "jellyfin": "10.11+",
-    "tags": ["playback", "details", "libraries", "subtitles", "hotfix", "stability", "velvet-antenna"],
+    "tags": [
+      "playback",
+      "details",
+      "libraries",
+      "subtitles",
+      "hotfix",
+      "stability",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.css?v=0.17.5",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v017.js?v=0.17.5",
-    "requires": ["velvet-antenna-v0150"]
+    "requires": [
+      "velvet-antenna-v0150"
+    ]
   },
   {
     "id": "velvet-antenna-v0200",
-    "name": "Velvet Antenna v0.20.3 Standalone",
+    "name": "Velvet Antenna v0.20.4 Standalone",
     "author": "James",
-    "description": "Standalone Velvet Antenna release. v0.20.3 restores a single-file runtime after the v0.20.2 secondary-script loader was blocked, while retaining administrator Needs ID and duplicate cleanup tools plus native Jellyfin multi-select for bulk Delete/Group Versions.",
-    "version": "0.20.3",
+    "description": "Standalone Velvet Antenna release. v0.20.4 fixes duplicate filtering so unresolved cards cannot leak into duplicate results, requires corroborating title evidence for provider-ID matches, and retains Needs ID, native multi-select, playback, Series/Season and metadata-management functionality.",
+    "version": "0.20.4",
     "jellyfin": "10.11+",
-    "tags": ["ui", "home", "cinematic", "navigation", "playback", "details", "libraries", "series", "subtitles", "metadata", "admin", "cleanup", "duplicates", "multi-select", "search", "live-tv", "stability", "standalone", "velvet-antenna"],
+    "tags": [
+      "ui",
+      "home",
+      "cinematic",
+      "navigation",
+      "playback",
+      "details",
+      "libraries",
+      "series",
+      "subtitles",
+      "metadata",
+      "admin",
+      "cleanup",
+      "duplicates",
+      "multi-select",
+      "search",
+      "live-tv",
+      "stability",
+      "standalone",
+      "velvet-antenna"
+    ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.3",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.3",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.4",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.4",
     "requires": []
   }
 ]
