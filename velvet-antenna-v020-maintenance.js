@@ -1,10 +1,10 @@
 (function () {
     'use strict';
 
-    if (window.__VELVET_ANTENNA_V0202_MAINTENANCE__) return;
-    window.__VELVET_ANTENNA_V0202_MAINTENANCE__ = true;
+    if (window.__VELVET_ANTENNA_V0204_MAINTENANCE__) return;
+    window.__VELVET_ANTENNA_V0204_MAINTENANCE__ = true;
 
-    const VERSION = '0.20.2';
+    const VERSION = '0.20.4';
     const STYLE_ID = 'va20-maintenance-style';
     const TOOL_ATTR = 'data-va20-maintenance';
     const MAX_BATCH = 100;
@@ -65,21 +65,26 @@
         return match && match[1] ? decodeURIComponent(match[1]) : '';
     }
 
-    function cardTitle(card) {
-        if (!card) return '';
-        const first = card.querySelector('.cardText-first, .cardText, .itemName, [title]');
-        return ((first && (first.textContent || first.getAttribute('title'))) || card.getAttribute('aria-label') || '').trim();
+    function allLibraryCards() {
+        return Array.from(document.querySelectorAll('.va20-library-card.card, body.va20-page-library .card')).filter(card => {
+            return !card.closest('#va20-library-intro');
+        });
     }
 
     function libraryCards() {
         const seen = new Set();
-        return Array.from(document.querySelectorAll('.va20-library-card.card, body.va20-page-library .card')).filter(card => {
-            if (card.closest('#va20-library-intro')) return false;
+        return allLibraryCards().filter(card => {
             const id = cardItemId(card);
             if (!id || seen.has(id)) return false;
             seen.add(id);
             return true;
         });
+    }
+
+    function cardTitle(card) {
+        if (!card) return '';
+        const first = card.querySelector('.cardText-first, .cardText, .itemName, [title]');
+        return ((first && (first.textContent || first.getAttribute('title'))) || card.getAttribute('aria-label') || '').trim();
     }
 
     async function resolveAdmin() {
@@ -116,7 +121,7 @@
                     EnableTotalRecordCount: false
                 });
             } catch (error) {
-                console.warn('[Velvet Antenna] v0.20.2 batch metadata lookup failed', error);
+                console.warn('[Velvet Antenna] v0.20.4 batch metadata lookup failed', error);
             }
             if (result && Array.isArray(result.Items)) items.push(...result.Items);
         }
@@ -204,7 +209,7 @@
     }
 
     function clearCardAnnotations() {
-        libraryCards().forEach(card => {
+        allLibraryCards().forEach(card => {
             card.classList.remove('va20-maint-hidden', 'va20-needs-id', 'va20-duplicate');
             card.removeAttribute('data-va20-duplicate-group');
             card.querySelectorAll('.va20-maint-card-info').forEach(el => el.remove());
@@ -267,14 +272,24 @@
     }
 
     async function scanNeedsId(token) {
+        const allCards = allLibraryCards();
         const cards = libraryCards();
         const ids = cards.map(cardItemId).filter(Boolean);
         const items = await fetchItems(ids);
         if (token !== STATE.scanToken || STATE.mode !== 'needs-id') return;
         STATE.itemMap = new Map(items.map(item => [String(item.Id), item]));
         let count = 0;
-        cards.forEach(card => {
+        let unresolved = 0;
+        allCards.forEach(card => {
             const id = cardItemId(card);
+            if (!id) {
+                unresolved += 1;
+                count += 1;
+                card.classList.remove('va20-maint-hidden');
+                card.classList.add('va20-needs-id');
+                annotateCard(card, 'NEEDS ID', 'No resolvable Jellyfin item ID', cardTitle(card));
+                return;
+            }
             const item = STATE.itemMap.get(String(id));
             const needsId = item ? !hasProviderId(item) : true;
             card.classList.toggle('va20-maint-hidden', !needsId);
@@ -286,13 +301,20 @@
         });
         if (document.body) document.body.classList.add('va20-maint-needs-id');
         STATE.busy = false;
-        setStatus(count + ' of ' + cards.length + ' loaded items need identification', false);
+        setStatus(count + ' of ' + allCards.length + ' loaded items need identification' + (unresolved ? ' • ' + unresolved + ' unresolved card' + (unresolved === 1 ? '' : 's') : ''), false);
+    }
+
+    function sharedStrongProvider(a, b) {
+        const left = new Set(strongProviderKeys(a));
+        return strongProviderKeys(b).some(key => left.has(key));
     }
 
     function duplicateComponents(items) {
         const ids = items.map(item => String(item.Id));
         const parent = new Map(ids.map(id => [id, id]));
         const reason = new Map();
+        const byId = new Map(items.map(item => [String(item.Id), item]));
+
         function find(id) {
             let root = parent.get(id) || id;
             while (root !== parent.get(root)) root = parent.get(root);
@@ -304,38 +326,42 @@
             }
             return root;
         }
+
         function union(a, b, why) {
             const ra = find(a);
             const rb = find(b);
             if (ra === rb) return;
             parent.set(rb, ra);
             const existing = reason.get(ra) || reason.get(rb);
-            reason.set(ra, existing === 'provider' || why === 'provider' ? 'provider' : why);
+            reason.set(ra, existing === 'provider+title' || why === 'provider+title' ? 'provider+title' : why);
         }
-        function unionBucket(bucket, why) {
-            if (bucket.length < 2) return;
-            for (let i = 1; i < bucket.length; i += 1) union(bucket[0], bucket[i], why);
-        }
-
-        const providerBuckets = new Map();
-        items.forEach(item => {
-            strongProviderKeys(item).forEach(key => {
-                if (!providerBuckets.has(key)) providerBuckets.set(key, []);
-                providerBuckets.get(key).push(String(item.Id));
-            });
-        });
-        providerBuckets.forEach(bucket => unionBucket(Array.from(new Set(bucket)), 'provider'));
 
         const titleBuckets = new Map();
         items.forEach(item => {
             const name = titleKey(item.Name);
-            const year = Number(item.ProductionYear || 0);
-            if (!name || !year) return;
-            const key = name + '|' + year;
-            if (!titleBuckets.has(key)) titleBuckets.set(key, []);
-            titleBuckets.get(key).push(String(item.Id));
+            if (!name) return;
+            if (!titleBuckets.has(name)) titleBuckets.set(name, []);
+            titleBuckets.get(name).push(item);
         });
-        titleBuckets.forEach(bucket => unionBucket(Array.from(new Set(bucket)), 'title-year'));
+
+        titleBuckets.forEach(bucket => {
+            if (bucket.length < 2) return;
+            for (let i = 0; i < bucket.length; i += 1) {
+                for (let j = i + 1; j < bucket.length; j += 1) {
+                    const a = bucket[i];
+                    const b = bucket[j];
+                    const yearA = Number(a.ProductionYear || 0);
+                    const yearB = Number(b.ProductionYear || 0);
+                    const sameYear = Boolean(yearA && yearB && yearA === yearB);
+                    const compatibleYear = !yearA || !yearB || sameYear;
+                    const providerMatch = sharedStrongProvider(a, b);
+                    if (!compatibleYear) continue;
+                    if (providerMatch || sameYear) {
+                        union(String(a.Id), String(b.Id), providerMatch ? 'provider+title' : 'title-year');
+                    }
+                }
+            }
+        });
 
         const groups = new Map();
         ids.forEach(id => {
@@ -343,13 +369,28 @@
             if (!groups.has(root)) groups.set(root, []);
             groups.get(root).push(id);
         });
+
         return Array.from(groups.entries())
             .filter(entry => entry[1].length > 1)
-            .map(entry => ({ ids: entry[1], reason: reason.get(find(entry[0])) || 'title-year' }));
+            .map(entry => ({
+                ids: entry[1],
+                reason: reason.get(find(entry[0])) || 'title-year',
+                items: entry[1].map(id => byId.get(id)).filter(Boolean)
+            }));
     }
 
     async function scanDuplicates(token) {
+        const allCards = allLibraryCards();
         const cards = libraryCards();
+        const unresolved = allCards.filter(card => !cardItemId(card)).length;
+
+        allCards.forEach(card => {
+            card.classList.add('va20-maint-hidden');
+            card.classList.remove('va20-duplicate');
+            card.removeAttribute('data-va20-duplicate-group');
+            card.querySelectorAll('.va20-maint-card-info').forEach(el => el.remove());
+        });
+
         const ids = cards.map(cardItemId).filter(Boolean);
         const items = await fetchItems(ids);
         if (token !== STATE.scanToken || STATE.mode !== 'duplicates') return;
@@ -361,18 +402,18 @@
         cards.forEach(card => {
             const id = String(cardItemId(card));
             const membership = memberships.get(id);
-            card.classList.toggle('va20-maint-hidden', !membership);
-            card.classList.toggle('va20-duplicate', Boolean(membership));
             if (!membership) return;
+            card.classList.remove('va20-maint-hidden');
+            card.classList.add('va20-duplicate');
             visible += 1;
             card.setAttribute('data-va20-duplicate-group', String(membership.index));
             const item = STATE.itemMap.get(id);
-            const reason = membership.reason === 'provider' ? 'same provider ID' : 'same title/year';
-            annotateCard(card, 'DUP ' + membership.index, qualitySummary(item), reason + (fileName(item) ? ' • ' + fileName(item) : ''));
+            const matchReason = membership.reason === 'provider+title' ? 'same title + provider ID' : 'same title/year';
+            annotateCard(card, 'DUP ' + membership.index, qualitySummary(item), matchReason + (fileName(item) ? ' • ' + fileName(item) : ''));
         });
         if (document.body) document.body.classList.add('va20-maint-duplicates');
         STATE.busy = false;
-        setStatus(groups.length + ' duplicate groups • ' + visible + ' items on this loaded page', false);
+        setStatus(groups.length + ' duplicate group' + (groups.length === 1 ? '' : 's') + ' • ' + visible + ' confirmed item' + (visible === 1 ? '' : 's') + (unresolved ? ' • ' + unresolved + ' unresolved card' + (unresolved === 1 ? '' : 's') + ' hidden' : ''), false);
     }
 
     async function toggleMode(mode) {
@@ -387,12 +428,12 @@
         STATE.itemMap.clear();
         updateButtons();
         const token = ++STATE.scanToken;
-        setStatus(mode === 'needs-id' ? 'Checking provider IDs…' : 'Comparing provider IDs, titles and media…', true);
+        setStatus(mode === 'needs-id' ? 'Checking provider IDs…' : 'Comparing titles, years, provider IDs and media…', true);
         try {
             if (mode === 'needs-id') await scanNeedsId(token);
             else await scanDuplicates(token);
         } catch (error) {
-            console.error('[Velvet Antenna] v0.20.2 maintenance scan failed', error);
+            console.error('[Velvet Antenna] v0.20.4 maintenance scan failed', error);
             if (token === STATE.scanToken) setModeOff('Scan failed. Toggle the tool to retry.');
         }
     }
@@ -405,7 +446,7 @@
         button.textContent = label;
         button.title = mode === 'needs-id'
             ? 'Show loaded Movies/Series with no external provider IDs'
-            : 'Show likely duplicate Movies/Series on the current loaded page';
+            : 'Show confirmed likely duplicate Movies/Series on the current loaded page';
         button.addEventListener('click', function () { toggleMode(mode); });
         return button;
     }
@@ -437,17 +478,6 @@
     function syncSelectionCompatibility() {
         const active = selectionActive();
         if (document.body) document.body.classList.toggle('va20-selection-active', active);
-        document.querySelectorAll('.va20-library-card.card, body.va20-page-library .card').forEach(card => {
-            if (active) {
-                if (!card.hasAttribute('role')) {
-                    card.setAttribute('role', 'button');
-                    card.setAttribute('data-va20-selection-role', '1');
-                }
-            } else if (card.getAttribute('data-va20-selection-role') === '1') {
-                card.removeAttribute('role');
-                card.removeAttribute('data-va20-selection-role');
-            }
-        });
     }
 
     function injectStyle() {
@@ -459,10 +489,9 @@
                 background: rgba(108,44,191,.58) !important;
                 color: #fff !important;
                 border-color: rgba(198,139,255,.48) !important;
-                box-shadow: 0 0 0 1px rgba(198,139,255,.10) inset, 0 10px 25px rgba(0,0,0,.24);
             }
             .va20-maint-status {
-                max-width: 260px;
+                max-width: 300px;
                 color: rgba(246,242,248,.52);
                 font-size: .62rem;
                 line-height: 1.35;
@@ -495,7 +524,6 @@
                 font-size: .55rem;
                 font-weight: 800;
                 letter-spacing: .08em;
-                box-shadow: 0 8px 22px rgba(0,0,0,.34);
             }
             .va20-maint-summary {
                 min-width: 0;
