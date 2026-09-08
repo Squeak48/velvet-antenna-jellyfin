@@ -1,0 +1,651 @@
+/* ============================================================
+   LIBRARY / VELVET LENS
+============================================================ */
+
+body.va21-page-library #reactRoot {
+  padding-top: var(--va21-nav-h) !important;
+}
+
+body.va21-page-library .libraryPage,
+body.va21-page-library .page {
+  padding-top: 0 !important;
+  background: transparent !important;
+}
+
+#va21-library-stage {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: clamp(330px, 40vh, 500px);
+  margin-top: 50px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 76% 28%, rgba(119,48,177,.12), transparent 32%),
+    linear-gradient(120deg, #0B0710, #07050A 68%);
+  border-bottom: 1px solid rgba(255,255,255,.045);
+}
+
+.va21-stage__art {
+  position: absolute;
+  inset: 0 0 0 39%;
+  z-index: 0;
+  background-image: var(--va21-stage-backdrop, none);
+  background-position: center 28%;
+  background-size: cover;
+  opacity: 0;
+  filter: saturate(.88) brightness(.72) contrast(1.03);
+  transform: scale(1.015);
+  transition: opacity 260ms ease;
+}
+
+.va21-stage.art-ready .va21-stage__art {
+  opacity: .94;
+}
+
+.va21-stage__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(7,5,10,1) 0%,
+      rgba(7,5,10,.99) 25%,
+      rgba(7,5,10,.82) 43%,
+      rgba(7,5,10,.20) 72%,
+      rgba(7,5,10,.04) 100%),
+    linear-gradient(0deg, rgba(7,5,10,.94) 0%, transparent 38%);
+}
+
+.va21-stage__noise {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .18;
+  background-image:
+    repeating-linear-gradient(90deg,
+      transparent 0,
+      transparent 12.5%,
+      rgba(215,166,255,.025) 12.55%,
+      transparent 12.7%);
+}
+
+.va21-stage__content {
+  position: relative;
+  z-index: 4;
+  width: min(690px, 52vw);
+  min-height: inherit;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 42px var(--va21-edge);
+}
+
+.va21-stage__title {
+  margin: .62rem 0 0;
+  max-width: 12ch;
+  color: var(--va21-text);
+  font-size: clamp(2.6rem, 4vw, 5.2rem);
+  line-height: .92;
+  font-weight: 680;
+  letter-spacing: -.052em;
+  text-wrap: balance;
+}
+
+.va21-stage__meta {
+  margin-top: .8rem;
+  min-height: 1em;
+  color: rgba(247,243,250,.56);
+  font-size: .68rem;
+  font-weight: 650;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.va21-stage__overview {
+  max-width: 58ch;
+  min-height: 3.1em;
+  margin: .82rem 0 0;
+  color: rgba(247,243,250,.64);
+  line-height: 1.54;
+  font-size: .88rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.va21-stage__side {
+  position: absolute;
+  z-index: 5;
+  top: 30px;
+  right: var(--va21-edge);
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.va21-stage__count {
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: rgba(247,243,250,.42);
+  background: rgba(7,5,10,.42);
+  border: 1px solid rgba(255,255,255,.06);
+  font-size: .54rem;
+  font-weight: 720;
+  letter-spacing: .15em;
+  backdrop-filter: blur(8px);
+}
+
+.va21-stage__tools {
+  display: none;
+  flex-direction: column;
+  gap: 7px;
+  width: 210px;
+  pointer-events: auto;
+}
+
+body.va21-admin .va21-stage__tools {
+  display: flex !important;
+}
+
+.va21-tool {
+  appearance: none;
+  width: 100%;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  background: rgba(9,6,13,.68);
+  border: 1px solid rgba(215,166,255,.12);
+  color: var(--va21-text);
+  backdrop-filter: blur(12px);
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.va21-tool:hover,
+.va21-tool:focus-visible {
+  background: rgba(90,36,137,.42);
+  border-color: rgba(215,166,255,.28);
+  transform: translateX(-3px);
+  outline: none;
+}
+
+.va21-tool b {
+  font-size: .61rem;
+  font-weight: 760;
+  letter-spacing: .10em;
+}
+
+.va21-tool span {
+  color: rgba(247,243,250,.46);
+  font-size: .57rem;
+}
+
+body.va21-page-library .itemsContainer,
+body.va21-page-library .verticalSection {
+  padding-left: var(--va21-edge) !important;
+  padding-right: var(--va21-edge) !important;
+  box-sizing: border-box;
+}
+
+body.va21-page-library .itemsContainer {
+  padding-top: 26px !important;
+}
+
+body.va21-page-library .listPaging {
+  color: var(--va21-text-2) !important;
+  margin-top: 20px !important;
+}
+
+body.va21-page-library .alphaPicker {
+  color: rgba(247,243,250,.46) !important;
+}
+
+body.va21-page-library .paper-icon-button-light,
+body.va21-page-library .emby-button {
+  border-radius: 999px !important;
+}
+
+body.va21-page-library .cardText {
+  color: rgba(247,243,250,.72) !important;
+}
+
+body.va21-page-library .cardText-secondary {
+  color: rgba(247,243,250,.40) !important;
+}
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+#va21-search-stage {
+  width: min(1080px, 84vw);
+  margin: clamp(48px, 8vh, 92px) auto 24px;
+}
+
+.va21-search-stage h1 {
+  margin: .7rem 0 .35rem;
+  color: var(--va21-text);
+  font-size: clamp(3rem, 5vw, 5.8rem);
+  line-height: .9;
+  font-weight: 680;
+  letter-spacing: -.055em;
+}
+
+.va21-search-stage p {
+  margin: 0;
+  color: var(--va21-text-2);
+  font-size: .92rem;
+}
+
+body.va21-page-search .searchFields,
+body.va21-page-search .searchField,
+body.va21-page-search .inputContainer {
+  width: min(1080px, 84vw) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+body.va21-page-search .searchInput,
+body.va21-page-search input[type="search"],
+body.va21-page-search input[placeholder*="search" i] {
+  min-height: 64px !important;
+  border-radius: 16px !important;
+  padding-left: 18px !important;
+  background: rgba(18,12,25,.82) !important;
+  color: var(--va21-text) !important;
+  border: 1px solid rgba(215,166,255,.18) !important;
+  box-shadow: 0 22px 55px rgba(0,0,0,.24) !important;
+  font-size: 1.03rem !important;
+}
+
+body.va21-page-search .searchInput:focus,
+body.va21-page-search input[type="search"]:focus,
+body.va21-page-search input[placeholder*="search" i]:focus {
+  outline: none !important;
+  border-color: rgba(215,166,255,.56) !important;
+  box-shadow: 0 0 0 3px rgba(155,82,245,.12), 0 26px 60px rgba(0,0,0,.28) !important;
+}
+
+/* ============================================================
+   DETAILS
+============================================================ */
+
+body.va21-page-details {
+  background: var(--va21-bg) !important;
+}
+
+body.va21-page-details .itemBackdrop,
+body.va21-page-details .backdropImage {
+  min-height: 500px !important;
+  height: min(72vh, 820px) !important;
+  opacity: .92 !important;
+  filter: saturate(.90) contrast(1.03) brightness(.67) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
+}
+
+body.va21-page-details .detailPagePrimaryContainer,
+body.va21-page-details .detailPageContent {
+  position: relative;
+  z-index: 3;
+}
+
+body.va21-page-details .detailPagePrimaryContainer {
+  padding-left: var(--va21-edge) !important;
+  padding-right: var(--va21-edge) !important;
+}
+
+body.va21-page-details .detailPageSecondaryContainer,
+body.va21-page-details .detailPageContent {
+  padding-left: var(--va21-edge) !important;
+  padding-right: var(--va21-edge) !important;
+  box-sizing: border-box;
+}
+
+#va21-detail-brand {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 7px;
+  margin-bottom: 9px;
+  color: rgba(247,243,250,.38);
+  font-size: .57rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+#va21-detail-brand span {
+  color: var(--va21-accent-2);
+}
+
+body.va21-page-details .itemName {
+  color: var(--va21-text) !important;
+  font-size: clamp(2.7rem, 4.2vw, 5.3rem) !important;
+  line-height: .92 !important;
+  font-weight: 680 !important;
+  letter-spacing: -.052em !important;
+}
+
+body.va21-page-details .overview {
+  max-width: 70ch;
+  color: rgba(247,243,250,.66) !important;
+  line-height: 1.58 !important;
+}
+
+body.va21-page-details .mainDetailButtons .emby-button,
+body.va21-page-details .btnPlay {
+  border-radius: 999px !important;
+}
+
+.va21-detail-edit {
+  color: var(--va21-accent-2) !important;
+}
+
+/* Series/Season functionality remains native. */
+body.va21-page-details #listChildrenCollapsible,
+body.va21-page-details .childrenItemsContainer,
+body.va21-page-details .detailSection {
+  position: relative;
+  z-index: 4;
+}
+
+body.va21-page-details .episodeCard,
+body.va21-page-details #listChildrenCollapsible .listItem {
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.025) !important;
+}
+
+/* Player functionality stays Jellyfin-native. */
+body.va21-player-active .btnSubtitles:not(.hide) {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* ============================================================
+   ADMIN WORKBENCH
+============================================================ */
+
+body.va21-workbench-open {
+  overflow: hidden !important;
+}
+
+#va21-workbench {
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  display: grid;
+  place-items: center;
+}
+
+.va21-workbench__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4,3,6,.74);
+  backdrop-filter: blur(14px);
+}
+
+.va21-workbench__panel {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, 91vw);
+  height: min(820px, 88vh);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(112,45,168,.16), transparent 34%),
+    #0D0912;
+  border: 1px solid rgba(215,166,255,.14);
+  box-shadow: 0 45px 120px rgba(0,0,0,.62);
+}
+
+.va21-workbench__panel > header {
+  min-height: 112px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 26px;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+.va21-workbench__panel h2 {
+  margin: .48rem 0 .18rem;
+  color: var(--va21-text);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: .95;
+  letter-spacing: -.04em;
+  font-weight: 670;
+}
+
+.va21-workbench__status {
+  margin: 0;
+  color: rgba(247,243,250,.52);
+  font-size: .72rem;
+}
+
+.va21-workbench__close {
+  appearance: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.035);
+  color: var(--va21-text);
+  font-size: 1.5rem;
+}
+
+.va21-workbench__body {
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 20px 20px;
+}
+
+.va21-wb-row {
+  min-height: 106px;
+  display: grid;
+  grid-template-columns: 68px minmax(0,1fr) auto;
+  gap: 15px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.va21-wb-row:hover {
+  background: rgba(255,255,255,.022);
+}
+
+.va21-wb-row__art {
+  width: 62px;
+  height: 88px;
+  border-radius: 8px;
+  background-color: #181020;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,.26);
+}
+
+.va21-wb-row__copy {
+  min-width: 0;
+}
+
+.va21-wb-row__group {
+  margin-bottom: 4px;
+  color: var(--va21-accent-2);
+  font-size: .53rem;
+  font-weight: 760;
+  letter-spacing: .13em;
+}
+
+.va21-wb-row h3 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--va21-text);
+  font-size: 1rem;
+  font-weight: 660;
+}
+
+.va21-wb-row__meta {
+  margin-top: 4px;
+  color: rgba(247,243,250,.52);
+  font-size: .66rem;
+}
+
+.va21-wb-row__path {
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(247,243,250,.30);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: .59rem;
+}
+
+.va21-wb-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.va21-workbench__panel > footer {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 18px;
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+
+.va21-workbench__page {
+  min-width: 110px;
+  text-align: center;
+  color: rgba(247,243,250,.48);
+  font-size: .61rem;
+  font-weight: 700;
+  letter-spacing: .10em;
+}
+
+.va21-spinner,
+.va21-empty {
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  color: rgba(247,243,250,.42);
+  font-size: .68rem;
+  font-weight: 720;
+  letter-spacing: .16em;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1050px) {
+  #va21-nav {
+    grid-template-columns: minmax(230px, 1fr) auto;
+  }
+
+  .va21-nav__utility {
+    display: none;
+  }
+
+  .va21-stage__side {
+    display: none;
+  }
+
+  .va21-stage__content {
+    width: min(760px, 66vw);
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --va21-nav-h: 64px;
+    --va21-edge: 18px;
+  }
+
+  #va21-nav {
+    grid-template-columns: 1fr;
+    padding: 0 14px;
+  }
+
+  .va21-nav__identity {
+    width: 100%;
+  }
+
+  .va21-nav__primary {
+    display: none;
+  }
+
+  .va21-nav__wordmark {
+    font-size: .66rem;
+  }
+
+  .va21-hero__content,
+  .va21-stage__content {
+    width: 100%;
+  }
+
+  .va21-hero__title {
+    font-size: clamp(2.7rem, 13vw, 4.6rem);
+  }
+
+  .va21-stage__title {
+    font-size: clamp(2.3rem, 11vw, 4rem);
+  }
+
+  .va21-hero__art--backdrop,
+  .va21-stage__art {
+    opacity: .38 !important;
+  }
+
+  .va21-hero__shade,
+  .va21-stage__shade {
+    background: linear-gradient(90deg, rgba(7,5,10,.98), rgba(7,5,10,.74)) !important;
+  }
+
+  .va21-hero__index,
+  .va21-stage__side {
+    display: none;
+  }
+
+  .va21-workbench__panel {
+    width: 96vw;
+    height: 92vh;
+  }
+
+  .va21-wb-row {
+    grid-template-columns: 54px minmax(0,1fr);
+  }
+
+  .va21-wb-row__art {
+    width: 48px;
+    height: 70px;
+  }
+
+  .va21-wb-row__actions {
+    grid-column: 1 / -1;
+    padding-left: 69px;
+  }
+}
