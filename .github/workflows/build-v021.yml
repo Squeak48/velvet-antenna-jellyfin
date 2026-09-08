@@ -33,13 +33,14 @@ jobs:
             src/v021/02-surface.css \
             src/v021/03-workbench-actions.css \
             src/v021/03-detail-play.css \
+            src/v021/04-hide-native-library-chrome.css \
             > velvet-antenna-v021.css
 
           python - <<'PY'
           from pathlib import Path
           path = Path('velvet-antenna-v021.js')
           content = path.read_text(encoding='utf-8')
-          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.2';", 1)
+          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.3';", 1)
           path.write_text(content, encoding='utf-8')
           PY
 
@@ -65,7 +66,13 @@ jobs:
               "genuineLocalPlayButton"
           ):
               if required not in js:
-                  raise SystemExit(f'Missing v0.21.2 feature: {required}')
+                  raise SystemExit(f'Missing v0.21.3 feature: {required}')
+          for required_css in (
+              "body.va21-page-library .skinHeader {\n  display: none !important;",
+              "#va21-library-stage {\n  margin-top: 0 !important;"
+          ):
+              if required_css not in css:
+                  raise SystemExit(f'Missing v0.21.3 chrome cleanup: {required_css}')
           PY
 
       - name: Advertise v0.21 alongside rollback builds
@@ -103,5 +110,5 @@ jobs:
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.21.2 detail playback surface'
+          git commit -m 'Build Velvet Antenna v0.21.3 chrome cleanup'
           git push
