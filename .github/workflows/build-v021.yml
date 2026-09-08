@@ -26,7 +26,7 @@ jobs:
             src/v021/03-runtime.js \
             src/v021/04-workbench.js \
             src/v021/05-detail-play.js \
-            > velvet-antenna-v0214.js
+            > velvet-antenna-v0215.js
 
           cat \
             src/v021/01-base.css \
@@ -34,23 +34,24 @@ jobs:
             src/v021/03-workbench-actions.css \
             src/v021/03-detail-play.css \
             src/v021/04-hide-native-library-chrome.css \
-            > velvet-antenna-v0214.css
+            src/v021/05-native-selection.css \
+            > velvet-antenna-v0215.css
 
           python - <<'PY'
           from pathlib import Path
-          path = Path('velvet-antenna-v0214.js')
+          path = Path('velvet-antenna-v0215.js')
           content = path.read_text(encoding='utf-8')
-          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.4';", 1)
+          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.5';", 1)
           path.write_text(content, encoding='utf-8')
           PY
 
       - name: Validate generated assets
         run: |
-          node --check velvet-antenna-v0214.js
+          node --check velvet-antenna-v0215.js
           python - <<'PY'
           from pathlib import Path
-          js = Path('velvet-antenna-v0214.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0214.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v0215.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0215.css').read_text(encoding='utf-8')
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if 'MutationObserver' in js:
@@ -66,13 +67,15 @@ jobs:
               "genuineLocalPlayButton"
           ):
               if required not in js:
-                  raise SystemExit(f'Missing v0.21.4 feature: {required}')
+                  raise SystemExit(f'Missing v0.21.5 feature: {required}')
           for required_css in (
               "body.va21-page-library .skinHeader {\n  display: none !important;",
-              "#va21-library-stage {\n  margin-top: 0 !important;"
+              "#va21-library-stage {\n  margin-top: 0 !important;",
+              "body.va21-viewer .selectionCommandsPanel {",
+              "z-index: 300000 !important;"
           ):
               if required_css not in css:
-                  raise SystemExit(f'Missing v0.21.4 chrome cleanup: {required_css}')
+                  raise SystemExit(f'Missing v0.21.5 native selection compatibility: {required_css}')
           PY
 
       - name: Advertise v0.21 alongside rollback builds
@@ -99,10 +102,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0214.js \
-            velvet-antenna-v0214.css \
+            velvet-antenna-v0215.js \
+            velvet-antenna-v0215.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.21.4 clean-cache bundle'
+          git commit -m 'Build Velvet Antenna v0.21.5 native selection fix'
           git push
