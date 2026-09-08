@@ -1,5 +1,3 @@
-    }
-
     function blockedPlaybackControl(el) {
         if (!el) return true;
         const blocked = /sync\s*play|syncplay|watch\s*together|join\s*(?:a\s*)?group|watch\s*session|group\s*watch|watch\s*party|play\s*to|remote\s*play/i;
