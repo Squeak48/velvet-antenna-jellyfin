@@ -1,10 +1,10 @@
 [
   {
-    "id": "velvet-antenna-v0210",
-    "name": "Velvet Antenna v0.21.3 Velvet Lens",
+    "id": "velvet-antenna-v0214",
+    "name": "Velvet Antenna v0.21.4 Velvet Lens",
     "author": "James",
-    "description": "Standalone Velvet Antenna redesign focused on speed and a distinct browsing identity. v0.21.3 removes the remaining visible native Jellyfin library header/tab chrome so Movies, Series and Collections are fully owned by the Velvet Lens surface, while retaining the v0.21.2 detail PLAY/CONTINUE control, inline Identify workflow, duplicate resolution badges and confirmed direct deletion.",
-    "version": "0.21.3",
+    "description": "Standalone Velvet Antenna redesign focused on speed and a distinct browsing identity. v0.21.4 uses a fresh mod ID and physical asset filenames to defeat stale JellyFrame caching, exposes inline IDENTIFY in the Needs ID workbench, resolution badges plus confirmed DELETE in the Duplicate workbench, removes the remaining visible native Jellyfin library header/tab chrome, and retains the detail PLAY/CONTINUE control.",
+    "version": "0.21.4",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -31,8 +31,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.css?v=0.21.3",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.js?v=0.21.3",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0214.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0214.js",
     "requires": []
   }
 ]
