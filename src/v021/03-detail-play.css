@@ -1,0 +1,29 @@
+
+/* ============================================================
+   DETAIL PLAYBACK SURFACE
+   ============================================================ */
+
+#va21-detail-playbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 12px;
+  position: relative;
+  z-index: 12;
+}
+
+#va21-detail-playbar .va21-detail-play {
+  min-width: 136px;
+  justify-content: center;
+  box-shadow: 0 16px 42px rgba(0,0,0,.34);
+}
+
+#va21-detail-playbar .va21-detail-play span {
+  margin-right: 7px;
+  font-size: .8em;
+}
+
+#va21-detail-playbar .va21-detail-play:disabled {
+  opacity: .68;
+  cursor: wait;
+}
