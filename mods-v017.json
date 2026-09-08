@@ -143,5 +143,38 @@
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.css?v=0.20.4",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v020.js?v=0.20.4",
     "requires": []
+  },
+  {
+    "id": "velvet-antenna-v0210",
+    "name": "Velvet Antenna v0.21.0 Velvet Lens",
+    "author": "James",
+    "description": "Standalone Velvet Antenna redesign focused on speed and a distinct browsing identity. Adds persistent Back navigation, the dynamic Velvet Lens library stage, whole-library Needs ID and duplicate workbenches, stable Home hero, strict local playback, native Series/Season rendering, subtitles and metadata editing.",
+    "version": "0.21.0",
+    "jellyfin": "10.11+",
+    "tags": [
+      "ui",
+      "home",
+      "cinematic",
+      "navigation",
+      "back",
+      "performance",
+      "libraries",
+      "velvet-lens",
+      "playback",
+      "series",
+      "subtitles",
+      "metadata",
+      "admin",
+      "cleanup",
+      "duplicates",
+      "whole-library",
+      "search",
+      "standalone",
+      "velvet-antenna"
+    ],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.css?v=0.21.0",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.js?v=0.21.0",
+    "requires": []
   }
 ]
