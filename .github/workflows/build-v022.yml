@@ -1,0 +1,107 @@
+name: Build Velvet Antenna v0.22 bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/v022/**'
+      - 'mods-v022.json'
+      - '.github/workflows/build-v022.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Antenna Flow standalone assets
+        run: |
+          cat \
+            velvet-antenna-v0215.js \
+            src/v022/01-antenna-flow.js \
+            src/v022/02-subtitle-search.js \
+            > velvet-antenna-v022.js
+
+          cat \
+            velvet-antenna-v0215.css \
+            src/v022/01-flow.css \
+            > velvet-antenna-v022.css
+
+      - name: Validate v0.22 assets
+        run: |
+          node --check velvet-antenna-v022.js
+          python - <<'PY'
+          from pathlib import Path
+          js = Path('velvet-antenna-v022.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v022.css').read_text(encoding='utf-8')
+          flow = Path('src/v022/01-antenna-flow.js').read_text(encoding='utf-8')
+          subs = Path('src/v022/02-subtitle-search.js').read_text(encoding='utf-8')
+          if css.count('{') != css.count('}'):
+              raise SystemExit('CSS brace count mismatch')
+          if 'MutationObserver' in flow or 'MutationObserver' in subs:
+              raise SystemExit('v0.22 feature modules must remain bounded and observer-free')
+          required = (
+              'Continue the story',
+              'One more episode',
+              'Forgotten signals',
+              'Rediscover',
+              'data-va22-open-tonight',
+              'signalScore(',
+              'ENDS ',
+              'va22-series-continuity',
+              'RemoteSearch/Subtitles/',
+              'DOWNLOAD & USE',
+              'subtitle-restart',
+              'removeMaintenanceSurface'
+          )
+          for marker in required:
+              if marker not in js:
+                  raise SystemExit(f'Missing v0.22 feature marker: {marker}')
+          required_css = (
+              '#va22-flow',
+              '#va22-tonight',
+              '#va22-subtitle-search',
+              '#va22-subtitle-overlay',
+              '.va21-stage__tools',
+              '.selectionCommandsPanel'
+          )
+          for marker in required_css:
+              if marker not in css:
+                  raise SystemExit(f'Missing v0.22 CSS marker: {marker}')
+          PY
+
+      - name: Advertise v0.22 alongside rollback builds
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          entry = json.loads(Path('mods-v022.json').read_text(encoding='utf-8'))[0]
+          for manifest_name in ('mods-v020.json', 'mods-v017.json', 'mods.json'):
+              path = Path(manifest_name)
+              data = json.loads(path.read_text(encoding='utf-8'))
+              data = [mod for mod in data if mod.get('id') != entry['id']]
+              data.append(entry)
+              path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit generated v0.22 bundle
+        run: |
+          if git diff --quiet; then
+            echo 'No generated changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            velvet-antenna-v022.js \
+            velvet-antenna-v022.css \
+            mods-v020.json \
+            mods-v017.json \
+            mods.json
+          git commit -m 'Build Velvet Antenna v0.22.0 Antenna Flow'
+          git push
