@@ -30,18 +30,37 @@ jobs:
           cat \
             src/v021/01-base.css \
             src/v021/02-surface.css \
+            src/v021/03-workbench-actions.css \
             > velvet-antenna-v021.css
+
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('velvet-antenna-v021.js')
+          content = path.read_text(encoding='utf-8')
+          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.1';", 1)
+          path.write_text(content, encoding='utf-8')
+          PY
 
       - name: Validate generated assets
         run: |
           node --check velvet-antenna-v021.js
           python - <<'PY'
           from pathlib import Path
+          js = Path('velvet-antenna-v021.js').read_text(encoding='utf-8')
           css = Path('velvet-antenna-v021.css').read_text(encoding='utf-8')
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
-          if 'MutationObserver' in Path('velvet-antenna-v021.js').read_text(encoding='utf-8'):
+          if 'MutationObserver' in js:
               raise SystemExit('v0.21 must not reintroduce MutationObserver')
+          for required in (
+              "Items/RemoteSearch/",
+              "Items/RemoteSearch/Apply/",
+              "deleteItem(String(item.Id))",
+              "va21-wb-resolution",
+              "data-va21-wb-action=\"identify\""
+          ):
+              if required not in js:
+                  raise SystemExit(f'Missing v0.21.1 workbench feature: {required}')
           PY
 
       - name: Advertise v0.21 alongside rollback builds
@@ -79,5 +98,5 @@ jobs:
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.21.0 Velvet Lens bundle'
+          git commit -m 'Build Velvet Antenna v0.21.1 workbench upgrade'
           git push
