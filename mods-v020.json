@@ -34,10 +34,10 @@
   },
   {
     "id": "velvet-antenna-v0210",
-    "name": "Velvet Antenna v0.21.1 Velvet Lens",
+    "name": "Velvet Antenna v0.21.2 Velvet Lens",
     "author": "James",
-    "description": "Standalone Velvet Antenna redesign focused on speed and a distinct browsing identity. v0.21.1 upgrades the whole-library admin workbenches with an inline Identify workflow for unmatched media, poster-level resolution badges for duplicate candidates, and confirmed direct deletion through Jellyfin, while retaining persistent Back navigation, Velvet Lens browsing, stable Home hero, strict local playback, native Series/Season rendering and subtitles.",
-    "version": "0.21.1",
+    "description": "Standalone Velvet Antenna redesign focused on speed and a distinct browsing identity. v0.21.2 adds an always-visible PLAY/CONTINUE control to playable Movie and Episode detail pages that delegates to Jellyfin's genuine local .btnPlay, while retaining the inline Identify workflow, duplicate resolution badges and confirmed direct deletion from v0.21.1.",
+    "version": "0.21.2",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -49,6 +49,7 @@
       "libraries",
       "velvet-lens",
       "playback",
+      "details",
       "series",
       "subtitles",
       "metadata",
@@ -63,8 +64,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.css?v=0.21.1",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.js?v=0.21.1",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.css?v=0.21.2",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v021.js?v=0.21.2",
     "requires": []
   }
 ]
