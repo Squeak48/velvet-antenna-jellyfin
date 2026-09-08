@@ -181,5 +181,35 @@
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0215.css",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0215.js",
     "requires": []
+  },
+  {
+    "id": "velvet-antenna-v0220",
+    "name": "Velvet Antenna v0.22.0 Antenna Flow",
+    "author": "James",
+    "description": "Major standalone Velvet Antenna viewer release. Antenna Flow replaces conventional home shelves with Continue the Story, Tonight, One More Episode, Forgotten Signals, Rediscover and transparent Signal Match recommendations; adds finish-time intelligence and Series continuity; removes the temporary Needs ID/Duplicates viewer tools; and adds in-player CC+ remote subtitle search with Download & Use via configured Jellyfin subtitle providers. Built on the proven v0.21.5 playback/navigation/admin compatibility base.",
+    "version": "0.22.0",
+    "jellyfin": "10.11+",
+    "tags": [
+      "ui",
+      "home",
+      "antenna-flow",
+      "tonight",
+      "recommendations",
+      "continue-watching",
+      "next-up",
+      "series",
+      "finish-time",
+      "subtitles",
+      "opensubtitles",
+      "playback",
+      "navigation",
+      "performance",
+      "standalone",
+      "velvet-antenna"
+    ],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v022.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v022.js",
+    "requires": []
   }
 ]
