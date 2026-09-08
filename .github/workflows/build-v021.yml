@@ -25,19 +25,21 @@ jobs:
             src/v021/02-lens.js \
             src/v021/03-runtime.js \
             src/v021/04-workbench.js \
+            src/v021/05-detail-play.js \
             > velvet-antenna-v021.js
 
           cat \
             src/v021/01-base.css \
             src/v021/02-surface.css \
             src/v021/03-workbench-actions.css \
+            src/v021/03-detail-play.css \
             > velvet-antenna-v021.css
 
           python - <<'PY'
           from pathlib import Path
           path = Path('velvet-antenna-v021.js')
           content = path.read_text(encoding='utf-8')
-          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.1';", 1)
+          content = content.replace("const VERSION = '0.21.0';", "const VERSION = '0.21.2';", 1)
           path.write_text(content, encoding='utf-8')
           PY
 
@@ -57,10 +59,13 @@ jobs:
               "Items/RemoteSearch/Apply/",
               "deleteItem(String(item.Id))",
               "va21-wb-resolution",
-              "data-va21-wb-action=\"identify\""
+              "data-va21-wb-action=\"identify\"",
+              "va21-detail-playbar",
+              "PLAY UNAVAILABLE",
+              "genuineLocalPlayButton"
           ):
               if required not in js:
-                  raise SystemExit(f'Missing v0.21.1 workbench feature: {required}')
+                  raise SystemExit(f'Missing v0.21.2 feature: {required}')
           PY
 
       - name: Advertise v0.21 alongside rollback builds
@@ -98,5 +103,5 @@ jobs:
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.21.1 workbench upgrade'
+          git commit -m 'Build Velvet Antenna v0.21.2 detail playback surface'
           git push
