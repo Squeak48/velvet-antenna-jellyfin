@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.21.0';
+    const VERSION = '0.21.1';
     const CACHE_PREFIX = 'velvet-antenna-v021:';
     const PENDING_PLAY_KEY = CACHE_PREFIX + 'pending-local-play';
     const PLAY_TTL_MS = 15000;

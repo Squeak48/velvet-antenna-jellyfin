@@ -1249,3 +1249,283 @@ body.va21-workbench-open {
     padding-left: 69px;
   }
 }
+/* Velvet Antenna v0.21.1 workbench action upgrade */
+
+.va21-wb-row__art {
+  position: relative;
+  overflow: hidden;
+}
+
+.va21-wb-resolution {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  z-index: 2;
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(7,5,10,.88);
+  border: 1px solid rgba(215,166,255,.32);
+  box-shadow: 0 5px 16px rgba(0,0,0,.42);
+  color: #fff;
+  font-size: .50rem;
+  font-weight: 820;
+  letter-spacing: .08em;
+}
+
+.va21-button--identify {
+  background: linear-gradient(135deg, var(--va21-accent), #C776FF) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  box-shadow: 0 10px 26px rgba(145,62,226,.22);
+}
+
+.va21-button--danger {
+  background: rgba(148,31,52,.16) !important;
+  color: #ff9aaa !important;
+  border: 1px solid rgba(255,93,121,.26) !important;
+}
+
+.va21-button--danger:hover,
+.va21-button--danger:focus-visible {
+  background: rgba(180,38,63,.34) !important;
+  color: #fff !important;
+  border-color: rgba(255,112,136,.52) !important;
+}
+
+.va21-button--danger:disabled,
+.va21-button--identify:disabled {
+  opacity: .46;
+  cursor: wait;
+}
+
+#va21-identify-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210000;
+  display: grid;
+  place-items: center;
+}
+
+.va21-identify__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3,2,5,.80);
+  backdrop-filter: blur(16px);
+}
+
+.va21-identify__panel {
+  position: relative;
+  z-index: 2;
+  width: min(1040px, 92vw);
+  max-height: min(850px, 92vh);
+  overflow: auto;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 86% 0%, rgba(119,48,180,.18), transparent 36%),
+    #0D0912;
+  border: 1px solid rgba(215,166,255,.16);
+  box-shadow: 0 52px 130px rgba(0,0,0,.70);
+}
+
+.va21-identify__panel > header {
+  min-height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 26px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+.va21-identify__panel h2 {
+  margin: .48rem 0 .18rem;
+  color: var(--va21-text);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: .95;
+  letter-spacing: -.04em;
+  font-weight: 670;
+}
+
+.va21-identify__path {
+  max-width: 720px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(247,243,250,.34);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: .61rem;
+}
+
+.va21-identify__form {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 130px auto auto;
+  align-items: end;
+  gap: 12px;
+  padding: 22px 26px 14px;
+}
+
+.va21-identify__form label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.va21-identify__form label > span {
+  color: rgba(247,243,250,.46);
+  font-size: .55rem;
+  font-weight: 760;
+  letter-spacing: .11em;
+}
+
+.va21-identify__form input[type="text"],
+.va21-identify__form input[type="number"] {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(215,166,255,.18);
+  outline: none;
+  background: rgba(255,255,255,.035);
+  color: var(--va21-text);
+  font: inherit;
+}
+
+.va21-identify__form input[type="text"]:focus,
+.va21-identify__form input[type="number"]:focus {
+  border-color: rgba(215,166,255,.60);
+  box-shadow: 0 0 0 3px rgba(155,82,245,.12);
+}
+
+.va21-identify__replace {
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: start;
+  align-self: center;
+  gap: 8px !important;
+  padding-top: 18px;
+  color: rgba(247,243,250,.60);
+  white-space: nowrap;
+}
+
+.va21-identify__replace input {
+  accent-color: var(--va21-accent);
+}
+
+.va21-identify__replace span {
+  color: rgba(247,243,250,.60) !important;
+  letter-spacing: .02em !important;
+  font-size: .64rem !important;
+}
+
+.va21-identify__status {
+  padding: 0 26px 16px;
+  color: rgba(247,243,250,.48);
+  font-size: .68rem;
+}
+
+.va21-identify__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 13px;
+  padding: 0 26px 28px;
+}
+
+.va21-identify-result {
+  appearance: none;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.025);
+  color: var(--va21-text);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.va21-identify-result:hover,
+.va21-identify-result:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(215,166,255,.48);
+  background: rgba(155,82,245,.08);
+  outline: none;
+}
+
+.va21-identify-result__art {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #17101F center / cover no-repeat;
+}
+
+.va21-identify-result__copy {
+  min-height: 88px;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 10px;
+}
+
+.va21-identify-result__copy b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .72rem;
+}
+
+.va21-identify-result__copy span {
+  color: rgba(247,243,250,.46);
+  font-size: .58rem;
+}
+
+.va21-identify-result__copy em {
+  margin-top: 3px;
+  color: var(--va21-accent-2);
+  font-size: .52rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.va21-identify.is-busy .va21-identify__results,
+.va21-identify.is-busy .va21-identify__form {
+  pointer-events: none;
+  opacity: .52;
+}
+
+@media (max-width: 860px) {
+  .va21-identify__form {
+    grid-template-columns: 1fr 110px;
+  }
+
+  .va21-identify__replace,
+  .va21-identify__form .va21-button {
+    align-self: end;
+  }
+}
+
+@media (max-width: 600px) {
+  .va21-identify__panel {
+    width: 96vw;
+    max-height: 94vh;
+  }
+
+  .va21-identify__form {
+    grid-template-columns: 1fr;
+  }
+
+  .va21-identify__replace {
+    padding-top: 0;
+  }
+
+  .va21-identify__results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
