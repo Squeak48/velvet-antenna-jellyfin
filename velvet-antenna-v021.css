@@ -1558,3 +1558,20 @@ body.va21-workbench-open {
   opacity: .68;
   cursor: wait;
 }
+/* v0.21.3 - Velvet Antenna owns the visible library chrome.
+   Jellyfin's native library header/tabs remain in the DOM for state and internal routing,
+   but are not presented alongside the Velvet Lens surface. */
+
+body.va21-page-library .skinHeader {
+  display: none !important;
+}
+
+body.va21-page-library .skinHeader .headerTabs,
+body.va21-page-library .skinHeader .emby-tabs-slider,
+body.va21-page-library .skinHeader .emby-tab-button {
+  display: none !important;
+}
+
+#va21-library-stage {
+  margin-top: 0 !important;
+}
