@@ -184,10 +184,10 @@
   },
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.2 Antenna Flow",
+    "name": "Velvet Antenna v0.22.3 Antenna Flow",
     "author": "James",
-    "description": "Major standalone Velvet Antenna viewer release. v0.22.2 keeps Antenna Flow, Tonight, Continue the Story, One More Episode, Forgotten Signals, Rediscover, Signal Match and in-player CC+ subtitle search, while fixing startup navigation so Home, Movies, Series, Collections and Tonight render immediately instead of appearing only after Jellyfin User Views finish loading. Library routes now resolve asynchronously behind already-visible controls, failed early API readiness is never cached permanently, TV navigation remains remote-first, and TV Home retains the redundant Libraries strip.",
-    "version": "0.22.2",
+    "description": "Reliability-focused Antenna Flow release. v0.22.3 keeps Tonight, Continue the Story, One More Episode, Forgotten Signals, Rediscover, Signal Match and in-player CC+ subtitle search, while fixing hit-and-miss library behaviour: navigation now prefers Jellyfin's own router/native hrefs over guessed routes, stale v0.22.2 route caches are discarded, non-boxset Collections fall back to their real generic library route instead of forcing a broken #/boxsets page, and Movies/Series/Collections get a deterministic API-backed Velvet Lens stage even when Jellyfin cards have not rendered yet. TV navigation remains immediate and remote-first.",
+    "version": "0.22.3",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -198,6 +198,8 @@
       "continue-watching",
       "next-up",
       "series",
+      "collections",
+      "velvet-lens",
       "finish-time",
       "subtitles",
       "opensubtitles",
@@ -207,13 +209,14 @@
       "tv",
       "remote",
       "libraries",
+      "reliability",
       "performance",
       "standalone",
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0222.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0222.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0223.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0223.js",
     "requires": []
   }
 ]
