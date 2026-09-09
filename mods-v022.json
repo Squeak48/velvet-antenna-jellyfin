@@ -1,10 +1,10 @@
 [
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.6 Antenna Flow",
+    "name": "Velvet Antenna v0.22.7 Antenna Flow",
     "author": "James",
-    "description": "Antenna Flow reliability fix. v0.22.6 adds a first-paint bootstrap so Home is claimed immediately instead of showing native Jellyfin until a later interaction, and replaces the timing-sensitive v0.22.5 collection control with a deterministic Collection Manager that mounts from the actual BoxSet detail item using cooperative bounded retries. MANAGE COLLECTION is now a dedicated visible action on collection detail pages, with Contents, Add from Library and Likely Missing views. Collection membership changes use Jellyfin's collection API and do not delete the underlying media. Fast Home, Tonight, deterministic Velvet Lens and CC+ subtitle search remain included.",
-    "version": "0.22.6",
+    "description": "Antenna Flow with source-aware Collection Manager. v0.22.7 replaces the old title-guessing Likely Missing feature with SOURCE CHECK. For a TMDb-backed Jellyfin BoxSet, Velvet Antenna reads the collection's TMDb provider ID and, when the optional Velvet Antenna Bridge server plugin is installed, asks Jellyfin's own TMDb client for the canonical collection parts. Those exact TMDb movie IDs are compared against the local Jellyfin movie library and reported as IN COLLECTION, OWNED BUT NOT IN COLLECTION, or MISSING FROM LIBRARY. Manual/non-TMDb collections are explicitly reported as having no canonical source instead of being guessed. Contents, Add from Library, first-paint Home, Tonight, deterministic Velvet Lens and CC+ subtitle search remain included.",
+    "version": "0.22.7",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -18,6 +18,9 @@
       "series",
       "collections",
       "collection-manager",
+      "source-check",
+      "tmdb",
+      "completeness",
       "franchises",
       "velvet-lens",
       "subtitles",
@@ -34,8 +37,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0226.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0226.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0227.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0227.js",
     "requires": []
   }
 ]
