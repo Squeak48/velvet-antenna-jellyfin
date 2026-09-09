@@ -24,25 +24,28 @@ jobs:
             velvet-antenna-v0215.js \
             src/v022/01-antenna-flow.js \
             src/v022/02-subtitle-search.js \
-            > velvet-antenna-v022.js
+            src/v022/03-library-navigation.js \
+            > velvet-antenna-v0221.js
 
           cat \
             velvet-antenna-v0215.css \
             src/v022/01-flow.css \
-            > velvet-antenna-v022.css
+            src/v022/02-tv-navigation.css \
+            > velvet-antenna-v0221.css
 
       - name: Validate v0.22 assets
         run: |
-          node --check velvet-antenna-v022.js
+          node --check velvet-antenna-v0221.js
           python - <<'PY'
           from pathlib import Path
-          js = Path('velvet-antenna-v022.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v022.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v0221.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0221.css').read_text(encoding='utf-8')
           flow = Path('src/v022/01-antenna-flow.js').read_text(encoding='utf-8')
           subs = Path('src/v022/02-subtitle-search.js').read_text(encoding='utf-8')
+          nav = Path('src/v022/03-library-navigation.js').read_text(encoding='utf-8')
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
-          if 'MutationObserver' in flow or 'MutationObserver' in subs:
+          if any('MutationObserver' in text for text in (flow, subs, nav)):
               raise SystemExit('v0.22 feature modules must remain bounded and observer-free')
           required = (
               'Continue the story',
@@ -56,22 +59,30 @@ jobs:
               'RemoteSearch/Subtitles/',
               'DOWNLOAD & USE',
               'subtitle-restart',
-              'removeMaintenanceSurface'
+              'removeMaintenanceSurface',
+              'getUserViews',
+              'collectionType=movies',
+              'collectionType=tvshows',
+              'collectionType=boxsets',
+              'data-va22-navigation',
+              'va22-tv-hubs'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.1 feature marker: {marker}')
           required_css = (
               '#va22-flow',
               '#va22-tonight',
               '#va22-subtitle-search',
               '#va22-subtitle-overlay',
               '.va21-stage__tools',
-              '.selectionCommandsPanel'
+              '.selectionCommandsPanel',
+              '.layout-tv #va21-nav[data-va22-navigation="0.22.1"]',
+              '#va22-tv-hubs'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.1 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -98,10 +109,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v022.js \
-            velvet-antenna-v022.css \
+            velvet-antenna-v0221.js \
+            velvet-antenna-v0221.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.0 Antenna Flow'
+          git commit -m 'Build Velvet Antenna v0.22.1 TV navigation fix'
           git push
