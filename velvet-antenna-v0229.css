@@ -3689,6 +3689,11 @@ body.va226-collection-open {
   }
 }/* Velvet Antenna v0.22.9 - owned Collections grid + curated artwork */
 
+#va228-collection-artwork,
+#va228-artwork-input {
+  display: none !important;
+}
+
 #va229-collections-grid {
   width: calc(100% - (var(--va224-edge) * 2));
   max-width: 1650px;
