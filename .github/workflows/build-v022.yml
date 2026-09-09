@@ -83,7 +83,7 @@ jobs:
               'uploadItemImage',
               'headerBackButton',
               'getUserViews',
-              'data-va228Owned'
+              'va228Owned'
           )
           for marker in required:
               if marker not in js:
