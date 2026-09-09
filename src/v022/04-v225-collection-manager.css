@@ -1,0 +1,285 @@
+/* Velvet Antenna v0.22.5 - Collection Manager */
+
+body.va225-collection-open {
+  overflow: hidden !important;
+}
+
+#va225-manage-collection {
+  margin-left: 8px;
+}
+
+#va225-collection-manager {
+  position: fixed;
+  z-index: 430000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.va225-collection-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,1,4,.84);
+  backdrop-filter: blur(18px);
+}
+
+.va225-collection-panel {
+  position: relative;
+  z-index: 1;
+  width: min(1080px, 94vw);
+  max-height: min(820px, 90vh);
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0,1fr);
+  overflow: hidden;
+  border: 1px solid rgba(199,144,255,.18);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg,rgba(18,11,25,.985),rgba(9,6,13,.99)),
+    #0b0710;
+  color: #fff;
+  box-shadow: 0 38px 110px rgba(0,0,0,.62);
+}
+
+.va225-collection-panel > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 28px 30px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.va225-collection-panel > header span,
+.va225-collection-tools label > span {
+  color: var(--va224-electric, #c790ff);
+  font-size: .54rem;
+  font-weight: 800;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.va225-collection-panel h1 {
+  margin: .45rem 0 .3rem;
+  color: #fff;
+  font-size: clamp(2rem,3.5vw,4rem);
+  line-height: .92;
+  font-weight: 680;
+  letter-spacing: -.05em;
+}
+
+.va225-collection-summary {
+  margin: 0;
+  color: rgba(247,243,250,.52);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.va225-collection-close {
+  appearance: none;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+  cursor: pointer;
+  background: rgba(255,255,255,.035);
+  color: rgba(247,243,250,.72);
+  font: inherit;
+  font-size: 1.4rem;
+}
+
+.va225-collection-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 24px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  scrollbar-width: none;
+}
+
+.va225-collection-tabs::-webkit-scrollbar { display: none; }
+
+.va225-collection-tabs button,
+.va225-collection-row__actions button {
+  appearance: none;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  cursor: pointer;
+  background: rgba(255,255,255,.035);
+  color: rgba(247,243,250,.68);
+  font: inherit;
+  font-size: .53rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.va225-collection-tabs button.is-active,
+.va225-collection-row__actions button.is-primary {
+  background: rgba(155,82,245,.72);
+  border-color: rgba(210,175,255,.30);
+  color: #fff;
+}
+
+.va225-collection-row__actions button.is-danger {
+  border-color: rgba(255,104,125,.25);
+  background: rgba(142,33,52,.18);
+  color: rgba(255,184,194,.92);
+}
+
+.va225-collection-row__actions button:disabled {
+  opacity: .42;
+  cursor: default;
+}
+
+.va225-collection-tools {
+  display: grid;
+  gap: 10px;
+  padding: 18px 26px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  background: rgba(255,255,255,.012);
+}
+
+.va225-collection-tools p {
+  max-width: 920px;
+  margin: 0;
+  color: rgba(247,243,250,.48);
+  font-size: .73rem;
+  line-height: 1.5;
+}
+
+.va225-collection-tools strong {
+  color: rgba(247,243,250,.86);
+}
+
+.va225-collection-tools label {
+  display: grid;
+  gap: 7px;
+}
+
+.va225-collection-tools input {
+  width: min(620px, 100%);
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid rgba(199,144,255,.18);
+  border-radius: 12px;
+  outline: none;
+  background: rgba(7,5,10,.78);
+  color: #fff;
+  font: inherit;
+}
+
+.va225-collection-tools input:focus {
+  border-color: rgba(199,144,255,.52);
+  box-shadow: 0 0 0 3px rgba(155,82,245,.10);
+}
+
+.va225-collection-results {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 18px 20px;
+}
+
+.va225-collection-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 78px;
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.045);
+}
+
+.va225-collection-row__art {
+  width: 52px;
+  height: 72px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.035) center/cover no-repeat;
+  box-shadow: 0 8px 22px rgba(0,0,0,.26);
+}
+
+.va225-collection-row__copy {
+  min-width: 0;
+}
+
+.va225-collection-row__copy span {
+  color: rgba(199,144,255,.60);
+  font-size: .48rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.va225-collection-row__copy h3 {
+  margin: .25rem 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(247,243,250,.92);
+  font-size: .94rem;
+  font-weight: 650;
+}
+
+.va225-collection-row__status {
+  color: rgba(133,233,255,.62);
+  font-size: .48rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.va225-collection-row__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.va225-collection-empty {
+  padding: 42px 24px;
+  text-align: center;
+  color: rgba(247,243,250,.43);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  #va225-collection-manager { padding: 10px; }
+  .va225-collection-panel { width: 100%; max-height: 94vh; border-radius: 16px; }
+  .va225-collection-panel > header { padding: 22px 18px 18px; }
+  .va225-collection-tabs { padding-left: 14px; padding-right: 14px; }
+  .va225-collection-tools { padding: 16px; }
+  .va225-collection-row { grid-template-columns: 48px minmax(0,1fr) auto; gap: 10px; }
+  .va225-collection-row__art { width: 44px; height: 62px; }
+  .va225-collection-row__status { display: none; }
+}
+
+.layout-tv #va225-collection-manager {
+  padding: 22px;
+}
+
+.layout-tv .va225-collection-panel {
+  width: min(1260px, 96vw);
+  max-height: 92vh;
+}
+
+.layout-tv .va225-collection-tabs button,
+.layout-tv .va225-collection-row__actions button,
+.layout-tv .va225-collection-close,
+.layout-tv .va225-collection-tools input {
+  min-height: 52px;
+}
+
+.layout-tv .va225-collection-tabs button:focus-visible,
+.layout-tv .va225-collection-row__actions button:focus-visible,
+.layout-tv .va225-collection-close:focus-visible,
+.layout-tv .va225-collection-tools input:focus-visible,
+.layout-tv #va225-manage-collection:focus-visible {
+  outline: 3px solid rgba(215,166,255,.76) !important;
+  outline-offset: 3px !important;
+}
