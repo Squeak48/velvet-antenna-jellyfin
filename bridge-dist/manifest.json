@@ -2,11 +2,19 @@
   {
     "guid": "d6f19488-6a7d-4c1f-9418-b3d56e5e7201",
     "name": "Velvet Antenna Bridge",
-    "description": "Read-only TMDb collection completeness bridge for Velvet Antenna.",
-    "overview": "Lets Velvet Antenna compare a Jellyfin BoxSet with its canonical TMDb collection.",
+    "description": "Read-only TMDb collection and Series integrity bridge for Velvet Antenna.",
+    "overview": "Lets Velvet Antenna compare Jellyfin Collections and Series against their canonical TMDb source.",
     "owner": "James",
     "category": "General",
     "versions": [
+      {
+        "version": "0.2.0.0",
+        "changelog": "Adds canonical TMDb Series season summaries and per-season episode structure for Series Integrity Audit.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/bridge-dist/velvet-antenna-bridge_0.2.0.0.zip",
+        "checksum": "8ec794292ffa2c85d434783e91e19454",
+        "timestamp": "2026-09-09T12:49:19Z"
+      },
       {
         "version": "0.1.0.0",
         "changelog": "Initial source-aware collection completeness bridge.",
