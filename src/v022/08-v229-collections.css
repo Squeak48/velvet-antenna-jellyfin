@@ -1,0 +1,338 @@
+/* Velvet Antenna v0.22.9 - owned Collections grid + curated artwork */
+
+#va229-collections-grid {
+  width: calc(100% - (var(--va224-edge) * 2));
+  max-width: 1650px;
+  box-sizing: border-box;
+  margin: 0 auto 72px;
+  color: #fff;
+}
+
+#va229-collections-grid > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 18px 0 20px;
+}
+
+#va229-collections-grid > header span {
+  color: var(--va224-electric);
+  font-size: .55rem;
+  font-weight: 800;
+  letter-spacing: .17em;
+}
+
+#va229-collections-grid > header h2 {
+  margin: .35rem 0 .25rem;
+  font-size: clamp(1.8rem,3vw,3.5rem);
+  letter-spacing: -.04em;
+}
+
+#va229-collections-grid > header p {
+  margin: 0;
+  color: rgba(247,243,250,.56);
+}
+
+#va229-collections-grid > header > b {
+  color: rgba(247,243,250,.34);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.va229-collections-grid__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px 18px;
+}
+
+.va229-collection-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  padding: 0 0 58px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  background: #0d0912 !important;
+  color: #fff !important;
+  text-align: left;
+  cursor: pointer;
+  aspect-ratio: 2 / 3;
+  box-shadow: 0 16px 40px rgba(0,0,0,.24);
+}
+
+.va229-collection-card__art,
+.va229-collection-card__shade {
+  position: absolute;
+  inset: 0 0 58px;
+}
+
+.va229-collection-card__art {
+  background-position: center;
+  background-size: cover;
+}
+
+.va229-collection-card__shade {
+  background: linear-gradient(to top, rgba(7,5,10,.84), transparent 34%);
+}
+
+.va229-collection-card__copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 58px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 12px;
+  background: rgba(10,7,14,.96);
+}
+
+.va229-collection-card__copy b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .82rem;
+}
+
+.va229-collection-card__copy small {
+  margin-top: 3px;
+  color: rgba(247,243,250,.46);
+  font-size: .64rem;
+}
+
+.va229-collection-card:hover,
+.va229-collection-card:focus-visible {
+  outline: 2px solid rgba(199,144,255,.78) !important;
+  outline-offset: 3px;
+  transform: translateY(-2px);
+}
+
+#va229-collection-artwork {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+#va229-collection-artwork button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 999px;
+  background: rgba(155,82,245,.10);
+  color: rgba(247,243,250,.88);
+  font: inherit;
+  font-size: .5rem;
+  font-weight: 800;
+  letter-spacing: .075em;
+  cursor: pointer;
+}
+
+#va229-artwork-picker {
+  position: fixed;
+  z-index: 410000;
+  inset: 0;
+  color: #fff;
+}
+
+.va229-artwork-picker__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,1,4,.76);
+  backdrop-filter: blur(8px);
+}
+
+.va229-artwork-picker__panel {
+  position: absolute;
+  inset: clamp(28px,5vh,70px) clamp(24px,5vw,90px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0,1fr) auto;
+  overflow: hidden;
+  border: 1px solid rgba(199,144,255,.18);
+  border-radius: 22px;
+  background: linear-gradient(180deg,rgba(18,12,24,.99),rgba(9,6,13,.99));
+  box-shadow: 0 30px 100px rgba(0,0,0,.56);
+}
+
+.va229-artwork-picker__panel > header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 26px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.va229-artwork-picker__panel > header span {
+  color: var(--va224-electric);
+  font-size: .54rem;
+  font-weight: 800;
+  letter-spacing: .17em;
+}
+
+.va229-artwork-picker__panel > header h2 {
+  margin: .35rem 0 .25rem;
+  font-size: clamp(1.8rem,3vw,3.2rem);
+  letter-spacing: -.04em;
+}
+
+.va229-artwork-picker__panel > header p {
+  margin: 0;
+  color: rgba(247,243,250,.55);
+}
+
+.va229-artwork-picker__panel > header > button {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.va229-artwork-picker__providers {
+  display: flex;
+  gap: 7px;
+  padding: 13px 26px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255,255,255,.045);
+}
+
+.va229-artwork-picker__providers button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(247,243,250,.58);
+  font: inherit;
+  font-size: .5rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.va229-artwork-picker__providers button.is-active {
+  background: rgba(155,82,245,.19);
+  color: #fff;
+  border-color: rgba(199,144,255,.28);
+}
+
+.va229-artwork-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+  gap: 18px;
+  padding: 22px 26px;
+  overflow-y: auto;
+}
+
+.va229-artwork-choice {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0,1fr) auto;
+  min-height: 280px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+  color: #fff;
+  cursor: pointer;
+}
+
+.va229-artwork-choice.is-backdrop {
+  min-height: 190px;
+}
+
+.va229-artwork-choice__art {
+  min-height: 0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: rgba(0,0,0,.18);
+}
+
+.va229-artwork-choice__copy {
+  display: block;
+  padding: 9px 10px 11px;
+  text-align: left;
+}
+
+.va229-artwork-choice__copy b {
+  display: block;
+  font-size: .68rem;
+}
+
+.va229-artwork-choice__copy small {
+  display: block;
+  margin-top: 3px;
+  color: rgba(247,243,250,.43);
+  font-size: .56rem;
+}
+
+.va229-artwork-choice:hover,
+.va229-artwork-choice:focus-visible {
+  outline: 2px solid rgba(199,144,255,.76);
+  outline-offset: 2px;
+  border-color: rgba(199,144,255,.34);
+}
+
+.va229-artwork-choice.is-applying {
+  opacity: .45;
+}
+
+.va229-artwork-picker__panel > footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 13px 22px;
+  border-top: 1px solid rgba(255,255,255,.045);
+}
+
+.va229-artwork-picker__panel > footer button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: #fff;
+  font: inherit;
+  font-size: .51rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.va229-artwork-picker__panel > footer button:disabled {
+  opacity: .3;
+}
+
+.va229-artwork-picker__panel > footer span {
+  min-width: 110px;
+  text-align: center;
+  color: rgba(247,243,250,.48);
+  font-size: .6rem;
+}
+
+.layout-tv .va229-collection-card:focus,
+.layout-tv .va229-artwork-choice:focus,
+.layout-tv #va229-collection-artwork button:focus,
+.layout-tv .va229-artwork-picker__panel button:focus {
+  outline: 3px solid rgba(215,166,255,.82) !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 760px) {
+  .va229-collections-grid__cards { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px 10px; }
+  #va229-collection-artwork { width: 100%; order: 3; margin: 8px 0 0; }
+  .va229-artwork-picker__panel { inset: 10px; }
+  .va229-artwork-picker__grid { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 14px; gap: 12px; }
+}
