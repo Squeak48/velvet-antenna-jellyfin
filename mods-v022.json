@@ -1,10 +1,10 @@
 [
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.9 Antenna Flow",
+    "name": "Velvet Antenna v0.22.10 Antenna Flow",
     "author": "James",
-    "description": "Collections-focused Antenna Flow release. v0.22.9 gives the Collections library its own API-backed BoxSet grid so every collection returned by Jellyfin is visible beneath the Velvet Lens instead of relying on Jellyfin's generic list page. Collection Manager artwork is upgraded from file-upload-first controls to PICK POSTER and PICK BACKDROP, opening a curated gallery from Jellyfin's configured remote image providers using getAvailableRemoteImages and applying the chosen image through downloadRemoteImage. Source-aware TMDb completeness through the optional Velvet Antenna Bridge, direct Add/Remove collection membership, v0.22.8 navigation reliability, permanent player EXIT, first-paint Home, Tonight, Velvet Lens, right-click administration and CC+ subtitle search remain included.",
-    "version": "0.22.9",
+    "description": "Series-management release. v0.22.10 restores administrator Series editing with native Jellyfin EDIT SERIES and IDENTIFY SERIES actions both on Series detail pages and in the Series Velvet Lens. The controls use Jellyfin's own itemAction edit/identify pathways and exact Series IDs rather than a custom metadata editor. v0.22.9 API-backed Collections grid and curated remote artwork picker, source-aware TMDb collection completeness through the optional Velvet Antenna Bridge, direct Add/Remove collection membership, v0.22.8 navigation reliability, permanent player EXIT, first-paint Home, Tonight, right-click administration and CC+ subtitle search remain included.",
+    "version": "0.22.10",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -16,6 +16,9 @@
       "continue-watching",
       "next-up",
       "series",
+      "series-edit",
+      "identify",
+      "metadata",
       "collections",
       "boxsets",
       "collection-grid",
@@ -44,8 +47,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0229.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0229.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.js",
     "requires": []
   }
 ]
