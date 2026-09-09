@@ -184,10 +184,10 @@
   },
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.7 Antenna Flow",
+    "name": "Velvet Antenna v0.22.8 Antenna Flow",
     "author": "James",
-    "description": "Antenna Flow with source-aware Collection Manager. v0.22.7 replaces the old title-guessing Likely Missing feature with SOURCE CHECK. For a TMDb-backed Jellyfin BoxSet, Velvet Antenna reads the collection's TMDb provider ID and, when the optional Velvet Antenna Bridge server plugin is installed, asks Jellyfin's own TMDb client for the canonical collection parts. Those exact TMDb movie IDs are compared against the local Jellyfin movie library and reported as IN COLLECTION, OWNED BUT NOT IN COLLECTION, or MISSING FROM LIBRARY. Manual/non-TMDb collections are explicitly reported as having no canonical source instead of being guessed. Contents, Add from Library, first-paint Home, Tonight, deterministic Velvet Lens and CC+ subtitle search remain included.",
-    "version": "0.22.7",
+    "description": "Reliability-focused Antenna Flow release. v0.22.8 adds a single delegated interaction layer so VA navigation no longer depends on per-screen button listeners or hidden Jellyfin cards, resolves Movies/Series/Collections from the current Jellyfin User Views API, and performs bounded self-healing when Jellyfin re-renders a page without the expected VA surface. Collection Manager gains direct CHANGE POSTER and CHANGE BACKDROP uploads through Jellyfin's native uploadItemImage API. Video playback gains a permanent EXIT control that delegates to Jellyfin's own native headerBackButton so Jellyfin remains responsible for closing playback. Source-aware TMDb collection completeness, Add from Library, first-paint Home, Tonight, Velvet Lens, right-click administration and CC+ subtitle search remain included.",
+    "version": "0.22.8",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -204,6 +204,9 @@
       "source-check",
       "tmdb",
       "completeness",
+      "artwork",
+      "images",
+      "player-exit",
       "franchises",
       "velvet-lens",
       "subtitles",
@@ -220,8 +223,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0227.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0227.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0228.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0228.js",
     "requires": []
   }
 ]
