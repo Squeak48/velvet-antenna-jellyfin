@@ -1,0 +1,20 @@
+[
+  {
+    "guid": "d6f19488-6a7d-4c1f-9418-b3d56e5e7201",
+    "name": "Velvet Antenna Bridge",
+    "description": "Read-only TMDb collection completeness bridge for Velvet Antenna.",
+    "overview": "Lets Velvet Antenna compare a Jellyfin BoxSet with its canonical TMDb collection.",
+    "owner": "James",
+    "category": "General",
+    "versions": [
+      {
+        "version": "0.1.0.0",
+        "changelog": "Initial source-aware collection completeness bridge.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/bridge-dist/velvet-antenna-bridge_0.1.0.0.zip",
+        "checksum": "53d9f060a6a365c3f1e883ad11a6fefc",
+        "timestamp": "2026-09-09T10:12:57Z"
+      }
+    ]
+  }
+]
