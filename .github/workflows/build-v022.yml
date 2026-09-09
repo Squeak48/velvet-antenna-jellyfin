@@ -152,10 +152,11 @@ jobs:
 
           source = json.loads(Path('mods-v022.json').read_text(encoding='utf-8'))
           entries = {mod.get('id'): mod for mod in source if mod.get('id')}
+          withdrawn_ids = {'velvet-antenna-v02211-cc'}
           for manifest_name in ('mods-v020.json', 'mods-v017.json', 'mods.json'):
               path = Path(manifest_name)
               data = json.loads(path.read_text(encoding='utf-8'))
-              data = [mod for mod in data if mod.get('id') not in entries]
+              data = [mod for mod in data if mod.get('id') not in entries and mod.get('id') not in withdrawn_ids]
               data.extend(source)
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
