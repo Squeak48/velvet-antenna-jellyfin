@@ -1,8 +1,9 @@
 (function () {
     'use strict';
 
-    const VERSION = '0.22.2';
-    const ROUTE_PREFIX = 'velvet-antenna-v021:route:';
+    const VERSION = '0.22.3';
+    const ROUTE_PREFIX = 'velvet-antenna-v0223:route:';
+    const LAST_KIND_KEY = 'velvet-antenna-v0223:last-kind';
     const HUBS_ID = 'va22-tv-hubs';
     const CORE = ['movies', 'series', 'collections'];
     const OPTIONAL = ['anime', 'live'];
@@ -29,7 +30,6 @@
     }
 
     function normalise(value) { return String(value || '').trim().toLowerCase(); }
-
     function route() { return String(window.location.hash || ''); }
 
     function isPlayback() {
@@ -61,6 +61,16 @@
         catch (error) { return ''; }
     }
 
+    function setLastKind(kind) {
+        try { sessionStorage.setItem(LAST_KIND_KEY, kind || ''); }
+        catch (error) { /* optional */ }
+    }
+
+    function lastKind() {
+        try { return sessionStorage.getItem(LAST_KIND_KEY) || ''; }
+        catch (error) { return ''; }
+    }
+
     async function fetchUserViews() {
         if (Array.isArray(resolvedViews) && resolvedViews.length) return resolvedViews;
         if (viewsPromise) return viewsPromise;
@@ -77,7 +87,7 @@
                     items = Array.isArray(result?.Items) ? result.Items : [];
                 }
             } catch (error) {
-                console.debug('[Velvet Antenna v0.22.2] getUserViews failed, trying direct endpoint', error);
+                console.debug('[Velvet Antenna v0.22.3] getUserViews failed, trying direct endpoint', error);
             }
 
             if (!items.length) {
@@ -87,7 +97,7 @@
                         items = Array.isArray(result?.Items) ? result.Items : [];
                     }
                 } catch (error) {
-                    console.debug('[Velvet Antenna v0.22.2] user views endpoint failed', error);
+                    console.debug('[Velvet Antenna v0.22.3] user views endpoint failed', error);
                 }
             }
 
@@ -106,14 +116,8 @@
         const type = normalise(view?.CollectionType);
         const name = normalise(view?.Name);
 
-        if (type === 'movies') {
-            if (/\banime\b/.test(name)) return 'anime';
-            return 'movies';
-        }
-        if (type === 'tvshows') {
-            if (/\banime\b/.test(name)) return 'anime';
-            return 'series';
-        }
+        if (type === 'movies') return /\banime\b/.test(name) ? 'anime' : 'movies';
+        if (type === 'tvshows') return /\banime\b/.test(name) ? 'anime' : 'series';
         if (type === 'boxsets') return 'collections';
         if (type === 'livetv') return 'live';
 
@@ -124,34 +128,55 @@
         return '';
     }
 
-    function routeForView(view, kind) {
+    function routeViaJellyfin(view) {
+        const router = window.Emby?.Page;
+        if (!view || !router || typeof router.getRouteUrl !== 'function') return '';
+        try {
+            const value = router.getRouteUrl(view, { context: view.CollectionType || undefined });
+            return typeof value === 'string' ? value : '';
+        } catch (error) {
+            return '';
+        }
+    }
+
+    function fallbackRouteForView(view, kind) {
         if (!view || !view.Id) return '';
         const id = encodeURIComponent(view.Id);
         const type = normalise(view.CollectionType);
 
-        if (kind === 'movies') return '#/movies?topParentId=' + id + '&collectionType=movies';
-        if (kind === 'series') return '#/tv?topParentId=' + id + '&collectionType=tvshows';
-        if (kind === 'collections') return '#/boxsets?topParentId=' + id + '&collectionType=boxsets';
+        if (kind === 'movies' && type === 'movies') return '#/movies?topParentId=' + id + '&collectionType=movies';
+        if (kind === 'series' && type === 'tvshows') return '#/tv?topParentId=' + id + '&collectionType=tvshows';
+        if (kind === 'collections') {
+            if (type === 'boxsets') return '#/boxsets?topParentId=' + id + '&collectionType=boxsets';
+            return '#/list?parentId=' + id;
+        }
         if (kind === 'live') return '#/livetv';
         if (kind === 'anime') {
             if (type === 'movies') return '#/movies?topParentId=' + id + '&collectionType=movies';
             if (type === 'tvshows') return '#/tv?topParentId=' + id + '&collectionType=tvshows';
             return '#/list?parentId=' + id;
         }
+        if (kind === 'movies') return '#/list?parentId=' + id;
+        if (kind === 'series') return '#/list?parentId=' + id;
         return '';
     }
 
-    function nativeRouteFallbacks(routes) {
-        document.querySelectorAll('.libraryMenuOptions a[href], .navMenuOption[href]').forEach(link => {
+    function routeForView(view, kind) {
+        return routeViaJellyfin(view) || fallbackRouteForView(view, kind);
+    }
+
+    function nativeRoutes() {
+        const routes = {};
+        document.querySelectorAll('.libraryMenuOptions a[href], .navMenuOption[href], .homePage a[href]').forEach(link => {
             const href = link.getAttribute('href') || '';
-            const label = normalise(link.textContent);
+            const label = normalise(link.textContent || link.getAttribute('aria-label') || link.getAttribute('title'));
             let kind = '';
-            if (/^movies?$/.test(label) || /#\/movies/i.test(href)) kind = 'movies';
-            else if (/^(shows?|series|tv shows?)$/.test(label) || /#\/tv\?/i.test(href)) kind = 'series';
+            if (/^movies?$/.test(label) || /#\/movies(?:\?|$)/i.test(href)) kind = 'movies';
+            else if (/^(shows?|series|tv shows?)$/.test(label) || /#\/tv(?:\?|$)/i.test(href)) kind = 'series';
             else if (/^anime$/.test(label)) kind = 'anime';
-            else if (/collections?/.test(label) || /#\/boxsets/i.test(href)) kind = 'collections';
+            else if (/^collections?$/.test(label) || /#\/boxsets(?:\?|$)/i.test(href)) kind = 'collections';
             else if (/live tv|^live$/.test(label) || /#\/livetv/i.test(href)) kind = 'live';
-            if (kind && !routes[kind] && href) routes[kind] = href;
+            if (kind && href) routes[kind] = href;
         });
         return routes;
     }
@@ -172,41 +197,47 @@
             if (value) routes[kind] = value;
         });
 
-        nativeRouteFallbacks(routes);
+        Object.assign(routes, nativeRoutes());
+
         [...CORE, ...OPTIONAL].forEach(kind => {
             if (routes[kind]) setStoredRoute(kind, routes[kind]);
         });
         return routes;
     }
 
-    function navigate(value) {
+    function navigate(value, kind) {
         if (!value) return;
+        if (kind) setLastKind(kind);
         if (value.startsWith('#')) window.location.hash = value.slice(1);
         else if (value.includes('#/')) window.location.hash = value.slice(value.indexOf('#') + 1);
         else window.location.href = value;
     }
 
-    async function resolveAndNavigate(kind, button) {
-        let value = button?.getAttribute('data-va22-api-route') || storedRoute(kind);
-        if (value) {
-            navigate(value);
-            return;
-        }
+    function wait(ms) { return new Promise(resolve => window.setTimeout(resolve, ms)); }
 
+    async function resolveAndNavigate(kind, button) {
         button?.classList.add('is-resolving');
         button?.setAttribute('aria-busy', 'true');
-        const routes = await libraryRoutes();
-        value = routes[kind] || '';
+
+        let value = '';
+        for (let attempt = 0; attempt < 10 && !value; attempt += 1) {
+            const routes = await libraryRoutes();
+            value = routes[kind] || '';
+            if (!value && attempt < 9) await wait(180);
+        }
+
+        if (!value) value = button?.getAttribute('data-va22-api-route') || storedRoute(kind);
         button?.classList.remove('is-resolving');
         button?.removeAttribute('aria-busy');
 
         if (value) {
             button?.setAttribute('data-va22-api-route', value);
-            navigate(value);
+            button?.removeAttribute('data-va22-route-pending');
+            navigate(value, kind);
             return;
         }
 
-        console.warn('[Velvet Antenna v0.22.2] No route resolved for', kind);
+        console.warn('[Velvet Antenna v0.22.3] No route resolved for', kind);
     }
 
     function mark() {
@@ -217,7 +248,7 @@
         return el;
     }
 
-    function goHome() { window.location.hash = '#/home'; }
+    function goHome() { setLastKind('home'); window.location.hash = '#/home'; }
 
     function goBack() {
         if (/^#\/home(?:\?|$)/i.test(route())) return;
@@ -314,7 +345,7 @@
 
         const utility = document.createElement('div');
         utility.className = 'va21-nav__utility';
-        utility.appendChild(makeSimpleButton('SEARCH', 'search', () => { window.location.hash = '#/search'; }));
+        utility.appendChild(makeSimpleButton('SEARCH', 'search', () => { setLastKind('search'); window.location.hash = '#/search'; }));
         utility.appendChild(makeSimpleButton('PROFILE', 'profile', openProfile));
 
         nav.append(identity, primary, utility);
@@ -329,7 +360,7 @@
             document.body.insertBefore(nav, document.body.firstChild);
         }
 
-        let primary = nav.querySelector('.va21-nav__primary');
+        const primary = nav.querySelector('.va21-nav__primary');
         if (!primary) return nav;
 
         if (!primary.querySelector('[data-va21-kind="home"]')) {
@@ -357,6 +388,7 @@
         if (value.startsWith('#/boxsets')) return 'collections';
         if (value.startsWith('#/livetv')) return 'live';
         if (value.startsWith('#/search')) return 'search';
+        if (value.startsWith('#/list?') || value.startsWith('#/mixed?')) return lastKind();
         return '';
     }
 
@@ -385,7 +417,7 @@
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'va22-tv-hub';
-        if (value) button.setAttribute('data-va22-tv-route', value);
+        if (value) button.setAttribute('data-va22-api-route', value);
         else button.setAttribute('data-va22-route-pending', 'true');
         button.innerHTML = '<span>VA / LIBRARY</span><b></b><i>ENTER →</i>';
         button.querySelector('b').textContent = LABELS[kind] || kind.toUpperCase();
@@ -493,5 +525,5 @@
         scheduleRepairs();
     }
 
-    console.log('[Velvet Antenna] v' + VERSION + ' immediate API-backed navigation loaded');
+    console.log('[Velvet Antenna] v' + VERSION + ' native-first library navigation loaded');
 })();
