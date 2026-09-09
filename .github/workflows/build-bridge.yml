@@ -81,7 +81,7 @@ jobs:
 
       - name: Commit generated bridge package
         run: |
-          if git diff --quiet -- bridge-dist; then
+          if [ -z "$(git status --porcelain -- bridge-dist)" ]; then
             echo 'No generated bridge changes.'
             exit 0
           fi
