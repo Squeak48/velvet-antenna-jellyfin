@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build v0.22.11 per-Series card edit assets
+      - name: Build v0.22.12 per-Series card edit assets
         run: |
           cat \
             src/v022/00-v226-bootstrap.js \
@@ -31,7 +31,7 @@ jobs:
             src/v022/11-v228-reliability.js \
             src/v022/12-v229-collections.js \
             src/v022/14-v2211-series-card-edit.js \
-            > velvet-antenna-v02211.js
+            > velvet-antenna-v02212.js
 
           cat \
             velvet-antenna-v0215.css \
@@ -43,16 +43,16 @@ jobs:
             src/v022/07-v228-reliability.css \
             src/v022/08-v229-collections.css \
             src/v022/10-v2211-series-card-edit.css \
-            > velvet-antenna-v02211.css
+            > velvet-antenna-v02212.css
 
-      - name: Validate v0.22.11 assets
+      - name: Validate v0.22.12 assets
         run: |
-          node --check velvet-antenna-v02211.js
+          node --check velvet-antenna-v02212.js
           python - <<'PY'
           from pathlib import Path
 
-          js = Path('velvet-antenna-v02211.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v02211.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v02212.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v02212.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
               'src/v022/00-v226-bootstrap.js',
               'src/v022/02-subtitle-search.js',
@@ -68,7 +68,7 @@ jobs:
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22.11 modules must remain observer-free')
+              raise SystemExit('v0.22.12 modules must remain observer-free')
 
           required = (
               'v0.22.6 first-paint bootstrap loaded',
@@ -99,7 +99,7 @@ jobs:
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.11 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.12 feature marker: {marker}')
 
           for marker in (
               'LIKELY MISSING',
@@ -109,7 +109,7 @@ jobs:
               'va2210-series-lens-action'
           ):
               if marker in js or marker in css:
-                  raise SystemExit(f'Forbidden behavior leaked into v0.22.11: {marker}')
+                  raise SystemExit(f'Forbidden behavior leaked into v0.22.12: {marker}')
 
           required_css = (
               '#va224-nav',
@@ -129,7 +129,7 @@ jobs:
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.11 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.12 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -138,16 +138,17 @@ jobs:
           from pathlib import Path
           import json
 
-          entry = json.loads(Path('mods-v022.json').read_text(encoding='utf-8'))[0]
+          source = json.loads(Path('mods-v022.json').read_text(encoding='utf-8'))
+          entries = {mod.get('id'): mod for mod in source if mod.get('id')}
           for manifest_name in ('mods-v020.json', 'mods-v017.json', 'mods.json'):
               path = Path(manifest_name)
               data = json.loads(path.read_text(encoding='utf-8'))
-              data = [mod for mod in data if mod.get('id') != entry['id']]
-              data.append(entry)
+              data = [mod for mod in data if mod.get('id') not in entries]
+              data.extend(source)
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22.11 bundle
+      - name: Commit generated v0.22.12 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -156,10 +157,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v02211.js \
-            velvet-antenna-v02211.css \
+            velvet-antenna-v02212.js \
+            velvet-antenna-v02212.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.11 per-Series card editing'
+          git commit -m 'Build Velvet Antenna v0.22.12 per-Series card editing'
           git push
