@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build v0.22.9 collections assets
+      - name: Build v0.22.10 Series tools assets
         run: |
           cat \
             src/v022/00-v226-bootstrap.js \
@@ -30,7 +30,8 @@ jobs:
             src/v022/10-v227-collection-manager.js \
             src/v022/11-v228-reliability.js \
             src/v022/12-v229-collections.js \
-            > velvet-antenna-v0229.js
+            src/v022/13-v2210-series-tools.js \
+            > velvet-antenna-v02210.js
 
           cat \
             velvet-antenna-v0215.css \
@@ -41,16 +42,17 @@ jobs:
             src/v022/06-v227-source-check.css \
             src/v022/07-v228-reliability.css \
             src/v022/08-v229-collections.css \
-            > velvet-antenna-v0229.css
+            src/v022/09-v2210-series-tools.css \
+            > velvet-antenna-v02210.css
 
-      - name: Validate v0.22.9 assets
+      - name: Validate v0.22.10 assets
         run: |
-          node --check velvet-antenna-v0229.js
+          node --check velvet-antenna-v02210.js
           python - <<'PY'
           from pathlib import Path
 
-          js = Path('velvet-antenna-v0229.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0229.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v02210.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v02210.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
               'src/v022/00-v226-bootstrap.js',
               'src/v022/02-subtitle-search.js',
@@ -59,13 +61,14 @@ jobs:
               'src/v022/07-v224-lens.js',
               'src/v022/10-v227-collection-manager.js',
               'src/v022/11-v228-reliability.js',
-              'src/v022/12-v229-collections.js'
+              'src/v022/12-v229-collections.js',
+              'src/v022/13-v2210-series-tools.js'
           )]
 
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22.9 modules must remain observer-free')
+              raise SystemExit('v0.22.10 modules must remain observer-free')
 
           required = (
               'v0.22.6 first-paint bootstrap loaded',
@@ -86,16 +89,21 @@ jobs:
               'getAvailableRemoteImages',
               'downloadRemoteImage',
               "IncludeItemTypes: 'BoxSet'",
+              'v0.22.10 native Series edit and identify tools loaded',
+              'EDIT SERIES',
+              'IDENTIFY SERIES',
+              "data-action', action",
+              "data-type', 'Series'",
               'headerBackButton',
               'getUserViews'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.9 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.10 feature marker: {marker}')
 
           for marker in ('LIKELY MISSING', 'MutationObserver'):
               if marker in js:
-                  raise SystemExit(f'Forbidden behavior leaked into v0.22.9: {marker}')
+                  raise SystemExit(f'Forbidden behavior leaked into v0.22.10: {marker}')
 
           required_css = (
               '#va224-nav',
@@ -109,12 +117,14 @@ jobs:
               '#va229-collection-artwork',
               '#va229-artwork-picker',
               '.va229-artwork-choice',
+              '.va2210-series-action',
+              '.va2210-series-lens-action',
               '#va22-subtitle-search',
               '.selectionCommandsPanel'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.9 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.10 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -132,7 +142,7 @@ jobs:
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22.9 bundle
+      - name: Commit generated v0.22.10 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -141,10 +151,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0229.js \
-            velvet-antenna-v0229.css \
+            velvet-antenna-v02210.js \
+            velvet-antenna-v02210.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.9 collections gallery'
+          git commit -m 'Build Velvet Antenna v0.22.10 Series tools'
           git push
