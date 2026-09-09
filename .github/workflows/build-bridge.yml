@@ -1,0 +1,92 @@
+name: Build Velvet Antenna Bridge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bridge/VelvetAntenna.Bridge/**'
+      - '.github/workflows/build-bridge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Build bridge for Jellyfin 10.11
+        run: |
+          dotnet restore bridge/VelvetAntenna.Bridge/VelvetAntenna.Bridge.csproj
+          dotnet publish bridge/VelvetAntenna.Bridge/VelvetAntenna.Bridge.csproj \
+            --configuration Release \
+            --no-restore \
+            --output bridge-build
+
+      - name: Package bridge and plugin repository manifest
+        run: |
+          set -euo pipefail
+          rm -rf bridge-package bridge-dist
+          mkdir -p bridge-package bridge-dist
+          cp bridge-build/VelvetAntenna.Bridge.dll bridge-package/
+          cat > bridge-package/meta.json <<'JSON'
+          {
+            "category": "General",
+            "changelog": "Initial Velvet Antenna source-aware collection bridge.",
+            "description": "Read-only bridge that exposes canonical TMDb collection parts through Jellyfin's existing TMDb client for Velvet Antenna.",
+            "guid": "d6f19488-6a7d-4c1f-9418-b3d56e5e7201",
+            "name": "Velvet Antenna Bridge",
+            "overview": "Canonical collection-source bridge for Velvet Antenna",
+            "owner": "James",
+            "targetAbi": "10.11.0.0",
+            "timestamp": "2026-09-09T10:00:00Z",
+            "version": "0.1.0.0"
+          }
+          JSON
+          (cd bridge-package && zip -q ../bridge-dist/velvet-antenna-bridge_0.1.0.0.zip VelvetAntenna.Bridge.dll meta.json)
+          test -s bridge-dist/velvet-antenna-bridge_0.1.0.0.zip
+          unzip -l bridge-dist/velvet-antenna-bridge_0.1.0.0.zip | grep -q 'VelvetAntenna.Bridge.dll'
+          checksum=$(md5sum bridge-dist/velvet-antenna-bridge_0.1.0.0.zip | awk '{print $1}')
+          python - "$checksum" <<'PY'
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import json
+          import sys
+
+          checksum = sys.argv[1]
+          manifest = [{
+              "guid": "d6f19488-6a7d-4c1f-9418-b3d56e5e7201",
+              "name": "Velvet Antenna Bridge",
+              "description": "Read-only TMDb collection completeness bridge for Velvet Antenna.",
+              "overview": "Lets Velvet Antenna compare a Jellyfin BoxSet with its canonical TMDb collection.",
+              "owner": "James",
+              "category": "General",
+              "versions": [{
+                  "version": "0.1.0.0",
+                  "changelog": "Initial source-aware collection completeness bridge.",
+                  "targetAbi": "10.11.0.0",
+                  "sourceUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/bridge-dist/velvet-antenna-bridge_0.1.0.0.zip",
+                  "checksum": checksum,
+                  "timestamp": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00', 'Z')
+              }]
+          }]
+          Path('bridge-dist/manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit generated bridge package
+        run: |
+          if git diff --quiet -- bridge-dist; then
+            echo 'No generated bridge changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bridge-dist/manifest.json bridge-dist/velvet-antenna-bridge_0.1.0.0.zip
+          git commit -m 'Build Velvet Antenna Bridge 0.1.0.0'
+          git push
