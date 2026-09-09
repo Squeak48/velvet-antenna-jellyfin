@@ -18,78 +18,86 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Antenna Flow standalone assets
+      - name: Build v0.22.4 clean ownership assets
         run: |
           cat \
             velvet-antenna-v0215.js \
-            src/v022/01-antenna-flow.js \
             src/v022/02-subtitle-search.js \
-            src/v022/03-library-navigation.js \
-            src/v022/04-library-reliability.js \
-            > velvet-antenna-v0223.js
+            src/v022/05-v224-shell.js \
+            src/v022/06-v224-home.js \
+            src/v022/07-v224-lens.js \
+            > velvet-antenna-v0224.js
 
           cat \
             velvet-antenna-v0215.css \
             src/v022/01-flow.css \
-            src/v022/02-tv-navigation.css \
-            > velvet-antenna-v0223.css
+            src/v022/03-v224.css \
+            > velvet-antenna-v0224.css
 
-      - name: Validate v0.22 assets
+      - name: Validate v0.22.4 assets
         run: |
-          node --check velvet-antenna-v0223.js
+          node --check velvet-antenna-v0224.js
           python - <<'PY'
           from pathlib import Path
-          js = Path('velvet-antenna-v0223.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0223.css').read_text(encoding='utf-8')
+
+          js = Path('velvet-antenna-v0224.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0224.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
-              'src/v022/01-antenna-flow.js',
               'src/v022/02-subtitle-search.js',
-              'src/v022/03-library-navigation.js',
-              'src/v022/04-library-reliability.js'
+              'src/v022/05-v224-shell.js',
+              'src/v022/06-v224-home.js',
+              'src/v022/07-v224-lens.js'
           )]
+
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22 feature modules must remain bounded and observer-free')
+              raise SystemExit('v0.22.4 modules must remain bounded and observer-free')
+
           required = (
+              "const CORE = ['movies', 'series', 'collections']",
+              'velvet-antenna-v0224:route:',
+              "else value = '#/list?parentId=' + id",
+              'v0.22.4 clean shell loaded',
+              'TUNING A FAST SIGNAL',
+              "Limit: 30",
               'Continue the story',
               'One more episode',
-              'Forgotten signals',
-              'Rediscover',
-              'data-va22-open-tonight',
-              'signalScore(',
-              'ENDS ',
-              'va22-series-continuity',
+              'v0.22.4 deterministic Velvet Lens loaded',
+              'va224-library-stage',
               'RemoteSearch/Subtitles/',
               'DOWNLOAD & USE',
-              'subtitle-restart',
-              'removeMaintenanceSurface',
-              'getUserViews',
-              'routeViaJellyfin',
-              'window.Emby?.Page',
-              "const CORE = ['movies', 'series', 'collections']",
-              'velvet-antenna-v0223:route:',
-              'deterministic library stage',
-              'data-va223-action',
-              'firstLibraryItem',
-              'forceLibrarySurface'
+              'subtitle-restart'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.3 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.4 feature marker: {marker}')
+
+          forbidden = (
+              'v0.22.3 immediate API-backed navigation loaded',
+              'v0.22.3 deterministic library stage loaded'
+          )
+          for marker in forbidden:
+              if marker in js:
+                  raise SystemExit(f'Legacy v0.22.3 controller leaked into v0.22.4: {marker}')
+
+          shell = Path('src/v022/05-v224-shell.js').read_text(encoding='utf-8')
+          if "navButton('LIVE'" in shell or "live: 'LIVE'" in shell:
+              raise SystemExit('Unproven Live navigation must not be exposed in v0.22.4')
+
           required_css = (
-              '#va22-flow',
-              '#va22-tonight',
+              '#va224-nav',
+              '#va224-home',
+              '#va224-library-stage',
+              'body.va224-active #va21-nav',
+              'body.va224-active #va21-library-stage',
               '#va22-subtitle-search',
               '#va22-subtitle-overlay',
-              '.selectionCommandsPanel',
-              '.layout-tv #va21-nav[data-va22-navigation="0.22.3"]',
-              '#va22-tv-hubs',
-              '[data-va22-route-pending="true"]'
+              '.selectionCommandsPanel'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.3 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.4 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -107,7 +115,7 @@ jobs:
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22 bundle
+      - name: Commit generated v0.22.4 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -116,10 +124,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0223.js \
-            velvet-antenna-v0223.css \
+            velvet-antenna-v0224.js \
+            velvet-antenna-v0224.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.3 reliability pass'
+          git commit -m 'Build Velvet Antenna v0.22.4 clean ownership reset'
           git push
