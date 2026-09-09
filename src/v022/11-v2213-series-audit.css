@@ -1,0 +1,345 @@
+/* Velvet Antenna v0.22.13 - Series Integrity Audit */
+
+.va2213-audit-launcher {
+  appearance: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(133,233,255,.24);
+  border-radius: 999px;
+  background: rgba(133,233,255,.08);
+  color: rgba(247,243,250,.96);
+  font: inherit;
+  font-size: .56rem;
+  font-weight: 820;
+  letter-spacing: .09em;
+  cursor: pointer;
+}
+
+.va2213-audit-launcher:hover,
+.va2213-audit-launcher:focus-visible {
+  background: rgba(133,233,255,.18);
+  outline: 2px solid rgba(133,233,255,.42);
+  outline-offset: 2px;
+}
+
+#va2213-series-audit {
+  position: fixed;
+  inset: 0;
+  z-index: 100120;
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 2vw, 28px);
+  box-sizing: border-box;
+}
+
+.va2213-audit__shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(4,3,7,.86);
+  backdrop-filter: blur(14px);
+}
+
+.va2213-audit__panel {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 96vw);
+  max-height: min(90vh, 980px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: clamp(20px, 2.4vw, 34px);
+  border: 1px solid rgba(199,144,255,.18);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(18,13,24,.99), rgba(8,6,12,.995));
+  box-shadow: 0 36px 90px rgba(0,0,0,.58);
+  color: #f7f3fa;
+}
+
+.va2213-audit__panel > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.va2213-audit__panel > header span {
+  color: #c790ff;
+  font-size: .63rem;
+  font-weight: 820;
+  letter-spacing: .18em;
+}
+
+.va2213-audit__panel h1 {
+  margin: .45rem 0 .45rem;
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  line-height: 1;
+}
+
+.va2213-audit__panel header p {
+  max-width: 72ch;
+  margin: 0;
+  color: rgba(247,243,250,.62);
+  line-height: 1.5;
+}
+
+.va2213-audit__close {
+  appearance: none;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.va2213-audit__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.va2213-audit__controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: rgba(247,243,250,.68);
+  font-size: .58rem;
+  font-weight: 780;
+  letter-spacing: .07em;
+}
+
+.va2213-audit__controls button,
+.va2213-result__actions button {
+  appearance: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(199,144,255,.24);
+  border-radius: 999px;
+  background: rgba(155,82,245,.11);
+  color: #fff;
+  font: inherit;
+  font-size: .56rem;
+  font-weight: 820;
+  letter-spacing: .075em;
+  cursor: pointer;
+}
+
+.va2213-audit__controls button:disabled {
+  opacity: .48;
+  cursor: default;
+}
+
+.va2213-audit__progress {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.va2213-audit__progress > div {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+}
+
+.va2213-audit__progress i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8a46e8, #85e9ff);
+  transition: width 180ms ease;
+}
+
+.va2213-audit__progress span {
+  color: rgba(247,243,250,.58);
+  font-size: .65rem;
+}
+
+.va2213-audit__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.va2213-stat {
+  padding: 14px 15px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+}
+
+.va2213-stat strong,
+.va2213-stat span {
+  display: block;
+}
+
+.va2213-stat strong {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.va2213-stat span {
+  margin-top: 5px;
+  color: rgba(247,243,250,.58);
+  font-size: .58rem;
+  font-weight: 760;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.va2213-stat--bad strong { color: #ff7c8c; }
+.va2213-stat--warn strong { color: #ffc66d; }
+.va2213-stat--unknown strong { color: #85e9ff; }
+.va2213-stat--good strong { color: #84e6ad; }
+
+.va2213-audit__notice {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  color: rgba(247,243,250,.60);
+  font-size: .67rem;
+  line-height: 1.45;
+}
+
+.va2213-audit__results {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.va2213-result {
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+}
+
+.va2213-result--missing_season { border-color: rgba(255,124,140,.24); }
+.va2213-result--missing_episode { border-color: rgba(255,198,109,.22); }
+.va2213-result--unverifiable { border-color: rgba(133,233,255,.18); }
+.va2213-result--complete { border-color: rgba(132,230,173,.16); }
+
+.va2213-result__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.va2213-result h3 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.va2213-result__head p {
+  margin: 5px 0 0;
+  color: rgba(247,243,250,.52);
+  font-size: .62rem;
+}
+
+.va2213-result__head b {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  font-size: .52rem;
+  letter-spacing: .08em;
+}
+
+.va2213-result--missing_season .va2213-result__head b { color: #ff9aa6; }
+.va2213-result--missing_episode .va2213-result__head b { color: #ffd18b; }
+.va2213-result--unverifiable .va2213-result__head b { color: #9fefff; }
+.va2213-result--complete .va2213-result__head b { color: #9cf0bd; }
+
+.va2213-result__facts {
+  margin-top: 10px;
+  color: rgba(247,243,250,.67);
+  font-size: .68rem;
+  line-height: 1.45;
+}
+
+.va2213-result ul {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.va2213-result li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.035);
+}
+
+.va2213-result li strong {
+  font-size: .67rem;
+}
+
+.va2213-result li span {
+  color: rgba(247,243,250,.58);
+  font-size: .65rem;
+  text-align: right;
+}
+
+.va2213-result__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.va2213-audit__clean {
+  padding: 26px;
+  border: 1px solid rgba(132,230,173,.16);
+  border-radius: 14px;
+  color: #9cf0bd;
+  text-align: center;
+}
+
+.layout-tv .va2213-audit-launcher,
+.layout-tv .va2213-audit__controls button,
+.layout-tv .va2213-result__actions button,
+.layout-tv .va2213-audit__close {
+  min-height: 50px;
+}
+
+.layout-tv .va2213-audit-launcher:focus,
+.layout-tv .va2213-audit__controls button:focus,
+.layout-tv .va2213-result__actions button:focus,
+.layout-tv .va2213-audit__close:focus {
+  outline: 3px solid rgba(215,166,255,.82) !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 760px) {
+  #va2213-series-audit { padding: 0; }
+  .va2213-audit__panel {
+    width: 100vw;
+    max-height: 100vh;
+    min-height: 100vh;
+    border-radius: 0;
+    padding: 18px 14px 26px;
+  }
+  .va2213-audit__summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .va2213-audit__progress { grid-template-columns: 1fr; }
+  .va2213-result__head,
+  .va2213-result li { flex-direction: column; }
+  .va2213-result li span { text-align: left; }
+}

@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build v0.22.12 per-Series card edit assets
+      - name: Build v0.22.13 Series Integrity Audit assets
         run: |
           cat \
             src/v022/00-v226-bootstrap.js \
@@ -31,7 +31,8 @@ jobs:
             src/v022/11-v228-reliability.js \
             src/v022/12-v229-collections.js \
             src/v022/14-v2211-series-card-edit.js \
-            > velvet-antenna-v02212.js
+            src/v022/15-v2213-series-audit.js \
+            > velvet-antenna-v02213.js
 
           cat \
             velvet-antenna-v0215.css \
@@ -43,16 +44,17 @@ jobs:
             src/v022/07-v228-reliability.css \
             src/v022/08-v229-collections.css \
             src/v022/10-v2211-series-card-edit.css \
-            > velvet-antenna-v02212.css
+            src/v022/11-v2213-series-audit.css \
+            > velvet-antenna-v02213.css
 
-      - name: Validate v0.22.12 assets
+      - name: Validate v0.22.13 assets
         run: |
-          node --check velvet-antenna-v02212.js
+          node --check velvet-antenna-v02213.js
           python - <<'PY'
           from pathlib import Path
 
-          js = Path('velvet-antenna-v02212.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v02212.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v02213.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v02213.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
               'src/v022/00-v226-bootstrap.js',
               'src/v022/02-subtitle-search.js',
@@ -62,13 +64,14 @@ jobs:
               'src/v022/10-v227-collection-manager.js',
               'src/v022/11-v228-reliability.js',
               'src/v022/12-v229-collections.js',
-              'src/v022/14-v2211-series-card-edit.js'
+              'src/v022/14-v2211-series-card-edit.js',
+              'src/v022/15-v2213-series-audit.js'
           )]
 
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22.12 modules must remain observer-free')
+              raise SystemExit('v0.22.13 modules must remain observer-free')
 
           required = (
               'v0.22.6 first-paint bootstrap loaded',
@@ -91,15 +94,21 @@ jobs:
               "IncludeItemTypes: 'BoxSet'",
               'v0.22.11 per-Series card edit buttons loaded',
               'va2211-series-card-edit',
-              "data-action', 'edit'",
-              "data-type', 'Series'",
-              "document.querySelectorAll('.card').forEach(decorateCard)",
+              'v0.22.13 Series Integrity Audit loaded',
+              'AUDIT SERIES',
+              'VelvetAntennaBridge/TmdbSeries/',
+              'MISSING SEASON',
+              'MISSING EPISODES',
+              'INCLUDE SPECIALS / SEASON 0',
+              "IncludeItemTypes: 'Episode'",
+              'IsVirtualItem',
+              'IndexNumberEnd',
               'headerBackButton',
               'getUserViews'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.12 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.13 feature marker: {marker}')
 
           for marker in (
               'LIKELY MISSING',
@@ -109,7 +118,7 @@ jobs:
               'va2210-series-lens-action'
           ):
               if marker in js or marker in css:
-                  raise SystemExit(f'Forbidden behavior leaked into v0.22.12: {marker}')
+                  raise SystemExit(f'Forbidden behavior leaked into v0.22.13: {marker}')
 
           required_css = (
               '#va224-nav',
@@ -124,12 +133,15 @@ jobs:
               '#va229-artwork-picker',
               '.va229-artwork-choice',
               '.va2211-series-card-edit',
+              '.va2213-audit-launcher',
+              '#va2213-series-audit',
+              '.va2213-result--missing_season',
               '#va22-subtitle-search',
               '.selectionCommandsPanel'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.12 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.13 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -148,7 +160,7 @@ jobs:
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22.12 bundle
+      - name: Commit generated v0.22.13 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -157,10 +169,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v02212.js \
-            velvet-antenna-v02212.css \
+            velvet-antenna-v02213.js \
+            velvet-antenna-v02213.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.12 per-Series card editing'
+          git commit -m 'Build Velvet Antenna v0.22.13 Series Integrity Audit'
           git push
