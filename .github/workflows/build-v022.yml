@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build v0.22.4 clean ownership assets
+      - name: Build v0.22.5 collection manager assets
         run: |
           cat \
             velvet-antenna-v0215.js \
@@ -26,52 +26,58 @@ jobs:
             src/v022/05-v224-shell.js \
             src/v022/06-v224-home.js \
             src/v022/07-v224-lens.js \
-            > velvet-antenna-v0224.js
+            src/v022/08-v225-collection-manager.js \
+            > velvet-antenna-v0225.js
 
           cat \
             velvet-antenna-v0215.css \
             src/v022/01-flow.css \
             src/v022/03-v224.css \
-            > velvet-antenna-v0224.css
+            src/v022/04-v225-collection-manager.css \
+            > velvet-antenna-v0225.css
 
-      - name: Validate v0.22.4 assets
+      - name: Validate v0.22.5 assets
         run: |
-          node --check velvet-antenna-v0224.js
+          node --check velvet-antenna-v0225.js
           python - <<'PY'
           from pathlib import Path
 
-          js = Path('velvet-antenna-v0224.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0224.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v0225.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0225.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
               'src/v022/02-subtitle-search.js',
               'src/v022/05-v224-shell.js',
               'src/v022/06-v224-home.js',
-              'src/v022/07-v224-lens.js'
+              'src/v022/07-v224-lens.js',
+              'src/v022/08-v225-collection-manager.js'
           )]
 
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22.4 modules must remain bounded and observer-free')
+              raise SystemExit('v0.22.5 modules must remain bounded and observer-free')
 
           required = (
               "const CORE = ['movies', 'series', 'collections']",
               'velvet-antenna-v0224:route:',
               "else value = '#/list?parentId=' + id",
-              'v0.22.4 clean shell loaded',
               'TUNING A FAST SIGNAL',
-              "Limit: 30",
-              'Continue the story',
-              'One more episode',
-              'v0.22.4 deterministic Velvet Lens loaded',
               'va224-library-stage',
               'RemoteSearch/Subtitles/',
               'DOWNLOAD & USE',
-              'subtitle-restart'
+              'v0.22.5 Collection Manager loaded',
+              'MANAGE COLLECTION',
+              'ADD FROM LIBRARY',
+              'LIKELY MISSING',
+              "client.getUrl('Collections/' + encodeURIComponent(collectionId) + '/Items'",
+              "mutateMembership('POST'",
+              "mutateMembership('DELETE'",
+              "IncludeItemTypes: 'Movie,Series,BoxSet'",
+              "IncludeItemTypes: 'Movie,Series'"
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.4 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.5 feature marker: {marker}')
 
           forbidden = (
               'v0.22.3 immediate API-backed navigation loaded',
@@ -79,25 +85,26 @@ jobs:
           )
           for marker in forbidden:
               if marker in js:
-                  raise SystemExit(f'Legacy v0.22.3 controller leaked into v0.22.4: {marker}')
+                  raise SystemExit(f'Legacy v0.22.3 controller leaked into v0.22.5: {marker}')
 
           shell = Path('src/v022/05-v224-shell.js').read_text(encoding='utf-8')
           if "navButton('LIVE'" in shell or "live: 'LIVE'" in shell:
-              raise SystemExit('Unproven Live navigation must not be exposed in v0.22.4')
+              raise SystemExit('Unproven Live navigation must not be exposed in v0.22.5')
 
           required_css = (
               '#va224-nav',
               '#va224-home',
               '#va224-library-stage',
-              'body.va224-active #va21-nav',
-              'body.va224-active #va21-library-stage',
+              '#va225-manage-collection',
+              '#va225-collection-manager',
+              '.va225-collection-row',
               '#va22-subtitle-search',
               '#va22-subtitle-overlay',
               '.selectionCommandsPanel'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.4 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.5 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -115,7 +122,7 @@ jobs:
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22.4 bundle
+      - name: Commit generated v0.22.5 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -124,10 +131,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0224.js \
-            velvet-antenna-v0224.css \
+            velvet-antenna-v0225.js \
+            velvet-antenna-v0225.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.4 clean ownership reset'
+          git commit -m 'Build Velvet Antenna v0.22.5 collection manager'
           git push
