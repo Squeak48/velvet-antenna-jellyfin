@@ -1,0 +1,79 @@
+/* Velvet Antenna v0.22.11 - restore per-Series card metadata editing */
+
+body.va224-active .va2211-series-card {
+  position: relative !important;
+}
+
+.va2211-series-card-edit {
+  position: absolute;
+  z-index: 60;
+  right: 8px;
+  bottom: 46px;
+  min-height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(199,144,255,.24);
+  border-radius: 999px;
+  background: rgba(12,8,17,.88);
+  color: #fff;
+  font: inherit;
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,.34);
+  transition: opacity 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.va2211-series-card-edit span {
+  color: var(--va224-electric, #c790ff);
+  font-size: .9rem;
+  line-height: 1;
+}
+
+.va2211-series-card-edit b {
+  font-size: .57rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.va2211-series-card:hover .va2211-series-card-edit,
+.va2211-series-card:focus-within .va2211-series-card-edit,
+.va2211-series-card-edit:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.va2211-series-card-edit:hover,
+.va2211-series-card-edit:focus-visible {
+  background: rgba(108,44,191,.82);
+  outline: 2px solid rgba(198,139,255,.36);
+  outline-offset: 2px;
+}
+
+.layout-tv .va2211-series-card-edit {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  min-height: 42px;
+  bottom: 44px;
+  padding: 0 12px;
+}
+
+.layout-tv .va2211-series-card-edit:focus {
+  outline: 3px solid rgba(215,166,255,.82) !important;
+  outline-offset: 3px !important;
+}
+
+@media (hover: none), (max-width: 760px) {
+  .va2211-series-card-edit {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .va2211-series-card-edit b { display: none; }
+  .va2211-series-card-edit { bottom: 40px; }
+}
