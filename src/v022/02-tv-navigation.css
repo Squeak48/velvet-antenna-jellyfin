@@ -1,0 +1,203 @@
+/* Velvet Antenna v0.22.1 - API-backed library navigation and TV hardening */
+
+#va21-nav[data-va22-navigation="0.22.1"] {
+  grid-template-columns: minmax(190px, .78fr) minmax(0, 2.4fr) minmax(150px, .7fr);
+  gap: clamp(10px, 1.3vw, 22px);
+}
+
+#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary {
+  min-width: 0;
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+}
+
+#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary::-webkit-scrollbar {
+  display: none;
+}
+
+#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary .va21-nav__item {
+  flex: 0 0 auto;
+}
+
+#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link {
+  color: rgba(247,243,250,.67);
+}
+
+#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link:focus-visible,
+#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link.is-active {
+  color: #fff;
+}
+
+@media (max-width: 1250px) {
+  #va21-nav[data-va22-navigation="0.22.1"] {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__wordmark {
+    display: none;
+  }
+
+  #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility [data-va21-kind="profile"] {
+    display: none;
+  }
+}
+
+/* Jellyfin explicitly marks TV layouts with .layout-tv. Core library destinations
+   are given priority over branding and utility actions in that environment. */
+.layout-tv {
+  --va21-nav-h: 88px;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] {
+  height: var(--va21-nav-h);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  padding-left: clamp(18px, 2vw, 38px);
+  padding-right: clamp(18px, 2vw, 38px);
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__identity {
+  gap: 7px;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__wordmark,
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility [data-va21-kind="profile"] {
+  display: none !important;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary {
+  gap: 8px;
+  padding: 4px 2px;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item {
+  min-width: max-content;
+  min-height: 50px;
+  padding: 0 12px;
+  border-radius: 11px;
+  color: rgba(247,243,250,.70);
+  font-size: .60rem;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item:focus-visible,
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__back:focus-visible,
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__brand:focus-visible {
+  outline: 3px solid rgba(215,166,255,.72) !important;
+  outline-offset: 2px !important;
+  background: rgba(155,82,245,.22) !important;
+  color: #fff !important;
+  transform: scale(1.035);
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item.is-active {
+  background: rgba(155,82,245,.12);
+  color: #fff;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility {
+  gap: 5px;
+}
+
+.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility .va21-nav__item {
+  padding-left: 9px;
+  padding-right: 9px;
+}
+
+/* A second, remote-first route surface on TV Home. This is intentionally redundant:
+   the primary libraries must remain reachable even if a TV client handles fixed-nav focus oddly. */
+#va22-tv-hubs {
+  display: none;
+}
+
+.layout-tv #va22-flow #va22-tv-hubs,
+.layout-tv #va22-tv-hubs {
+  display: block;
+  width: calc(100% - (var(--va22-edge) * 2));
+  max-width: 1650px;
+  box-sizing: border-box;
+  margin: 8px auto 36px;
+}
+
+.layout-tv .va22-tv-hubs > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 13px;
+}
+
+.layout-tv .va22-tv-hubs > header span {
+  color: var(--va22-electric);
+  font-size: .52rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+
+.layout-tv .va22-tv-hubs > header h2 {
+  margin: .35rem 0 0;
+  color: rgba(247,243,250,.92);
+  font-size: 1.3rem;
+  font-weight: 640;
+  letter-spacing: -.03em;
+}
+
+.layout-tv .va22-tv-hubs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.layout-tv .va22-tv-hub {
+  appearance: none;
+  min-height: 112px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 6px;
+  padding: 17px 19px;
+  border: 1px solid rgba(199,144,255,.14);
+  border-radius: 15px;
+  cursor: pointer;
+  text-align: left;
+  background:
+    linear-gradient(115deg, rgba(31,17,44,.94), rgba(12,8,17,.96)),
+    #0b0710;
+  color: #fff;
+  box-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+
+.layout-tv .va22-tv-hub span {
+  color: rgba(199,144,255,.58);
+  font-size: .45rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.layout-tv .va22-tv-hub b {
+  font-size: 1rem;
+  font-weight: 720;
+  letter-spacing: .06em;
+}
+
+.layout-tv .va22-tv-hub i {
+  color: rgba(133,233,255,.56);
+  font-size: .47rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: .09em;
+}
+
+.layout-tv .va22-tv-hub:focus-visible {
+  outline: 3px solid rgba(215,166,255,.78);
+  outline-offset: 3px;
+  border-color: rgba(215,166,255,.58);
+  background:
+    linear-gradient(115deg, rgba(83,37,121,.96), rgba(24,12,34,.98)),
+    #120b19;
+  transform: scale(1.025);
+}
