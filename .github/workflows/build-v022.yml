@@ -25,27 +25,31 @@ jobs:
             src/v022/01-antenna-flow.js \
             src/v022/02-subtitle-search.js \
             src/v022/03-library-navigation.js \
-            > velvet-antenna-v0222.js
+            src/v022/04-library-reliability.js \
+            > velvet-antenna-v0223.js
 
           cat \
             velvet-antenna-v0215.css \
             src/v022/01-flow.css \
             src/v022/02-tv-navigation.css \
-            > velvet-antenna-v0222.css
+            > velvet-antenna-v0223.css
 
       - name: Validate v0.22 assets
         run: |
-          node --check velvet-antenna-v0222.js
+          node --check velvet-antenna-v0223.js
           python - <<'PY'
           from pathlib import Path
-          js = Path('velvet-antenna-v0222.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0222.css').read_text(encoding='utf-8')
-          flow = Path('src/v022/01-antenna-flow.js').read_text(encoding='utf-8')
-          subs = Path('src/v022/02-subtitle-search.js').read_text(encoding='utf-8')
-          nav = Path('src/v022/03-library-navigation.js').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v0223.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0223.css').read_text(encoding='utf-8')
+          modules = [Path(p).read_text(encoding='utf-8') for p in (
+              'src/v022/01-antenna-flow.js',
+              'src/v022/02-subtitle-search.js',
+              'src/v022/03-library-navigation.js',
+              'src/v022/04-library-reliability.js'
+          )]
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
-          if any('MutationObserver' in text for text in (flow, subs, nav)):
+          if any('MutationObserver' in text for text in modules):
               raise SystemExit('v0.22 feature modules must remain bounded and observer-free')
           required = (
               'Continue the story',
@@ -61,33 +65,31 @@ jobs:
               'subtitle-restart',
               'removeMaintenanceSurface',
               'getUserViews',
-              'collectionType=movies',
-              'collectionType=tvshows',
-              'collectionType=boxsets',
-              'data-va22-navigation',
-              'va22-tv-hubs',
-              'ensureImmediateNav',
+              'routeViaJellyfin',
+              'window.Emby?.Page',
               "const CORE = ['movies', 'series', 'collections']",
-              'data-va22-route-pending',
-              'viewsPromise = null'
+              'velvet-antenna-v0223:route:',
+              'deterministic library stage',
+              'data-va223-action',
+              'firstLibraryItem',
+              'forceLibrarySurface'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.2 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.3 feature marker: {marker}')
           required_css = (
               '#va22-flow',
               '#va22-tonight',
               '#va22-subtitle-search',
               '#va22-subtitle-overlay',
-              '.va21-stage__tools',
               '.selectionCommandsPanel',
-              '.layout-tv #va21-nav[data-va22-navigation="0.22.2"]',
+              '.layout-tv #va21-nav[data-va22-navigation="0.22.3"]',
               '#va22-tv-hubs',
               '[data-va22-route-pending="true"]'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.2 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.3 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -114,10 +116,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0222.js \
-            velvet-antenna-v0222.css \
+            velvet-antenna-v0223.js \
+            velvet-antenna-v0223.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.2 startup navigation fix'
+          git commit -m 'Build Velvet Antenna v0.22.3 reliability pass'
           git push
