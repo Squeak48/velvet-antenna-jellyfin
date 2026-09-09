@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build v0.22.8 reliability assets
+      - name: Build v0.22.9 collections assets
         run: |
           cat \
             src/v022/00-v226-bootstrap.js \
@@ -29,7 +29,8 @@ jobs:
             src/v022/07-v224-lens.js \
             src/v022/10-v227-collection-manager.js \
             src/v022/11-v228-reliability.js \
-            > velvet-antenna-v0228.js
+            src/v022/12-v229-collections.js \
+            > velvet-antenna-v0229.js
 
           cat \
             velvet-antenna-v0215.css \
@@ -39,16 +40,17 @@ jobs:
             src/v022/05-v226-fixes.css \
             src/v022/06-v227-source-check.css \
             src/v022/07-v228-reliability.css \
-            > velvet-antenna-v0228.css
+            src/v022/08-v229-collections.css \
+            > velvet-antenna-v0229.css
 
-      - name: Validate v0.22.8 assets
+      - name: Validate v0.22.9 assets
         run: |
-          node --check velvet-antenna-v0228.js
+          node --check velvet-antenna-v0229.js
           python - <<'PY'
           from pathlib import Path
 
-          js = Path('velvet-antenna-v0228.js').read_text(encoding='utf-8')
-          css = Path('velvet-antenna-v0228.css').read_text(encoding='utf-8')
+          js = Path('velvet-antenna-v0229.js').read_text(encoding='utf-8')
+          css = Path('velvet-antenna-v0229.css').read_text(encoding='utf-8')
           modules = [Path(p).read_text(encoding='utf-8') for p in (
               'src/v022/00-v226-bootstrap.js',
               'src/v022/02-subtitle-search.js',
@@ -56,19 +58,18 @@ jobs:
               'src/v022/06-v224-home.js',
               'src/v022/07-v224-lens.js',
               'src/v022/10-v227-collection-manager.js',
-              'src/v022/11-v228-reliability.js'
+              'src/v022/11-v228-reliability.js',
+              'src/v022/12-v229-collections.js'
           )]
 
           if css.count('{') != css.count('}'):
               raise SystemExit('CSS brace count mismatch')
           if any('MutationObserver' in text for text in modules):
-              raise SystemExit('v0.22.8 modules must remain observer-free')
+              raise SystemExit('v0.22.9 modules must remain observer-free')
 
           required = (
               'v0.22.6 first-paint bootstrap loaded',
               "const CORE = ['movies', 'series', 'collections']",
-              'TUNING A FAST SIGNAL',
-              'va224-library-stage',
               'RemoteSearch/Subtitles/',
               'DOWNLOAD & USE',
               'v0.22.7 source-aware Collection Manager loaded',
@@ -78,24 +79,23 @@ jobs:
               'MISSING FROM LIBRARY',
               'v0.22.8 deterministic interaction layer loaded',
               'va228-player-exit',
-              'CHANGE POSTER',
-              'CHANGE BACKDROP',
-              'uploadItemImage',
+              'v0.22.9 owned Collections grid and curated artwork picker loaded',
+              'va229-collections-grid',
+              'PICK POSTER',
+              'PICK BACKDROP',
+              'getAvailableRemoteImages',
+              'downloadRemoteImage',
+              "IncludeItemTypes: 'BoxSet'",
               'headerBackButton',
-              'getUserViews',
-              'va228Owned'
+              'getUserViews'
           )
           for marker in required:
               if marker not in js:
-                  raise SystemExit(f'Missing v0.22.8 feature marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.9 feature marker: {marker}')
 
-          forbidden = (
-              'LIKELY MISSING',
-              'MutationObserver'
-          )
-          for marker in forbidden:
+          for marker in ('LIKELY MISSING', 'MutationObserver'):
               if marker in js:
-                  raise SystemExit(f'Forbidden behavior leaked into v0.22.8: {marker}')
+                  raise SystemExit(f'Forbidden behavior leaked into v0.22.9: {marker}')
 
           required_css = (
               '#va224-nav',
@@ -105,13 +105,16 @@ jobs:
               '#va226-collection-manager',
               '.va227-source-row',
               '#va228-player-exit',
-              '#va228-collection-artwork',
+              '#va229-collections-grid',
+              '#va229-collection-artwork',
+              '#va229-artwork-picker',
+              '.va229-artwork-choice',
               '#va22-subtitle-search',
               '.selectionCommandsPanel'
           )
           for marker in required_css:
               if marker not in css:
-                  raise SystemExit(f'Missing v0.22.8 CSS marker: {marker}')
+                  raise SystemExit(f'Missing v0.22.9 CSS marker: {marker}')
           PY
 
       - name: Advertise v0.22 alongside rollback builds
@@ -129,7 +132,7 @@ jobs:
               path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
 
-      - name: Commit generated v0.22.8 bundle
+      - name: Commit generated v0.22.9 bundle
         run: |
           if git diff --quiet; then
             echo 'No generated changes.'
@@ -138,10 +141,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            velvet-antenna-v0228.js \
-            velvet-antenna-v0228.css \
+            velvet-antenna-v0229.js \
+            velvet-antenna-v0229.css \
             mods-v020.json \
             mods-v017.json \
             mods.json
-          git commit -m 'Build Velvet Antenna v0.22.8 reliability release'
+          git commit -m 'Build Velvet Antenna v0.22.9 collections gallery'
           git push
