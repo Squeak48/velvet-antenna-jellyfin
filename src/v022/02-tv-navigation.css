@@ -1,11 +1,11 @@
-/* Velvet Antenna v0.22.1 - API-backed library navigation and TV hardening */
+/* Velvet Antenna v0.22.2 - immediate API-backed library navigation and TV hardening */
 
-#va21-nav[data-va22-navigation="0.22.1"] {
+#va21-nav[data-va22-navigation="0.22.2"] {
   grid-template-columns: minmax(190px, .78fr) minmax(0, 2.4fr) minmax(150px, .7fr);
   gap: clamp(10px, 1.3vw, 22px);
 }
 
-#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary {
+#va21-nav[data-va22-navigation="0.22.2"] .va21-nav__primary {
   min-width: 0;
   justify-content: flex-start;
   overflow-x: auto;
@@ -16,44 +16,50 @@
   white-space: nowrap;
 }
 
-#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary::-webkit-scrollbar {
+#va21-nav[data-va22-navigation="0.22.2"] .va21-nav__primary::-webkit-scrollbar {
   display: none;
 }
 
-#va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary .va21-nav__item {
+#va21-nav[data-va22-navigation="0.22.2"] .va21-nav__primary .va21-nav__item {
   flex: 0 0 auto;
 }
 
-#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link {
+#va21-nav[data-va22-navigation="0.22.2"] .va22-api-library-link {
   color: rgba(247,243,250,.67);
 }
 
-#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link:focus-visible,
-#va21-nav[data-va22-navigation="0.22.1"] .va22-api-library-link.is-active {
+#va21-nav[data-va22-navigation="0.22.2"] .va22-api-library-link:focus-visible,
+#va21-nav[data-va22-navigation="0.22.2"] .va22-api-library-link.is-active {
   color: #fff;
 }
 
+#va21-nav[data-va22-navigation="0.22.2"] [data-va22-route-pending="true"] {
+  opacity: .82;
+}
+
+#va21-nav[data-va22-navigation="0.22.2"] .is-resolving {
+  opacity: .58;
+}
+
 @media (max-width: 1250px) {
-  #va21-nav[data-va22-navigation="0.22.1"] {
+  #va21-nav[data-va22-navigation="0.22.2"] {
     grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
-  #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__wordmark {
+  #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__wordmark {
     display: none;
   }
 
-  #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility [data-va21-kind="profile"] {
+  #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__utility [data-va21-kind="profile"] {
     display: none;
   }
 }
 
-/* Jellyfin explicitly marks TV layouts with .layout-tv. Core library destinations
-   are given priority over branding and utility actions in that environment. */
 .layout-tv {
   --va21-nav-h: 88px;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] {
   height: var(--va21-nav-h);
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
@@ -61,21 +67,21 @@
   padding-right: clamp(18px, 2vw, 38px);
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__identity {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__identity {
   gap: 7px;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__wordmark,
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility [data-va21-kind="profile"] {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__wordmark,
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__utility [data-va21-kind="profile"] {
   display: none !important;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__primary {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__primary {
   gap: 8px;
   padding: 4px 2px;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__item {
   min-width: max-content;
   min-height: 50px;
   padding: 0 12px;
@@ -84,9 +90,9 @@
   font-size: .60rem;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item:focus-visible,
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__back:focus-visible,
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__brand:focus-visible {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__item:focus-visible,
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__back:focus-visible,
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__brand:focus-visible {
   outline: 3px solid rgba(215,166,255,.72) !important;
   outline-offset: 2px !important;
   background: rgba(155,82,245,.22) !important;
@@ -94,22 +100,20 @@
   transform: scale(1.035);
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__item.is-active {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__item.is-active {
   background: rgba(155,82,245,.12);
   color: #fff;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__utility {
   gap: 5px;
 }
 
-.layout-tv #va21-nav[data-va22-navigation="0.22.1"] .va21-nav__utility .va21-nav__item {
+.layout-tv #va21-nav[data-va22-navigation="0.22.2"] .va21-nav__utility .va21-nav__item {
   padding-left: 9px;
   padding-right: 9px;
 }
 
-/* A second, remote-first route surface on TV Home. This is intentionally redundant:
-   the primary libraries must remain reachable even if a TV client handles fixed-nav focus oddly. */
 #va22-tv-hubs {
   display: none;
 }
@@ -169,6 +173,10 @@
     #0b0710;
   color: #fff;
   box-shadow: 0 18px 48px rgba(0,0,0,.24);
+}
+
+.layout-tv .va22-tv-hub[data-va22-route-pending="true"] {
+  opacity: .86;
 }
 
 .layout-tv .va22-tv-hub span {
