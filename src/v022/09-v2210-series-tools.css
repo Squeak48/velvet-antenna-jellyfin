@@ -1,0 +1,54 @@
+/* Velvet Antenna v0.22.10 - native Series edit and identify controls */
+
+.va2210-series-action,
+.va2210-series-lens-action {
+  appearance: none;
+  min-height: 40px;
+  padding: 0 14px !important;
+  border: 1px solid rgba(199,144,255,.22) !important;
+  border-radius: 999px !important;
+  background: rgba(155,82,245,.10) !important;
+  color: rgba(247,243,250,.92) !important;
+  font: inherit !important;
+  font-size: .54rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .075em;
+  cursor: pointer;
+}
+
+.va2210-series-action:hover,
+.va2210-series-action:focus-visible,
+.va2210-series-lens-action:hover,
+.va2210-series-lens-action:focus-visible {
+  background: rgba(155,82,245,.22) !important;
+  border-color: rgba(215,166,255,.42) !important;
+  color: #fff !important;
+  outline: 2px solid rgba(199,144,255,.52) !important;
+  outline-offset: 2px;
+}
+
+.va2210-series-action[data-action="identify"],
+.va2210-series-lens-action[data-action="identify"] {
+  background: rgba(133,233,255,.07) !important;
+  border-color: rgba(133,233,255,.20) !important;
+}
+
+.va2210-series-action__icon {
+  display: inline-block;
+  margin-right: 7px;
+  font-size: .8rem;
+  line-height: 1;
+}
+
+.layout-tv .va2210-series-action,
+.layout-tv .va2210-series-lens-action {
+  min-height: 50px;
+  padding: 0 16px !important;
+  font-size: .62rem !important;
+}
+
+.layout-tv .va2210-series-action:focus,
+.layout-tv .va2210-series-lens-action:focus {
+  outline: 3px solid rgba(215,166,255,.82) !important;
+  outline-offset: 3px !important;
+}
