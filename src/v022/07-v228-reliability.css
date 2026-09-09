@@ -1,0 +1,121 @@
+/* Velvet Antenna v0.22.8 - reliable navigation, artwork and player exit */
+
+#va224-nav {
+  z-index: 260000 !important;
+  pointer-events: auto !important;
+}
+
+#va224-nav button,
+#va224-nav a {
+  pointer-events: auto !important;
+}
+
+#va228-player-exit {
+  position: fixed;
+  z-index: 650000;
+  top: max(18px, env(safe-area-inset-top));
+  left: max(18px, env(safe-area-inset-left));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 54px;
+  min-height: 48px;
+  padding: 0 15px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px;
+  background: rgba(8,6,11,.78);
+  color: #fff;
+  box-shadow: 0 12px 38px rgba(0,0,0,.42);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  font: inherit;
+  pointer-events: auto;
+}
+
+#va228-player-exit span {
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 300;
+}
+
+#va228-player-exit b {
+  font-size: .56rem;
+  letter-spacing: .12em;
+}
+
+#va228-player-exit:hover,
+#va228-player-exit:focus-visible {
+  border-color: rgba(211,167,255,.7);
+  background: rgba(80,38,113,.86);
+  outline: 2px solid rgba(211,167,255,.42);
+  outline-offset: 3px;
+}
+
+#va228-collection-artwork {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+#va228-collection-artwork button {
+  appearance: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  color: rgba(247,243,250,.88);
+  cursor: pointer;
+  font: inherit;
+  font-size: .50rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+#va228-collection-artwork button:hover,
+#va228-collection-artwork button:focus-visible {
+  border-color: rgba(205,157,255,.44);
+  background: rgba(124,66,177,.22);
+  outline: none;
+}
+
+.layout-tv #va228-player-exit {
+  min-width: 74px;
+  min-height: 58px;
+  padding: 0 20px;
+  top: 24px;
+  left: 24px;
+}
+
+.layout-tv #va228-collection-artwork button {
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: .58rem;
+}
+
+@media (max-width: 760px) {
+  #va228-player-exit {
+    top: 10px;
+    left: 10px;
+    min-width: 46px;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  #va228-player-exit b {
+    display: none;
+  }
+
+  #va228-collection-artwork {
+    width: 100%;
+    order: 3;
+    margin: 8px 0 0;
+  }
+
+  #va228-collection-artwork button {
+    flex: 1;
+  }
+}
