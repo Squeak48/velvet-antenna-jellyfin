@@ -72,10 +72,10 @@
   },
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.8 Antenna Flow",
+    "name": "Velvet Antenna v0.22.9 Antenna Flow",
     "author": "James",
-    "description": "Reliability-focused Antenna Flow release. v0.22.8 adds a single delegated interaction layer so VA navigation no longer depends on per-screen button listeners or hidden Jellyfin cards, resolves Movies/Series/Collections from the current Jellyfin User Views API, and performs bounded self-healing when Jellyfin re-renders a page without the expected VA surface. Collection Manager gains direct CHANGE POSTER and CHANGE BACKDROP uploads through Jellyfin's native uploadItemImage API. Video playback gains a permanent EXIT control that delegates to Jellyfin's own native headerBackButton so Jellyfin remains responsible for closing playback. Source-aware TMDb collection completeness, Add from Library, first-paint Home, Tonight, Velvet Lens, right-click administration and CC+ subtitle search remain included.",
-    "version": "0.22.8",
+    "description": "Collections-focused Antenna Flow release. v0.22.9 gives the Collections library its own API-backed BoxSet grid so every collection returned by Jellyfin is visible beneath the Velvet Lens instead of relying on Jellyfin's generic list page. Collection Manager artwork is upgraded from file-upload-first controls to PICK POSTER and PICK BACKDROP, opening a curated gallery from Jellyfin's configured remote image providers using getAvailableRemoteImages and applying the chosen image through downloadRemoteImage. Source-aware TMDb completeness through the optional Velvet Antenna Bridge, direct Add/Remove collection membership, v0.22.8 navigation reliability, permanent player EXIT, first-paint Home, Tonight, Velvet Lens, right-click administration and CC+ subtitle search remain included.",
+    "version": "0.22.9",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -88,12 +88,16 @@
       "next-up",
       "series",
       "collections",
+      "boxsets",
+      "collection-grid",
       "collection-manager",
       "source-check",
       "tmdb",
       "completeness",
       "artwork",
-      "images",
+      "remote-images",
+      "posters",
+      "backdrops",
       "player-exit",
       "franchises",
       "velvet-lens",
@@ -111,8 +115,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0228.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0228.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0229.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v0229.js",
     "requires": []
   }
 ]
