@@ -71,28 +71,6 @@
     "requires": []
   },
   {
-    "id": "velvet-antenna-v02211-cc",
-    "name": "Velvet Antenna v0.22.11 CC+ Persistence Hotfix",
-    "author": "James",
-    "description": "Small compatibility hotfix for Antenna Flow. Keeps the Velvet Antenna CC+ subtitle-search launcher available during playback even when Jellyfin hides its native CC selector because no local subtitle tracks exist. Leaves Jellyfin's native subtitle availability and selection logic untouched.",
-    "version": "0.22.11",
-    "jellyfin": "10.11+",
-    "tags": [
-      "subtitles",
-      "opensubtitles",
-      "cc",
-      "playback",
-      "hotfix",
-      "velvet-antenna"
-    ],
-    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.css?v=0.22.11",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02211-cc.js?v=0.22.11",
-    "requires": [
-      "velvet-antenna-v0220"
-    ]
-  },
-  {
     "id": "velvet-antenna-v0220",
     "name": "Velvet Antenna v0.22.10 Antenna Flow",
     "author": "James",
@@ -143,5 +121,27 @@
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.css",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.js",
     "requires": []
+  },
+  {
+    "id": "velvet-antenna-v02211-cc",
+    "name": "Velvet Antenna v0.22.11 CC+ Persistence Hotfix",
+    "author": "James",
+    "description": "Small compatibility hotfix for Antenna Flow. Keeps the Velvet Antenna CC+ subtitle-search launcher available during playback even when Jellyfin hides its native CC selector because no local subtitle tracks exist. Leaves Jellyfin's native subtitle availability and selection logic untouched.",
+    "version": "0.22.11",
+    "jellyfin": "10.11+",
+    "tags": [
+      "subtitles",
+      "opensubtitles",
+      "cc",
+      "playback",
+      "hotfix",
+      "velvet-antenna"
+    ],
+    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.css?v=0.22.11",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02211-cc.js?v=0.22.11",
+    "requires": [
+      "velvet-antenna-v0220"
+    ]
   }
 ]
