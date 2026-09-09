@@ -3,7 +3,7 @@
     "id": "velvet-antenna-v0220",
     "name": "Velvet Antenna v0.22.13 Antenna Flow",
     "author": "James",
-    "description": "Series Integrity Audit release. v0.22.13 adds an AUDIT SERIES workflow that compares each TMDb-identified Jellyfin Series against its canonical TMDb season structure through Velvet Antenna Bridge 0.2.0.0, then drills into only incomplete seasons to identify exact aired episodes that are missing. Entire missing seasons, individual missing episodes, unverifiable Series and complete Series are reported separately. Unaired episodes are excluded, Specials/Season 0 are optional, Jellyfin virtual missing-episode placeholders do not count as owned files, and combined episode files using IndexNumberEnd are treated as covering their full episode range. Per-Series card editing, source-aware Collections, curated artwork, player EXIT, first-paint Home, Tonight and CC+ subtitle search remain included.",
+    "description": "Series Integrity Audit release. v0.22.13 adds an AUDIT SERIES workflow that compares each TMDb-identified Jellyfin Series against its canonical TMDb season structure through Velvet Antenna Bridge 0.2.0.0, then drills into only incomplete seasons to identify exact aired episodes that are missing. Entire missing seasons, individual missing episodes, unverifiable Series and complete Series are reported separately. Unaired episodes are excluded, Specials/Season 0 are optional, Jellyfin virtual missing-episode placeholders do not count as owned files, and combined episode files using IndexNumberEnd are treated as covering their full episode range. Per-Series card editing, source-aware Collections, curated artwork, player EXIT, first-paint Home, Tonight and CC+ subtitle search remain included. The separate CC+ fixed-overlay hotfix has been withdrawn because its global DOM observer could destabilise playback.",
     "version": "0.22.13",
     "jellyfin": "10.11+",
     "tags": [
@@ -54,28 +54,5 @@
     "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02213.css",
     "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02213.js",
     "requires": []
-  },
-  {
-    "id": "velvet-antenna-v02211-cc",
-    "name": "Velvet Antenna v0.22.12 CC+ Fixed Overlay Hotfix",
-    "author": "James",
-    "description": "Small compatibility hotfix for Antenna Flow. v0.22.12 anchors CC+ as a fixed, top-layer playback overlay near the player controls, hides the older in-player CC+ launcher, and keeps subtitle search available even when Jellyfin hides its native CC selector because no local subtitle tracks exist.",
-    "version": "0.22.12",
-    "jellyfin": "10.11+",
-    "tags": [
-      "subtitles",
-      "opensubtitles",
-      "cc",
-      "playback",
-      "hotfix",
-      "overlay",
-      "velvet-antenna"
-    ],
-    "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02210.css?v=0.22.12",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02211-cc.js?v=0.22.12",
-    "requires": [
-      "velvet-antenna-v0220"
-    ]
   }
 ]
