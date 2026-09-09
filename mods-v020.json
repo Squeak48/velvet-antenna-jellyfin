@@ -72,10 +72,10 @@
   },
   {
     "id": "velvet-antenna-v0220",
-    "name": "Velvet Antenna v0.22.12 Antenna Flow",
+    "name": "Velvet Antenna v0.22.13 Antenna Flow",
     "author": "James",
-    "description": "Series card-edit restoration release. v0.22.12 removes the v0.22.10 Series detail/Lens toolbar experiment from the active bundle and restores the earlier per-item workflow: every Series card in the Series library receives its own native Jellyfin EDIT metadata action using that card's exact Series ID, server ID and type. The edit pill appears on hover/focus and remains remote/touch accessible. v0.22.9 API-backed Collections grid and curated remote artwork picker, source-aware TMDb collection completeness through the optional Velvet Antenna Bridge, direct Add/Remove collection membership, v0.22.8 navigation reliability, permanent player EXIT, first-paint Home, Tonight, right-click administration and CC+ subtitle search remain included.",
-    "version": "0.22.12",
+    "description": "Series Integrity Audit release. v0.22.13 adds an AUDIT SERIES workflow that compares each TMDb-identified Jellyfin Series against its canonical TMDb season structure through Velvet Antenna Bridge 0.2.0.0, then drills into only incomplete seasons to identify exact aired episodes that are missing. Entire missing seasons, individual missing episodes, unverifiable Series and complete Series are reported separately. Unaired episodes are excluded, Specials/Season 0 are optional, Jellyfin virtual missing-episode placeholders do not count as owned files, and combined episode files using IndexNumberEnd are treated as covering their full episode range. Per-Series card editing, source-aware Collections, curated artwork, player EXIT, first-paint Home, Tonight and CC+ subtitle search remain included.",
+    "version": "0.22.13",
     "jellyfin": "10.11+",
     "tags": [
       "ui",
@@ -88,6 +88,10 @@
       "next-up",
       "series",
       "series-edit",
+      "series-audit",
+      "integrity",
+      "missing-episodes",
+      "missing-seasons",
       "metadata",
       "card-actions",
       "collections",
@@ -118,8 +122,8 @@
       "velvet-antenna"
     ],
     "sourceUrl": "https://github.com/Squeak48/velvet-antenna-jellyfin",
-    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02212.css",
-    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02212.js",
+    "cssUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02213.css",
+    "jsUrl": "https://raw.githubusercontent.com/Squeak48/velvet-antenna-jellyfin/main/velvet-antenna-v02213.js",
     "requires": []
   },
   {
