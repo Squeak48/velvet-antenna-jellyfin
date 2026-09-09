@@ -1,0 +1,41 @@
+/* Velvet Antenna v0.22.7 - canonical collection source check */
+
+.va227-source-row .va225-collection-row__status.is-good {
+  color: rgba(167,255,201,.92);
+}
+
+.va227-source-row .va225-collection-row__status.is-warn {
+  color: rgba(255,220,148,.94);
+}
+
+.va227-source-row .va225-collection-row__status.is-missing {
+  color: rgba(255,153,170,.96);
+}
+
+.va227-tmdb-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: rgba(247,243,250,.74) !important;
+  text-decoration: none !important;
+  font-size: .53rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.va227-source-row.is-missing {
+  background: linear-gradient(90deg, rgba(125,25,48,.07), transparent 42%);
+}
+
+.va227-source-row.is-local {
+  background: linear-gradient(90deg, rgba(175,126,31,.06), transparent 42%);
+}
+
+.va227-source-row.is-owned {
+  background: linear-gradient(90deg, rgba(45,132,82,.05), transparent 42%);
+}
